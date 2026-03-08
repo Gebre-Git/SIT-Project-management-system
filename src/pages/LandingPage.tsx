@@ -30,7 +30,7 @@ const LandingPage: React.FC = () => {
 
             {/* Navigation */}
             <nav className="fixed top-0 w-full z-50 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/70 dark:bg-[#020617]/70 backdrop-blur-xl transition-all duration-500">
-                <div className="max-w-7xl mx-auto px-6 md:px-10 h-24 md:h-28 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-6 md:px-10 h-20 md:h-28 flex items-center justify-between">
                     <Logo />
                     <div className="flex items-center gap-6">
                         <ThemeToggle />
@@ -73,7 +73,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </nav>
 
-            <main className="pt-48 md:pt-56">
+            <main className="pt-32 md:pt-56">
                 {/* Hero Section */}
                 <section className="max-w-7xl mx-auto px-6 mb-24 lg:mb-32">
                     <div
@@ -517,7 +517,7 @@ const LandingPage: React.FC = () => {
                             <div className="space-y-2">
                                 <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No credit card. Just accountability.</p>
                                 <p className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-tighter">
-                                    Available on Web <span className="opacity-40 ml-2">(Mobile coming soon)</span>
+                                    Available on Web <span className="opacity-40 ml-2">(Fully Responsive)</span>
                                 </p>
                             </div>
                         </div>

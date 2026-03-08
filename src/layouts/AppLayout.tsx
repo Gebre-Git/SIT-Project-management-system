@@ -137,7 +137,7 @@ const AppLayout: React.FC = () => {
                     {isMobileMenuOpen ? <X /> : <Menu />}
                 </button>
                 <Logo collapsed animate={false} />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                     <NotificationPanel />
                     <ThemeToggle />
                     <ProfileDropdown />

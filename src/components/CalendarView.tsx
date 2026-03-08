@@ -62,8 +62,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
     }, [currentDate]);
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none">
+        <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30">
                         <CalendarIcon className="w-6 h-6 text-white" />
@@ -77,13 +77,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl flex items-center shadow-inner">
+                    <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl flex items-center shadow-inner overflow-x-auto no-scrollbar max-w-full">
                         {['week', 'month', 'year'].map((type) => (
                             <button
                                 key={type}
                                 onClick={() => setViewType(type as ViewType)}
                                 className={cn(
-                                    "px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all",
+                                    "px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
                                     viewType === type ? "bg-white dark:bg-slate-700 text-blue-600 shadow-md" : "text-slate-500 hover:text-slate-700"
                                 )}
                             >
@@ -98,7 +98,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
                         <button onClick={() => navigate('prev')} className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl border border-slate-200 dark:border-slate-700 transition active:scale-90">
                             <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
                         </button>
-                        <button onClick={() => setCurrentDate(new Date())} className="px-6 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest rounded-2xl border border-blue-100 dark:border-blue-900/50 hover:bg-blue-100 transition">
+                        <button onClick={() => setCurrentDate(new Date())} className="px-4 sm:px-6 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] sm:text-xs font-black uppercase tracking-widest rounded-2xl border border-blue-100 dark:border-blue-900/50 hover:bg-blue-100 transition">
                             Today
                         </button>
                         <button onClick={() => navigate('next')} className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl border border-slate-200 dark:border-slate-700 transition active:scale-90">
@@ -136,58 +136,65 @@ const WeekMode: React.FC<{ days: Date[], tasks: Task[], members: User[] }> = ({ 
 );
 
 const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, projectName?: string }> = ({ days, tasks, currentMonth, projectName }) => (
-    <div className="grid grid-cols-7 gap-3 bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
-            <div key={d} className="text-center py-4 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">{d}</div>
-        ))}
-        {days.map((day, i) => {
-            const isOtherMonth = !isSameMonth(day, currentMonth);
-            const dayTasks = tasks.filter(t => t.deadline && isSameDay(t.deadline.toDate(), day));
-            const isTodayDay = isToday(day);
+    <div className="overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="min-w-[700px] lg:min-w-0 grid grid-cols-7 gap-2 sm:gap-3 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
+                <div key={d} className="text-center py-2 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">{d}</div>
+            ))}
+            {days.map((day, i) => {
+                const isOtherMonth = !isSameMonth(day, currentMonth);
+                const dayTasks = tasks.filter(t => t.deadline && isSameDay(t.deadline.toDate(), day));
+                const isTodayDay = isToday(day);
 
-            return (
-                <div
-                    key={i}
-                    className={cn(
-                        "min-h-[140px] rounded-3xl p-4 border transition-all relative overflow-hidden group",
-                        isTodayDay ? "bg-blue-600 border-blue-500 shadow-xl shadow-blue-500/20 z-10 scale-[1.02]" : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700",
-                        isOtherMonth && "opacity-20 pointer-events-none grayscale"
-                    )}
-                >
-                    <div className="flex justify-between items-start mb-3">
-                        <span className={cn("text-lg font-black tabular-nums", isTodayDay ? "text-white" : "text-slate-900 dark:text-white")}>
-                            {format(day, 'd')}
-                        </span>
-                        {dayTasks.length > 0 && !isTodayDay && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                return (
+                    <div
+                        key={i}
+                        className={cn(
+                            "min-h-[100px] sm:min-h-[140px] rounded-2xl sm:rounded-3xl p-2 sm:p-4 border transition-all relative overflow-hidden group",
+                            isTodayDay ? "bg-blue-600 border-blue-500 shadow-xl shadow-blue-500/20 z-10 scale-[1.02]" : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700",
+                            isOtherMonth && "opacity-20 pointer-events-none grayscale"
+                        )}
+                    >
+                        <div className="flex justify-between items-start mb-2 sm:mb-3">
+                            <span className={cn("text-base sm:text-lg font-black tabular-nums", isTodayDay ? "text-white" : "text-slate-900 dark:text-white")}>
+                                {format(day, 'd')}
+                            </span>
+                            {dayTasks.length > 0 && !isTodayDay && (
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                            )}
+                        </div>
+
+                        <div className="space-y-1 sm:space-y-1.5 overflow-hidden">
+                            {dayTasks.slice(0, window.innerWidth < 640 ? 2 : 5).map(t => (
+                                <div key={t.id} className={cn(
+                                    "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-bold truncate transition-colors",
+                                    isTodayDay ? "bg-white/20 text-white" : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                                )}>
+                                    {t.title}
+                                </div>
+                            ))}
+                            {dayTasks.length > (window.innerWidth < 640 ? 2 : 5) && (
+                                <div className={cn("text-[7px] font-black uppercase px-1", isTodayDay ? "text-white/60" : "text-slate-400")}>
+                                    + {dayTasks.length - (window.innerWidth < 640 ? 2 : 5)} more
+                                </div>
+                            )}
+                        </div>
+
+                        {projectName && !isOtherMonth && (
+                            <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 pt-1 sm:pt-2 border-t border-slate-100 dark:border-slate-700/50">
+                                <div className={cn(
+                                    "flex items-center gap-1 opacity-0 sm:opacity-40 group-hover:opacity-100 transition-opacity",
+                                    isTodayDay ? "text-white" : "text-slate-400"
+                                )}>
+                                    <Box className="w-2 h-2" />
+                                    <span className="text-[7px] font-black uppercase tracking-tighter truncate">{projectName}</span>
+                                </div>
+                            </div>
                         )}
                     </div>
-
-                    <div className="space-y-1.5 overflow-hidden">
-                        {dayTasks.map(t => (
-                            <div key={t.id} className={cn(
-                                "px-2 py-1 rounded-lg text-[9px] font-bold truncate transition-colors",
-                                isTodayDay ? "bg-white/20 text-white" : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                            )}>
-                                {t.title}
-                            </div>
-                        ))}
-                    </div>
-
-                    {projectName && !isOtherMonth && (
-                        <div className="absolute bottom-3 left-3 right-3 pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                            <div className={cn(
-                                "flex items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity",
-                                isTodayDay ? "text-white" : "text-slate-400"
-                            )}>
-                                <Box className="w-2 h-2" />
-                                <span className="text-[7px] font-black uppercase tracking-tighter truncate">{projectName}</span>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        })}
+                );
+            })}
+        </div>
     </div>
 );
 

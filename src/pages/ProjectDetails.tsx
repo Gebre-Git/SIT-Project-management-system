@@ -709,7 +709,7 @@ const ProjectDetails: React.FC = () => {
             </header>
 
             {/* Tabs */}
-            <div className="border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 sm:gap-8">
+            <div className="border-b border-slate-200 dark:border-slate-700 flex items-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar whitespace-nowrap -mx-4 px-4 sm:mx-0 sm:px-0">
                 <button
                     onClick={() => setActiveTab('tasks')}
                     className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'tasks' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
@@ -785,9 +785,9 @@ const ProjectDetails: React.FC = () => {
                                                 </h4>
 
                                                 {newSubTasks.map((st, i) => (
-                                                    <div key={i} className="flex flex-wrap items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-800">
+                                                    <div key={i} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-800">
                                                         <input
-                                                            className="flex-1 min-w-[150px] bg-transparent text-sm font-medium outline-none text-slate-800 dark:text-slate-200"
+                                                            className="flex-1 bg-transparent text-sm font-medium outline-none text-slate-800 dark:text-slate-200 px-1"
                                                             placeholder="Sub-task title..."
                                                             value={st.title}
                                                             onChange={e => {
@@ -796,60 +796,62 @@ const ProjectDetails: React.FC = () => {
                                                                 setNewSubTasks(list);
                                                             }}
                                                         />
-                                                        <input
-                                                            type="date"
-                                                            className="bg-transparent text-xs text-slate-500 outline-none"
-                                                            value={st.deadline}
-                                                            onChange={e => {
-                                                                const list = [...newSubTasks];
-                                                                list[i].deadline = e.target.value;
-                                                                setNewSubTasks(list);
-                                                            }}
-                                                        />
-                                                        {!isPersonal && (
-                                                            <select
-                                                                className="bg-transparent text-xs text-blue-600 dark:text-blue-400 font-bold outline-none max-w-[120px]"
-                                                                value={st.assignedTo}
+                                                        <div className="flex items-center gap-3 overflow-x-auto sm:overflow-visible no-scrollbar">
+                                                            <input
+                                                                type="date"
+                                                                className="bg-transparent text-xs text-slate-500 outline-none"
+                                                                value={st.deadline}
                                                                 onChange={e => {
                                                                     const list = [...newSubTasks];
-                                                                    list[i].assignedTo = e.target.value;
+                                                                    list[i].deadline = e.target.value;
                                                                     setNewSubTasks(list);
                                                                 }}
-                                                            >
-                                                                <option value="">Assign Member</option>
-                                                                {membersData.map(m => (
-                                                                    <option key={m.uid} value={m.uid}>{m.displayName || m.username}</option>
-                                                                ))}
-                                                            </select>
-                                                        )}
-
-                                                        {/* Sub-task File Toggle */}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                const list = [...newSubTasks];
-                                                                list[i].requiresUpload = !list[i].requiresUpload;
-                                                                setNewSubTasks(list);
-                                                            }}
-                                                            className={cn(
-                                                                "p-1.5 rounded-lg border transition-all flex items-center gap-1.5",
-                                                                st.requiresUpload
-                                                                    ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800"
-                                                                    : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/50 dark:border-slate-800"
+                                                            />
+                                                            {!isPersonal && (
+                                                                <select
+                                                                    className="bg-transparent text-xs text-blue-600 dark:text-blue-400 font-bold outline-none max-w-[120px]"
+                                                                    value={st.assignedTo}
+                                                                    onChange={e => {
+                                                                        const list = [...newSubTasks];
+                                                                        list[i].assignedTo = e.target.value;
+                                                                        setNewSubTasks(list);
+                                                                    }}
+                                                                >
+                                                                    <option value="">Assign Member</option>
+                                                                    {membersData.map(m => (
+                                                                        <option key={m.uid} value={m.uid}>{m.displayName || m.username}</option>
+                                                                    ))}
+                                                                </select>
                                                             )}
-                                                            title="Require file upload for this sub-task"
-                                                        >
-                                                            <Upload className="w-3.5 h-3.5" />
-                                                            {st.requiresUpload && <span className="text-[10px] font-bold">Required</span>}
-                                                        </button>
 
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeSubTaskRow(i)}
-                                                            className="text-slate-400 hover:text-red-500 transition-colors"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                            {/* Sub-task File Toggle */}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const list = [...newSubTasks];
+                                                                    list[i].requiresUpload = !list[i].requiresUpload;
+                                                                    setNewSubTasks(list);
+                                                                }}
+                                                                className={cn(
+                                                                    "p-1.5 rounded-lg border transition-all flex items-center gap-1.5",
+                                                                    st.requiresUpload
+                                                                        ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800"
+                                                                        : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/50 dark:border-slate-800"
+                                                                )}
+                                                                title="Require file upload for this sub-task"
+                                                            >
+                                                                <Upload className="w-3.5 h-3.5" />
+                                                                {st.requiresUpload && <span className="text-[10px] font-bold">Required</span>}
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeSubTaskRow(i)}
+                                                                className="text-slate-400 hover:text-red-500 transition-colors ml-auto sm:ml-0"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 ))}
 
@@ -1037,7 +1039,7 @@ const ProjectDetails: React.FC = () => {
                                                                                 </span>
                                                                             )}
                                                                         </div>
-                                                                        <div className="flex items-center gap-3 opacity-60 group-hover/st:opacity-100 transition-opacity">
+                                                                        <div className="flex items-center gap-3 opacity-100 lg:opacity-60 lg:group-hover/st:opacity-100 transition-opacity">
                                                                             {/* Sub-task upload button */}
                                                                             {st.requiresUpload && st.assignedTo === currentUser?.uid && st.status !== 'done' && (
                                                                                 <div className="flex items-center gap-2">
@@ -1183,7 +1185,7 @@ const ProjectDetails: React.FC = () => {
                                                     </div>
                                                 </div>
 
-                                                <div className="absolute top-6 right-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                <div className="absolute top-6 right-6 flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
                                                     {(isOwner || task.createdBy === currentUser?.uid) && (
                                                         <>
                                                             <button

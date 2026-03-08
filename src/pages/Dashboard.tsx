@@ -100,12 +100,12 @@ const Dashboard: React.FC = () => {
                     </h1>
                     <p className="text-lg text-slate-500 dark:text-slate-400 font-medium">Here's what's happening with your projects.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                     <button
                         onClick={async () => {
                             if (await checkAndRedirect()) setIsJoinModalOpen(true);
                         }}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                     >
                         <UserPlus className="w-4 h-4" />
                         Join Team
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
                         onClick={async () => {
                             if (await checkAndRedirect()) setIsModalOpen(true);
                         }}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-blue-600/20"
+                        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-blue-600/20"
                     >
                         <Plus className="w-4 h-4" />
                         New Project
@@ -255,7 +255,7 @@ const Dashboard: React.FC = () => {
                     >
                         <h2 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white">New Project</h2>
 
-                        <div className="grid grid-cols-2 gap-4 mb-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                             <button
                                 onClick={() => setNewProject({ ...newProject, type: 'personal' })}
                                 className={cn(
@@ -314,21 +314,21 @@ const Dashboard: React.FC = () => {
                                 </div>
                             )}
 
-                            <div className="flex justify-end gap-3 pt-4">
+                            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => {
                                         setIsModalOpen(false);
                                         setNewProject({ name: '', course: '', type: 'team' });
                                     }}
-                                    className="px-6 py-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-medium transition"
+                                    className="px-6 py-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-medium transition text-center"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg shadow-blue-600/20 disabled:opacity-50 flex items-center gap-2"
+                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg shadow-blue-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {creating && <Loader2 className="w-4 h-4 animate-spin" />}
                                     Create {newProject.type === 'personal' ? 'Personal' : 'Team'} Project

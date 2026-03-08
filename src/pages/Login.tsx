@@ -64,7 +64,7 @@ const Login: React.FC = () => {
             </div>
 
             {/* Login Form Side */}
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="flex-1 flex items-center justify-center p-6 sm:p-8">
                 <div className="max-w-md w-full space-y-8">
                     <div className="text-center">
                         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-blue-500/30">

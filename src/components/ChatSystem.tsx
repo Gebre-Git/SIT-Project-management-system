@@ -395,7 +395,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
             "flex flex-col relative",
             isFullscreen
                 ? "fixed inset-0 z-[9999] bg-white dark:bg-slate-950"
-                : "h-[700px] glass-card rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl"
+                : "h-[600px] md:h-[700px] glass-card rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl"
         )}>
             {/* ── Header ───────────────────────────────────────────── */}
             <div className="px-6 md:px-8 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex items-center justify-between shrink-0">
@@ -501,6 +501,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                     )}
                                     onMouseEnter={() => setActiveMessageId(msg.id)}
                                     onMouseLeave={() => { setActiveMessageId(null); setShowReactionPicker(null); }}
+                                    onClick={() => setActiveMessageId(activeMessageId === msg.id ? null : msg.id)}
                                 >
                                     {/* Avatar */}
                                     {!isMe ? (
@@ -511,7 +512,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                         </div>
                                     ) : <div className="w-8 shrink-0" />}
 
-                                    <div className={cn("max-w-[75%] relative", isMe ? "items-end" : "items-start")}>
+                                    <div className={cn("max-w-[85%] sm:max-w-[75%] relative", isMe ? "items-end" : "items-start")}>
                                         {/* Sender Name */}
                                         {!isMe && isFirstInGroup && !isPersonal && (
                                             <p className="text-[10px] font-extrabold text-slate-400 mb-1 ml-3 uppercase tracking-wider">
@@ -519,15 +520,15 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                             </p>
                                         )}
 
-                                        {/* Action Buttons (hover) */}
+                                        {/* Action Buttons */}
                                         <AnimatePresence>
                                             {activeMessageId === msg.id && !msg.isDeleted && (
                                                 <motion.div
-                                                    initial={{ opacity: 0, scale: 0.8 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.8 }}
+                                                    initial={{ opacity: 0, scale: 0.8, y: 5 }}
+                                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.8, y: 5 }}
                                                     className={cn(
-                                                        "absolute -top-8 z-30 flex items-center gap-0.5 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 px-1 py-0.5",
+                                                        "absolute -top-10 z-30 flex items-center gap-0.5 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 px-1 py-0.5",
                                                         isMe ? "right-0" : "left-0"
                                                     )}
                                                 >
