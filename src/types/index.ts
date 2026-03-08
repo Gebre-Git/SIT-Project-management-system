@@ -6,6 +6,11 @@ export interface User {
     displayName: string | null;
     photoURL: string | null;
     username: string;
+    groupNumber?: string;
+    school?: string;
+    major?: string;
+    year?: string;
+    bio?: string;
     createdAt: Timestamp;
     updatedAt: Timestamp;
 }
@@ -14,7 +19,7 @@ export interface Project {
     id: string;
     name: string;
     course: string;
-    deadline: Timestamp;
+    deadline?: Timestamp;
     ownerId: string;
     members: string[]; // User UIDs
     inviteCode: string;
@@ -23,18 +28,21 @@ export interface Project {
     updatedAt: Timestamp;
 }
 
+export type TaskStatus = 'todo' | 'done';
+export type TaskWeight = 'small' | 'medium' | 'large';
+
 export interface SubTask {
     id: string;
     title: string;
-    status: 'todo' | 'done';
+    status: TaskStatus;
     deadline: Timestamp;
-    assignedTo?: string; // Single user for sub-tasks
+    assignedTo: string; // Single user for sub-tasks
     completedAt?: Timestamp | null;
     isLate?: boolean;
+    requiresUpload?: boolean;
+    submissionUrl?: string | null;
+    submissionFileName?: string | null;
 }
-
-export type TaskStatus = 'todo' | 'done';
-export type TaskWeight = 'small' | 'medium' | 'large';
 
 export interface Task {
     id: string;
@@ -49,6 +57,9 @@ export interface Task {
     completedAt?: Timestamp | null;
     isLate?: boolean;
     subTasks?: SubTask[];
+    requiresUpload?: boolean;        // If true, member must upload a file to complete
+    submissionUrl?: string | null;   // Download URL of submitted file
+    submissionFileName?: string | null; // Original filename for display
     createdBy: string; // User UID who created the task
     createdAt: Timestamp;
     updatedAt: Timestamp;
@@ -89,4 +100,26 @@ export interface Notification {
     link?: string; // e.g., /projects/123?task=456
     read: boolean;
     createdAt: Timestamp;
+}
+
+export interface MessageReplyTo {
+    messageId: string;
+    text: string;
+    senderName: string;
+}
+
+export interface ChatMessage {
+    id: string;
+    text: string;
+    fileUrl?: string;
+    fileName?: string;
+    fileType?: string;
+    senderId: string;
+    createdAt: Timestamp;
+    replyTo?: MessageReplyTo | null;
+    editedAt?: Timestamp | null;
+    isDeleted?: boolean;
+    pinnedBy?: string | null;
+    pinnedAt?: Timestamp | null;
+    reactions?: Record<string, string[]>;
 }
