@@ -17,7 +17,8 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
     const sizeClasses = {
         sm: 'w-8 h-8 text-xs',
         md: 'w-10 h-10 text-sm',
-        lg: 'w-16 h-16 text-xl'
+        lg: 'w-12 h-12 text-lg',
+        xl: 'w-16 h-16 text-xl'
     };
 
     const getInitials = () => {

@@ -52,13 +52,17 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
             {({ isActive }) => (
                 <>
                     <ProfileAvatar
-                        photoURL={currentUser?.photoURL}
-                        displayName={currentUser?.displayName}
-                        size="sm"
-                        className={cn("ring-2 ring-transparent transition-all", isActive ? "ring-white/50" : "group-hover:ring-blue-500/30")}
-                    />
-                    {!collapsed && (
-                        <div className="flex flex-col min-w-0 flex-1">
+                    photoURL={currentUser?.photoURL}
+                    displayName={currentUser?.displayName}
+                    size={collapsed ? 'md' : 'sm'}
+                    className={cn(
+                        "transition-all duration-300",
+                        isActive ? "ring-2 ring-white/50" : (collapsed ? "ring-2 ring-blue-500/20 group-hover:ring-blue-500/50" : "group-hover:ring-blue-500/30"),
+                        collapsed && "scale-110 shadow-lg shadow-blue-500/10"
+                    )}
+                />
+                {!collapsed && (
+                    <div className="flex flex-col min-w-0 flex-1">
                             <span className="relative z-10 font-medium truncate">
                                 {currentUser?.displayName || 'My Profile'}
                             </span>
@@ -162,11 +166,11 @@ const AppLayout: React.FC = () => {
                     </button>
                 </nav>
 
-                <div className="mt-auto p-4 space-y-4 border-t border-border-color bg-white/30 dark:bg-slate-900/30">
+                <div className={cn("mt-auto space-y-6 border-t border-border-color bg-white/30 dark:bg-slate-900/30 transition-all duration-300", isSidebarCollapsed ? "p-2" : "p-4")}>
                     <div className="flex justify-center">
                         <ThemeToggle collapsed={isSidebarCollapsed} />
                     </div>
-                    <div className={cn("flex items-center gap-3 px-2", isSidebarCollapsed && "justify-center")}>
+                    <div className={cn("flex flex-col items-center gap-3", !isSidebarCollapsed && "px-2 items-start")}>
                         <ProfileDropdown collapsed={isSidebarCollapsed} />
                     </div>
                 </div>

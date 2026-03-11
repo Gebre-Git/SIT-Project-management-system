@@ -65,7 +65,11 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ collapsed = false }) 
                 <ProfileAvatar
                     photoURL={photoURL || currentUser.photoURL}
                     displayName={currentUser.displayName}
-                    size="md"
+                    size={collapsed ? 'lg' : 'md'}
+                    className={cn(
+                        "transition-all duration-300",
+                        collapsed ? "ring-4 ring-blue-500/10 hover:ring-blue-500/30 hover:scale-105 shadow-xl shadow-blue-500/10" : "ring-transparent"
+                    )}
                 />
                 {!collapsed && (
                     <div className="hidden md:block text-left">
