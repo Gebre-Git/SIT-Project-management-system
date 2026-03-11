@@ -6,7 +6,11 @@ import { useAuth } from '../context/AuthContext';
 import { ChevronDown, User, LogOut } from 'lucide-react';
 import ProfileAvatar from './ProfileAvatar';
 
-const ProfileDropdown: React.FC = () => {
+interface ProfileDropdownProps {
+    collapsed?: boolean;
+}
+
+const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ collapsed = false }) => {
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -58,11 +62,13 @@ const ProfileDropdown: React.FC = () => {
                     displayName={currentUser.displayName}
                     size="md"
                 />
-                <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{currentUser.displayName}</p>
-                    <p className="text-xs text-slate-500 dark:text-gray-400">{currentUser.email}</p>
-                </div>
-                <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                {!collapsed && (
+                    <div className="hidden md:block text-left">
+                        <p className="text-sm font-medium text-slate-900 dark:text-white line-clamp-1">{currentUser.displayName}</p>
+                        <p className="text-xs text-slate-500 dark:text-gray-400 line-clamp-1">{currentUser.email}</p>
+                    </div>
+                )}
+                {!collapsed && <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
             </button>
 
             {isOpen && (
