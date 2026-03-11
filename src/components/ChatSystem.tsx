@@ -13,6 +13,7 @@ import {
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { User, ChatMessage } from '../types';
+import { useAlert } from '../context/AlertContext';
 import {
     Send,
     Smile,
@@ -48,6 +49,7 @@ const QUICK_REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🔥'];
 
 const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal }) => {
     const { currentUser } = useAuth();
+    const { showConfirm } = useAlert();
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isUploading, setIsUploading] = useState(false);
@@ -186,7 +188,13 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
 
         // Warn for large files
         if (file.size > 25 * 1024 * 1024) {
-            if (!window.confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)}MB. Files over 25MB may fail. Continue?`)) {
+            const confirmed = await showConfirm({
+                title: 'Large File Warning',
+                message: `This file is ${(file.size / 1024 / 1024).toFixed(1)}MB. Files over 25MB may fail to upload. Do you want to continue?`,
+                confirmLabel: 'Continue Anyway',
+                type: 'warning'
+            });
+            if (!confirmed) {
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 return;
             }
