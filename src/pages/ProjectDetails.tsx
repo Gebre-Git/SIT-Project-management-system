@@ -22,7 +22,27 @@ import {
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { Project, Task, User, TaskWeight, Activity, SubTask, TaskStatus, Notification } from '../types';
-import { Loader2, Plus, Calendar, CheckCircle, Clock, Share2, ArrowLeft, Layout, BarChart2, List, Trash2, MessageSquare, AlertTriangle, Edit3, Upload, Download } from 'lucide-react';
+import {
+    Loader2,
+    Plus,
+    Calendar,
+    CheckCircle,
+    Clock,
+    Share2,
+    ArrowLeft,
+    Layout,
+    BarChart2,
+    List,
+    Trash2,
+    MessageSquare,
+    AlertTriangle,
+    Edit3,
+    Upload,
+    Download,
+    Settings,
+    Users,
+    Check
+} from 'lucide-react';
 import NotificationPanel from '../components/NotificationPanel';
 import { useProjects } from '../hooks/useProjects';
 import { useAlert } from '../context/AlertContext';
@@ -70,6 +90,86 @@ const ProjectDetails: React.FC = () => {
     const [newTaskRequiresUpload, setNewTaskRequiresUpload] = useState(false);
     const [uploadingTaskId, setUploadingTaskId] = useState<string | null>(null);
     const [taskUploadProgress, setTaskUploadProgress] = useState(0);
+
+    // Project Settings Edit State
+    const [editName, setEditName] = useState('');
+    const [editCourse, setEditCourse] = useState('');
+    const [editDeadline, setEditDeadline] = useState('');
+    const [isUpdatingProject, setIsUpdatingProject] = useState(false);
+
+    useEffect(() => {
+        if (project) {
+            setEditName(project.name);
+            setEditCourse(project.course || '');
+            if (project.deadline) {
+                setEditDeadline(format(project.deadline.toDate(), "yyyy-MM-dd'T'HH:mm"));
+            }
+        }
+    }, [project]);
+
+    const handleUpdateProjectInfo = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!projectId || !project || !currentUser || isGuest) return;
+        if (project.ownerId !== currentUser.uid) return;
+
+        setIsUpdatingProject(true);
+        try {
+            await updateDoc(doc(db, 'projects', projectId), {
+                name: editName,
+                course: editCourse,
+                deadline: editDeadline ? Timestamp.fromDate(new Date(editDeadline)) : project.deadline,
+                updatedAt: serverTimestamp()
+            });
+            showAlert("Project settings updated!", "success");
+        } catch (err) {
+            console.error(err);
+            showAlert("Failed to update project settings.", "error");
+        } finally {
+            setIsUpdatingProject(false);
+        }
+    };
+
+    const handleRemoveMember = async (memberId: string) => {
+        if (!projectId || !project || !currentUser || isGuest) return;
+        if (project.ownerId !== currentUser.uid) return;
+        if (memberId === currentUser.uid) {
+            showAlert("You cannot remove yourself from your own project.", "error");
+            return;
+        }
+
+        const member = membersData.find(m => m.uid === memberId);
+        if (!window.confirm(`Are you sure you want to remove ${member?.displayName || member?.username} from the team?`)) return;
+
+        try {
+            await updateDoc(doc(db, 'projects', projectId), {
+                members: arrayRemove(memberId)
+            });
+            showAlert("Member removed from team.", "success");
+            await logActivity('task_created' as any, `removed ${member?.displayName || member?.username} from the team`);
+        } catch (err) {
+            console.error(err);
+            showAlert("Failed to remove member.", "error");
+        }
+    };
+
+    const handleRotateInviteCode = async () => {
+        if (!projectId || !project || !currentUser || isGuest) return;
+        if (project.ownerId !== currentUser.uid) return;
+
+        if (!window.confirm("Generating a new invite code will invalidate the current one. Continue?")) return;
+
+        const newCode = Math.random().toString(36).substring(2, 9).toUpperCase();
+        try {
+            await updateDoc(doc(db, 'projects', projectId), {
+                inviteCode: newCode,
+                updatedAt: serverTimestamp()
+            });
+            showAlert("New invite code generated!", "success");
+        } catch (err) {
+            console.error(err);
+            showAlert("Failed to regenerate invite code.", "error");
+        }
+    };
 
     // Fetch Project & Activity
     useEffect(() => {
@@ -741,7 +841,7 @@ const ProjectDetails: React.FC = () => {
                         onClick={() => setActiveTab('settings')}
                         className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'settings' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                     >
-                        <Layout className="w-4 h-4" /> Settings
+                        <Settings className="w-4 h-4" /> Settings
                     </button>
                 )}
             </div>
@@ -1304,9 +1404,125 @@ const ProjectDetails: React.FC = () => {
                 <CalendarView tasks={tasks} members={membersData} projectName={project?.name} />
             )}
 
-            {activeTab === 'settings' && (
-                <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="glass-card rounded-[2.5rem] p-10 border border-red-200/30 dark:border-red-900/20 bg-red-50/5 dark:bg-red-950/5">
+            {activeTab === 'settings' && isOwner && (
+                <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+                    {/* Project Information */}
+                    <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full -mr-16 -mt-16" />
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                            <Settings className="w-5 h-5 text-blue-500" /> General Settings
+                        </h2>
+                        <form onSubmit={handleUpdateProjectInfo} className="space-y-6 max-w-2xl relative z-10">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Project Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                        value={editName}
+                                        onChange={e => setEditName(e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Course / Prefix</label>
+                                    <input
+                                        type="text"
+                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                        value={editCourse}
+                                        onChange={e => setEditCourse(e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2 md:col-span-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Project Deadline</label>
+                                    <input
+                                        type="datetime-local"
+                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                        value={editDeadline}
+                                        onChange={e => setEditDeadline(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isUpdatingProject || (editName === project?.name && editCourse === (project?.course || '') && editDeadline === (project?.deadline ? format(project.deadline.toDate(), "yyyy-MM-dd'T'HH:mm") : ''))}
+                                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2"
+                            >
+                                {isUpdatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                Save Changes
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Member Management */}
+                    {!isPersonal && (
+                        <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                                <Users className="w-5 h-5 text-blue-500" /> Team Management
+                            </h2>
+                            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                {membersData.map(member => (
+                                    <div key={member.uid} className="py-4 flex items-center justify-between group">
+                                        <div className="flex items-center gap-3">
+                                            <ProfileAvatar photoURL={member.photoURL} displayName={member.displayName || member.username} size="sm" />
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                                    {member.displayName || member.username}
+                                                    {member.uid === project?.ownerId && (
+                                                        <span className="text-[10px] bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-black uppercase tracking-widest">Admin</span>
+                                                    )}
+                                                </p>
+                                                <p className="text-[11px] font-medium text-slate-400">@{member.username}</p>
+                                            </div>
+                                        </div>
+                                        {member.uid !== currentUser?.uid && (
+                                            <button
+                                                onClick={() => handleRemoveMember(member.uid)}
+                                                className="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                                                title="Remove from team"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Invite Management */}
+                    <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm bg-slate-50/30 dark:bg-slate-900/30">
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                            <Share2 className="w-5 h-5 text-blue-500" /> Invite Settings
+                        </h2>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 font-mono text-sm bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                            <div>
+                                <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Current Invite Code</p>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider">
+                                        {project?.inviteCode}
+                                    </span>
+                                    <button
+                                        onClick={copyInvite}
+                                        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-blue-500"
+                                    >
+                                        <Share2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleRotateInviteCode}
+                                className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all text-xs uppercase tracking-widest"
+                            >
+                                Regenerate Code
+                            </button>
+                        </div>
+                        <p className="mt-4 text-[11px] text-slate-500 font-medium leading-relaxed max-w-xl">
+                            Regenerating the invite code will immediately invalidate all older invite links for this project.
+                        </p>
+                    </div>
+
+                    {/* Danger Zone */}
+                    <div className="glass-card rounded-[2.5rem] p-10 border border-red-200/30 dark:border-red-900/20 bg-red-50/5 dark:bg-red-950/5 mt-12">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-2xl">
                                 <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
