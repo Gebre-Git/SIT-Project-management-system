@@ -55,6 +55,7 @@ import ActivityFeed from '../components/ActivityFeed';
 import ChatSystem from '../components/ChatSystem';
 import { AccountabilityEngine } from '../lib/AccountabilityEngine';
 import EditTaskModal from '../components/EditTaskModal';
+import TaskViewModal from '../components/TaskViewModal';
 import { format } from 'date-fns';
 
 type Tab = 'tasks' | 'calendar' | 'analytics' | 'chat' | 'settings';
@@ -84,6 +85,7 @@ const ProjectDetails: React.FC = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [confirmName, setConfirmName] = useState('');
     const [editingTask, setEditingTask] = useState<Task | null>(null);
+    const [viewingTask, setViewingTask] = useState<Task | null>(null);
 
     // File-upload-required feature state
     const [newTaskRequiresUpload, setNewTaskRequiresUpload] = useState(false);
@@ -635,6 +637,17 @@ const ProjectDetails: React.FC = () => {
         } catch (err) {
             console.error("Error deleting task:", err);
             showAlert("Failed to delete task", "error");
+        }
+    };
+    
+    const handleTaskClick = (task: Task) => {
+        setActiveTab('tasks');
+        setViewingTask(task);
+        if (task.status === 'done') {
+            setShowCompletedTasks(true);
+        }
+        if (groupByPriority && collapsedGroups[task.weight]) {
+            setCollapsedGroups(prev => ({ ...prev, [task.weight]: false }));
         }
     };
 
@@ -1505,7 +1518,7 @@ const ProjectDetails: React.FC = () => {
 
             {
                 activeTab === 'calendar' && (
-                    <CalendarView tasks={tasks} members={membersData} projectName={project?.name} />
+                    <CalendarView tasks={tasks} members={membersData} projectName={project?.name} onTaskClick={handleTaskClick} />
                 )
             }
 
@@ -1595,7 +1608,7 @@ const ProjectDetails: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Invite Management */}
+                {/* Invite Management */}
                         <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm bg-slate-50/30 dark:bg-slate-900/30">
                             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                                 <Share2 className="w-5 h-5 text-blue-500" /> Invite Settings
@@ -1714,7 +1727,7 @@ const ProjectDetails: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            {/* Task Editing Modal */}
+            {/* Task Modals */}
             <AnimatePresence>
                 {editingTask && (
                     <EditTaskModal
@@ -1724,6 +1737,14 @@ const ProjectDetails: React.FC = () => {
                         members={membersData}
                         onUpdate={handleUpdateTask}
                         isPersonal={isPersonal}
+                    />
+                )}
+                {viewingTask && (
+                    <TaskViewModal
+                        isOpen={!!viewingTask}
+                        onClose={() => setViewingTask(null)}
+                        task={viewingTask}
+                        members={membersData}
                     />
                 )}
             </AnimatePresence>
