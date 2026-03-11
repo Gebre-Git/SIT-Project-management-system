@@ -123,4 +123,5 @@ export interface ChatMessage {
     pinnedBy?: string | null;
     pinnedAt?: Timestamp | null;
     reactions?: Record<string, string[]>;
+    seenBy?: string[];
 }

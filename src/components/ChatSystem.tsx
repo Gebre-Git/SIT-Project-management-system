@@ -9,6 +9,7 @@ import {
     updateDoc,
     doc,
     serverTimestamp,
+    arrayUnion
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
@@ -113,6 +114,37 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
     useEffect(() => {
         if (messages.length) scrollToBottom(false);
     }, [messages.length]); // eslint-disable-line
+
+    // ── Seen Tracking ───────────────────────────────────────────────────
+    useEffect(() => {
+        if (!currentUser || !projectId || messages.length === 0) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(async (entry) => {
+                if (entry.isIntersecting) {
+                    const msgId = entry.target.getAttribute('data-message-id');
+                    if (!msgId) return;
+
+                    const msg = messages.find(m => m.id === msgId);
+                    if (msg && msg.senderId !== currentUser.uid && !msg.seenBy?.includes(currentUser.uid)) {
+                        try {
+                            await updateDoc(doc(db, 'projects', projectId, 'messages', msgId), {
+                                seenBy: arrayUnion(currentUser.uid)
+                            });
+                        } catch (err) {
+                            console.error("Error updating seen status:", err);
+                        }
+                    }
+                }
+            });
+        }, { threshold: 0.5 }); // 50% of the message must be visible
+
+        messageRefs.current.forEach((el) => {
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, [messages, currentUser, projectId]);
 
     const handleScroll = () => {
         if (!scrollRef.current) return;
@@ -502,6 +534,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                 {/* Message Bubble */}
                                 <div
                                     ref={(el) => { if (el) messageRefs.current.set(msg.id, el); }}
+                                    data-message-id={msg.id}
                                     className={cn(
                                         "group flex items-end gap-2 transition-all rounded-2xl",
                                         isMe ? "flex-row-reverse" : "flex-row",
@@ -686,7 +719,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                                         {msg.editedAt && <span className="italic">edited</span>}
                                                         {msg.createdAt && format(msg.createdAt.toDate(), 'HH:mm')}
                                                         {isMe && (
-                                                            <Check className="w-3 h-3 opacity-70" />
+                                                            <div className="flex items-center -space-x-1 ml-1">
+                                                                <Check className={cn("w-3 h-3 transition-colors", msg.seenBy && msg.seenBy.length > 0 ? "text-blue-300" : "opacity-70")} />
+                                                                {msg.seenBy && msg.seenBy.length > 0 && <Check className="w-3 h-3 text-blue-300" />}
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </>
