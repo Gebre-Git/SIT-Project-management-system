@@ -109,10 +109,9 @@ const AppLayout: React.FC = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="hidden lg:flex flex-col border-r border-border-color bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl fixed inset-y-0 z-40 overflow-hidden"
             >
-                <div className={cn("h-20 flex items-center justify-between", isSidebarCollapsed ? "px-4" : "px-6")}>
+                <div className={cn("h-20 flex items-center justify-between", isSidebarCollapsed ? "px-4 pt-4 flex-col gap-4 h-auto" : "px-6")}>
                     <div className={cn("flex items-center gap-3 overflow-hidden", isSidebarCollapsed && "justify-center w-full")}>
                         <Logo collapsed={isSidebarCollapsed} />
-                        {!isSidebarCollapsed && <ThemeToggle />}
                     </div>
                     {!isSidebarCollapsed && (
                         <button
@@ -125,17 +124,17 @@ const AppLayout: React.FC = () => {
                 </div>
 
                 {isSidebarCollapsed && (
-                    <div className="px-4 py-2 flex justify-center">
+                    <div className="py-2 flex justify-center">
                         <button
                             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                            className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                            className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors shadow-sm"
                         >
                             <ChevronRight size={20} />
                         </button>
                     </div>
                 )}
 
-                <nav className="flex-1 px-4 py-6 space-y-2">
+                <nav className="flex-1 px-4 py-6 space-y-4">
                     {!isSidebarCollapsed && (
                         <div className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                             Main
@@ -163,7 +162,10 @@ const AppLayout: React.FC = () => {
                     </button>
                 </nav>
 
-                <div className="p-4 border-t border-border-color bg-white/30 dark:bg-slate-900/30">
+                <div className="mt-auto p-4 space-y-4 border-t border-border-color bg-white/30 dark:bg-slate-900/30">
+                    <div className="flex justify-center">
+                        <ThemeToggle collapsed={isSidebarCollapsed} />
+                    </div>
                     <div className={cn("flex items-center gap-3 px-2", isSidebarCollapsed && "justify-center")}>
                         <ProfileDropdown collapsed={isSidebarCollapsed} />
                     </div>
