@@ -29,7 +29,8 @@ import {
     X,
     ChevronDown,
     Check,
-    FileText
+    FileText,
+    Mic
 } from 'lucide-react';
 import EmojiPicker, { Theme as EmojiTheme } from 'emoji-picker-react';
 import { format, isToday, isYesterday, isSameDay } from 'date-fns';
@@ -783,20 +784,25 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                 )}
             </AnimatePresence>
 
-            {/* ── Input Area ───────────────────────────────────────── */}
-            <div className="px-4 md:px-8 py-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/80 shrink-0 relative">
+            {/* ── Input Area (Telegram Style) ────────────────────────── */}
+            <div className="px-4 md:px-6 pb-6 pt-2 bg-white dark:bg-slate-900/90 shrink-0 relative">
                 <form
                     onSubmit={handleSendMessage}
-                    className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all"
+                    className="flex items-end gap-2 max-w-5xl mx-auto w-full group"
                 >
+                    {/* Attachment Button */}
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isUploading}
-                        className="p-2.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors text-slate-500"
-                        title="Attach file, photo, or video"
+                        className="p-2.5 mb-0.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all text-slate-500 hover:text-blue-500 active:scale-90"
+                        title="Attach file"
                     >
-                        {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5" />}
+                        {isUploading ? (
+                            <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                        ) : (
+                            <Paperclip className="w-6 h-6 rotate-45" />
+                        )}
                     </button>
 
                     <input
@@ -807,50 +813,90 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                         className="hidden"
                     />
 
-                    <div className="relative flex-1">
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            placeholder={
-                                editingMessage ? "Edit your message..." :
-                                    isPersonal ? "Save a note or file..." : "Type a message..."
-                            }
-                            className="w-full bg-transparent py-2.5 px-2 text-sm outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                        />
+                    {/* Main Input Capsule */}
+                    <div className={cn(
+                        "flex-1 flex items-end bg-slate-100 dark:bg-slate-800/80 rounded-[22px] px-2 py-1.5 border-2 border-transparent transition-all",
+                        "focus-within:bg-white dark:focus-within:bg-slate-800 focus-within:border-blue-500/10 focus-within:shadow-sm"
+                    )}>
+                        {/* Emoji Button */}
+                        <button
+                            type="button"
+                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                            className="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 rounded-full text-slate-400 hover:text-amber-500 transition-colors mb-0.5"
+                        >
+                            <Smile className="w-6 h-6" />
+                        </button>
+
+                        <div className="relative flex-1 mb-1">
+                            <textarea
+                                ref={inputRef as any}
+                                rows={1}
+                                placeholder={
+                                    editingMessage ? "Edit message..." :
+                                        isPersonal ? "Save a note..." : "Message"
+                                }
+                                className="w-full bg-transparent py-1.5 px-2 text-[15px] outline-none text-slate-900 dark:text-gray-100 placeholder:text-slate-400 resize-none max-h-40 overflow-y-auto scrollbar-hide"
+                                value={newMessage}
+                                onChange={(e) => {
+                                    setNewMessage(e.target.value);
+                                    // Auto-resize logic could go here if needed, but standard input/textarea handles basic stuff
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = `${e.target.scrollHeight}px`;
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSendMessage();
+                                    }
+                                }}
+                            />
+                        </div>
+
+                        {/* Secondary functionality or just padding */}
+                        <div className="w-2" />
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="p-2.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors text-amber-500"
-                    >
-                        <Smile className="w-5 h-5" />
-                    </button>
-
-                    <button
+                    {/* Send Button (Circular) */}
+                    <motion.button
                         type="submit"
                         disabled={!newMessage.trim() && !isUploading}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         className={cn(
-                            "p-2.5 rounded-xl transition-all shadow-lg active:scale-90 text-white",
+                            "p-3 rounded-full transition-all shadow-md flex items-center justify-center mb-0.5",
                             editingMessage
-                                ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/20 disabled:opacity-50"
-                                : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20 disabled:opacity-50"
+                                ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/20"
+                                : "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30",
+                            (!newMessage.trim() && !isUploading) && "opacity-0 scale-75 pointer-events-none"
                         )}
                     >
-                        {editingMessage ? <Check className="w-5 h-5" /> : <Send className="w-5 h-5" />}
-                    </button>
+                        {editingMessage ? (
+                            <Check className="w-6 h-6 text-white" />
+                        ) : (
+                            <Send className="w-6 h-6 text-white ml-0.5" />
+                        )}
+                    </motion.button>
+
+                    {/* If message is empty, show Mic (placeholder/aesthetic) */}
+                    {(!newMessage.trim() && !isUploading) && (
+                        <motion.button
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="p-3 mb-0.5 rounded-full bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-all pointer-events-none"
+                        >
+                            <Mic className="w-6 h-6" />
+                        </motion.button>
+                    )}
                 </form>
 
                 {/* Emoji picker - positioned relative to input area */}
                 <AnimatePresence>
                     {showEmojiPicker && (
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="absolute bottom-full right-4 mb-2 z-[100] shadow-2xl rounded-2xl overflow-hidden"
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            className="absolute bottom-full left-4 md:left-20 mb-4 z-[100] shadow-2xl rounded-2xl overflow-hidden"
                         >
                             <EmojiPicker
                                 theme={EmojiTheme.AUTO}
