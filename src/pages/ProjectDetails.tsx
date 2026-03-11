@@ -1025,7 +1025,10 @@ const ProjectDetails: React.FC = () => {
                     )}
                     <NotificationPanel />
                     <button
-                        onClick={() => setNewTaskMode(true)}
+                        onClick={() => {
+                            setActiveTab('tasks');
+                            setNewTaskMode(true);
+                        }}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition hover:scale-105"
                     >
                         <Plus className="w-5 h-5" /> Add Task
