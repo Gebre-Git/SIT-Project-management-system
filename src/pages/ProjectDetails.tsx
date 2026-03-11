@@ -41,7 +41,8 @@ import {
     Settings,
     Users,
     Check,
-    ChevronDown
+    ChevronDown,
+    Columns
 } from 'lucide-react';
 import NotificationPanel from '../components/NotificationPanel';
 import { useProjects } from '../hooks/useProjects';
@@ -56,9 +57,10 @@ import ChatSystem from '../components/ChatSystem';
 import { AccountabilityEngine } from '../lib/AccountabilityEngine';
 import EditTaskModal from '../components/EditTaskModal';
 import TaskViewModal from '../components/TaskViewModal';
+import KanbanBoard from '../components/KanbanBoard';
 import { format } from 'date-fns';
 
-type Tab = 'tasks' | 'calendar' | 'analytics' | 'chat' | 'settings';
+type Tab = 'tasks' | 'kanban' | 'calendar' | 'analytics' | 'chat' | 'settings';
 
 const ProjectDetails: React.FC = () => {
     const { projectId } = useParams<{ projectId: string }>();
@@ -1051,6 +1053,12 @@ const ProjectDetails: React.FC = () => {
                     <MessageSquare className="w-4 h-4" /> Chat & Files
                 </button>
                 <button
+                    onClick={() => setActiveTab('kanban')}
+                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'kanban' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                >
+                    <Columns className="w-4 h-4" /> Kanban
+                </button>
+                <button
                     onClick={() => setActiveTab('calendar')}
                     className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'calendar' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                 >
@@ -1517,6 +1525,49 @@ const ProjectDetails: React.FC = () => {
             {
                 activeTab === 'calendar' && (
                     <CalendarView tasks={tasks} members={membersData} projectName={project?.name} onTaskClick={handleTaskClick} />
+                )
+            }
+
+            {
+                activeTab === 'kanban' && (
+                    <KanbanBoard
+                        tasks={tasks}
+                        members={membersData}
+                        onStatusChange={async (taskId, newStatus) => {
+                            if (!projectId) return;
+                            const task = tasks.find(t => t.id === taskId);
+                            if (!task) return;
+
+                            const isLate = newStatus === 'done' && new Date() > task.deadline.toDate();
+                            const updates: any = {
+                                status: newStatus,
+                                updatedAt: isGuest ? Timestamp.now() : serverTimestamp()
+                            };
+
+                            if (newStatus === 'done') {
+                                updates.completedBy = currentUser?.uid;
+                                updates.completedAt = isGuest ? Timestamp.now() : serverTimestamp();
+                                updates.isLate = isLate;
+                            } else {
+                                updates.completedBy = null;
+                                updates.completedAt = null;
+                                updates.isLate = false;
+                            }
+
+                            if (isGuest) {
+                                setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+                                return;
+                            }
+
+                            try {
+                                await updateDoc(doc(db, 'projects', projectId, 'tasks', taskId), updates);
+                                showAlert(`Task moved to ${newStatus === 'todo' ? 'To Do' : newStatus === 'in_progress' ? 'In Progress' : newStatus === 'under_review' ? 'Under Review' : 'Completed'}`, 'success');
+                            } catch (err) {
+                                showAlert('Failed to update task status', 'error');
+                            }
+                        }}
+                        onTaskClick={handleTaskClick}
+                    />
                 )
             }
 

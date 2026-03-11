@@ -29,7 +29,7 @@ export interface Project {
     updatedAt: Timestamp;
 }
 
-export type TaskStatus = 'todo' | 'done';
+export type TaskStatus = 'todo' | 'in_progress' | 'under_review' | 'done';
 export type TaskWeight = 'small' | 'medium' | 'large';
 
 export interface SubTask {
