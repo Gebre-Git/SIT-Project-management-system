@@ -128,7 +128,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
 };
 
 const WeekMode: React.FC<{ days: Date[], tasks: Task[], members: User[], onTaskClick?: (task: Task) => void }> = ({ days, tasks, members, onTaskClick }) => (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-3 sm:gap-4">
         {days.map((day, i) => {
             const dayTasks = tasks.filter(t => t.deadline && isSameDay(t.deadline.toDate(), day));
             return <DayCard key={i} day={day} tasks={dayTasks} members={members} fullHeight onTaskClick={onTaskClick} />;

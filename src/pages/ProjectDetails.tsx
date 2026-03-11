@@ -997,8 +997,8 @@ const ProjectDetails: React.FC = () => {
                             <Layout className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{project?.name}</h1>
+                            <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{project?.name}</h1>
                                 {project?.course && (
                                     <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
                                         {project.course}
@@ -1016,13 +1016,13 @@ const ProjectDetails: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                     {isOwner && !isPersonal && (
                         <button
                             onClick={copyInvite}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition font-medium"
+                            className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition font-medium text-sm"
                         >
-                            <Share2 className="w-4 h-4" /> Invite Team
+                            <Share2 className="w-4 h-4" /> <span className="hidden sm:inline">Invite Team</span>
                         </button>
                     )}
                     <NotificationPanel />
@@ -1031,9 +1031,9 @@ const ProjectDetails: React.FC = () => {
                             setActiveTab('tasks');
                             setNewTaskMode(true);
                         }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition hover:scale-105"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition hover:scale-105 text-sm"
                     >
-                        <Plus className="w-5 h-5" /> Add Task
+                        <Plus className="w-5 h-5" /> <span className="hidden xs:inline">Add Task</span>
                     </button>
                 </div>
             </header>

@@ -87,7 +87,7 @@ const KanbanCard: React.FC<{
             draggable
             onDragStart={(e) => onDragStart(e as unknown as React.DragEvent, task.id)}
             onClick={() => onTaskClick(task)}
-            className="group bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm hover:shadow-lg dark:shadow-slate-900/30 border border-slate-100 dark:border-slate-700/50 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
+            className="group bg-white dark:bg-slate-800 rounded-2xl p-3 sm:p-4 shadow-sm hover:shadow-lg dark:shadow-slate-900/30 border border-slate-100 dark:border-slate-700/50 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
         >
             {/* Drag handle & Priority */}
             <div className="flex items-center justify-between mb-3">
@@ -199,7 +199,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, members, onStatusChang
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 min-h-[60vh]">
+            <div className="flex gap-4 lg:gap-6 min-h-[50vh] lg:min-h-[60vh] overflow-x-auto pb-4 snap-x snap-mandatory lg:snap-none lg:grid lg:grid-cols-4 lg:overflow-x-visible no-scrollbar">
                 {COLUMNS.map((col) => {
                     const columnTasks = col.id === 'todo' ? todoTasks : getColumnTasks(col.id);
                     const isDropTarget = dragOverColumn === col.id;
@@ -211,7 +211,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, members, onStatusChang
                             onDragLeave={handleDragLeave}
                             onDrop={(e) => handleDrop(e, col.id)}
                             className={cn(
-                                "flex flex-col rounded-2xl border transition-all duration-300",
+                                "flex flex-col rounded-2xl border transition-all duration-300 min-w-[280px] sm:min-w-[300px] lg:min-w-0 snap-center shrink-0 lg:shrink",
                                 isDropTarget
                                     ? "border-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-900/10 scale-[1.01] shadow-lg shadow-blue-500/10"
                                     : "border-slate-200/60 dark:border-slate-700/40 bg-gradient-to-b " + col.bgGradient
@@ -229,7 +229,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, members, onStatusChang
                             </div>
 
                             {/* Cards */}
-                            <div className="flex-1 p-3 space-y-3 overflow-y-auto max-h-[65vh] custom-scrollbar">
+                            <div className="flex-1 p-2 sm:p-3 space-y-3 overflow-y-auto max-h-[50vh] lg:max-h-[65vh] custom-scrollbar">
                                 <AnimatePresence mode="popLayout">
                                     {columnTasks.map(task => (
                                         <KanbanCard

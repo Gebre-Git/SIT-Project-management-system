@@ -25,10 +25,10 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-[2.5rem] w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
             >
                 {/* Header */}
-                <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/20">
+                <div className="p-4 sm:p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/20">
                     <div className="flex items-center gap-4">
                         <div className={cn(
                             "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg",
@@ -37,7 +37,7 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                             {isDone ? <CheckCircle className="w-6 h-6 text-white" /> : <Layout className="w-6 h-6 text-white" />}
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Mission Details</h2>
+                            <h2 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Mission Details</h2>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">Operational Overview</p>
                         </div>
                     </div>
@@ -50,12 +50,12 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8 custom-scrollbar">
                     {/* Title & Description */}
                     <div className="space-y-4">
                         <div className="flex flex-wrap items-center gap-3">
                             <h3 className={cn(
-                                "text-3xl font-black tracking-tight",
+                                "text-xl sm:text-3xl font-black tracking-tight",
                                 isDone ? "text-slate-400 line-through" : "text-slate-900 dark:text-white"
                             )}>
                                 {task.title}
@@ -130,7 +130,7 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                                 {task.subTasks.map(st => {
                                     const stMember = members.find(m => m.uid === st.assignedTo);
                                     return (
-                                        <div key={st.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                        <div key={st.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 p-3 sm:p-4 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-100 dark:border-slate-800">
                                             <div className="flex items-center gap-3">
                                                 <div className={cn(
                                                     "w-5 h-5 rounded-md flex items-center justify-center border",
@@ -170,7 +170,7 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                 </div>
 
                 {/* Footer */}
-                <div className="p-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 flex items-center justify-end">
+                <div className="p-4 sm:p-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 flex items-center justify-end">
                     <button
                         onClick={onClose}
                         className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-slate-900/20 dark:shadow-white/10 transition-all hover:scale-105 active:scale-95"
