@@ -14,8 +14,11 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
     return (
         <Link
             to="/"
-            className={cn("flex items-center gap-2 font-bold", className)}
-            onClick={() => window.scrollTo(0, 0)}
+            className={cn(
+                "flex items-center font-bold transition-all duration-300",
+                collapsed ? "justify-center w-full" : "gap-2",
+                className
+            )}
         >
             <motion.div
                 initial={animate ? { scale: 0.5, rotate: -180, opacity: 0 } : false}

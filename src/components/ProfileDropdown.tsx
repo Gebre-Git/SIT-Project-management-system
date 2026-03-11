@@ -5,6 +5,7 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { ChevronDown, User, LogOut } from 'lucide-react';
 import ProfileAvatar from './ProfileAvatar';
+import { cn } from '../lib/utils';
 
 interface ProfileDropdownProps {
     collapsed?: boolean;
@@ -55,7 +56,11 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ collapsed = false }) 
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className={cn(
+                    "flex items-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300",
+                    collapsed ? "justify-center w-full p-2" : "gap-2 px-3 py-2"
+                )}
+                title={collapsed ? currentUser.displayName || 'Profile' : undefined}
             >
                 <ProfileAvatar
                     photoURL={photoURL || currentUser.photoURL}

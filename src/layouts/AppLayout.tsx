@@ -13,8 +13,10 @@ import { cn } from '../lib/utils';
 const SidebarLink = ({ to, icon: Icon, label, collapsed }: { to: string, icon: any, label: string, collapsed?: boolean }) => (
     <NavLink
         to={to}
+        title={collapsed ? label : undefined}
         className={({ isActive }) => cn(
-            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+            "flex items-center rounded-xl transition-all duration-300 group relative overflow-hidden",
+            collapsed ? "justify-center p-3 mx-2" : "gap-3 px-4 py-3",
             isActive
                 ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -38,8 +40,10 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
     return (
         <NavLink
             to={to}
+            title={collapsed ? "My Profile" : undefined}
             className={({ isActive }) => cn(
-                "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden",
+                "flex items-center rounded-xl transition-all duration-300 group relative overflow-hidden",
+                collapsed ? "justify-center p-3 mx-2" : "gap-3 px-4 py-2.5",
                 isActive
                     ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -98,25 +102,38 @@ const AppLayout: React.FC = () => {
             <motion.aside
                 initial={false}
                 animate={{ 
-                    width: isSidebarCollapsed ? 88 : 260,
+                    width: isSidebarCollapsed ? 80 : 260,
                     x: 0,
                     opacity: 1
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="hidden lg:flex flex-col border-r border-border-color bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl fixed inset-y-0 z-40 overflow-hidden"
             >
-                <div className="px-6 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3 overflow-hidden">
+                <div className={cn("h-20 flex items-center justify-between", isSidebarCollapsed ? "px-4" : "px-6")}>
+                    <div className={cn("flex items-center gap-3 overflow-hidden", isSidebarCollapsed && "justify-center w-full")}>
                         <Logo collapsed={isSidebarCollapsed} />
                         {!isSidebarCollapsed && <ThemeToggle />}
                     </div>
-                    <button
-                        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors"
-                    >
-                        {isSidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-                    </button>
+                    {!isSidebarCollapsed && (
+                        <button
+                            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+                    )}
                 </div>
+
+                {isSidebarCollapsed && (
+                    <div className="px-4 py-2 flex justify-center">
+                        <button
+                            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                            className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                        >
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+                )}
 
                 <nav className="flex-1 px-4 py-6 space-y-2">
                     {!isSidebarCollapsed && (
@@ -135,9 +152,10 @@ const AppLayout: React.FC = () => {
 
                     <button
                         onClick={handleLogout}
+                        title={isSidebarCollapsed ? "Logout" : undefined}
                         className={cn(
-                            "w-full flex items-center gap-3 px-4 py-3 mt-4 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all duration-300 group",
-                            isSidebarCollapsed && "justify-center"
+                            "w-full flex items-center text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all duration-300 group",
+                            isSidebarCollapsed ? "justify-center p-3 h-12" : "gap-3 px-4 py-3 mt-4"
                         )}
                     >
                         <LogOut className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" />
@@ -191,7 +209,7 @@ const AppLayout: React.FC = () => {
             <motion.main 
                 initial={false}
                 animate={{ 
-                    paddingLeft: window.innerWidth >= 1024 ? (isSidebarCollapsed ? 88 : 260) : 0
+                    paddingLeft: window.innerWidth >= 1024 ? (isSidebarCollapsed ? 80 : 260) : 0
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="flex-1 pt-16 lg:pt-0 min-h-screen"
