@@ -1,5 +1,6 @@
 import React from 'react';
 import { User } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 interface ProfileAvatarProps {
     photoURL?: string | null;
@@ -35,13 +36,13 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
             <img
                 src={photoURL}
                 alt={displayName || 'User'}
-                className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
+                className={cn(sizeClasses[size], "rounded-full object-cover flex-shrink-0", className)}
             />
         );
     }
 
     return (
-        <div className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-semibold text-white ${className}`}>
+        <div className={cn(sizeClasses[size], "rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-semibold text-white flex-shrink-0", className)}>
             {displayName ? getInitials() : <User className="w-1/2 h-1/2" />}
         </div>
     );

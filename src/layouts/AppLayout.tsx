@@ -16,7 +16,7 @@ const SidebarLink = ({ to, icon: Icon, label, collapsed }: { to: string, icon: a
         title={collapsed ? label : undefined}
         className={({ isActive }) => cn(
             "flex items-center rounded-xl transition-all duration-300 group relative overflow-hidden",
-            collapsed ? "justify-center p-3 mx-2" : "gap-3 px-4 py-3",
+            collapsed ? "justify-center p-2" : "gap-3 px-4 py-3",
             isActive
                 ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -43,7 +43,7 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
             title={collapsed ? "My Profile" : undefined}
             className={({ isActive }) => cn(
                 "flex items-center rounded-xl transition-all duration-300 group relative overflow-hidden",
-                collapsed ? "justify-center p-3 mx-2" : "gap-3 px-4 py-2.5",
+                collapsed ? "justify-center p-2" : "gap-3 px-4 py-2.5",
                 isActive
                     ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -138,7 +138,7 @@ const AppLayout: React.FC = () => {
                     </div>
                 )}
 
-                <nav className="flex-1 px-4 py-6 space-y-4">
+                <nav className={cn("flex-1 py-6 space-y-4 transition-all duration-300", isSidebarCollapsed ? "px-2" : "px-4")}>
                     {!isSidebarCollapsed && (
                         <div className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                             Main
