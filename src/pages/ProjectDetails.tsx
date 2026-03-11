@@ -95,7 +95,6 @@ const ProjectDetails: React.FC = () => {
     // Project Settings Edit State
     const [editName, setEditName] = useState('');
     const [editCourse, setEditCourse] = useState('');
-    const [editDeadline, setEditDeadline] = useState('');
     const [isUpdatingProject, setIsUpdatingProject] = useState(false);
     const [showCompletedTasks, setShowCompletedTasks] = useState(false);
     const [groupByPriority, setGroupByPriority] = useState(false);
@@ -105,9 +104,6 @@ const ProjectDetails: React.FC = () => {
         if (project) {
             setEditName(project.name);
             setEditCourse(project.course || '');
-            if (project.deadline) {
-                setEditDeadline(format(project.deadline.toDate(), "yyyy-MM-dd'T'HH:mm"));
-            }
         }
     }, [project]);
 
@@ -121,7 +117,6 @@ const ProjectDetails: React.FC = () => {
             await updateDoc(doc(db, 'projects', projectId), {
                 name: editName,
                 course: editCourse,
-                deadline: editDeadline ? Timestamp.fromDate(new Date(editDeadline)) : project.deadline,
                 updatedAt: serverTimestamp()
             });
             showAlert("Project settings updated!", "success");
@@ -1551,19 +1546,10 @@ const ProjectDetails: React.FC = () => {
                                             onChange={e => setEditCourse(e.target.value)}
                                         />
                                     </div>
-                                    <div className="space-y-2 md:col-span-2">
-                                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Project Deadline</label>
-                                        <input
-                                            type="datetime-local"
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                                            value={editDeadline}
-                                            onChange={e => setEditDeadline(e.target.value)}
-                                        />
-                                    </div>
                                 </div>
                                 <button
                                     type="submit"
-                                    disabled={isUpdatingProject || (editName === project?.name && editCourse === (project?.course || '') && editDeadline === (project?.deadline ? format(project.deadline.toDate(), "yyyy-MM-dd'T'HH:mm") : ''))}
+                                    disabled={isUpdatingProject || (editName === project?.name && editCourse === (project?.course || ''))}
                                     className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2"
                                 >
                                     {isUpdatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
