@@ -1,15 +1,69 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper: Check if user is a member of the project
+
+    // Helper functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isSuperAdmin() {
+    // Check if the user's UID exists in the super_admins collection
+    return isSignedIn() && exists(/databases/$(database)/documents/super_admins/$(request.auth.uid));
+  }
+
     function isMember(projectId) {
-      return request.auth != null && 
+      return isSignedIn() &&
              exists(/databases/$(database)/documents/projects/$(projectId)) &&
              get(/databases/$(database)/documents/projects/$(projectId)).data.members.hasAny([request.auth.uid]);
     }
 
-    // --- Users ---
+  // --- Admin Security ---
+  
+  match /super_admins/{uid} {
+    // Anyone signed in can check if they are an admin
+    allow read: if isSignedIn();
+    
+    // Create rule: Allow if caller is ALREADY an admin OR if they are promoting THEMSELVES
+    // with a valid token from the invitation system.
+    allow create: if isSuperAdmin() || (
+      request.auth.uid == uid && 
+      isSignedIn() &&
+      request.resource.data.email == request.auth.token.email &&
+      // Check that they provided a token and we can verify it
+      request.resource.data.claimedWithToken != null &&
+      exists(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)) &&
+      get(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)).data.used == false &&
+      get(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)).data.email == request.auth.token.email
+    );
+    
+    // Admins can delete other admins (except themselves via these rules if you want, 
+    // but for now let's keep it simple)
+    allow delete: if isSuperAdmin();
+  }
+
+  match /adminInvitationTokens/{tokenId} {
+    // Only super-admins can see or create tokens
+    allow read, create: if isSuperAdmin();
+    
+    // Allow users to update the token to 'used' if they are the rightful owner
+    allow update: if isSignedIn() && (
+      isSuperAdmin() || (
+        request.resource.data.used == true &&
+        request.resource.data.usedByUid == request.auth.uid &&
+        resource.data.used == false &&
+        resource.data.email == request.auth.token.email
+      )
+    );
+    allow delete: if false; // Only Cloud Functions (Admin SDK) can delete
+  }
+
+  // --- Global Read Rule for Super Admins ---
+  match /{document=**} {
+    allow read: if isSuperAdmin();
+  }
+
+    // ── Users ───────────────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
@@ -20,12 +74,12 @@ service cloud.firestore {
       }
     }
 
-    // --- Projects ---
+    // ── Projects ────────────────────────────────────────────────────────
     match /projects/{projectId} {
       allow create, read: if request.auth != null;
       
       // Only project owner can update project settings, but users can add themselves
-      allow update: if request.auth != null && (
+      allow update: if isSuperAdmin() || (request.auth != null && (
                       get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid ||
                       (
                         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members']) &&
@@ -33,24 +87,24 @@ service cloud.firestore {
                         request.resource.data.members.size() == resource.data.members.size() + 1 &&
                         request.resource.data.members.hasAny([request.auth.uid])
                       )
-                    );
+                    ));
 
-      // Allow deletion only if the user is the owner
-      allow delete: if request.auth != null && 
-                      get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+      // Allow deletion only if the user is the owner or a super-admin
+      allow delete: if isSuperAdmin() || (request.auth != null && 
+                      get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid);
 
-      // --- Subcollections ---
-      
+      // ── Subcollections ──
+
       match /tasks/{taskId} {
-        allow read, create: if isMember(projectId);
+        allow read, create: if isSuperAdmin() || isMember(projectId);
         
         // Only owner or task creator can delete tasks
-        allow delete: if request.auth != null && (
+        allow delete: if isSuperAdmin() || (request.auth != null && (
                         get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid ||
                         resource.data.createdBy == request.auth.uid
-                      );
+                      ));
 
-        allow update: if isMember(projectId) && (
+        allow update: if isSuperAdmin() || (isMember(projectId) && (
           // 1. Project owner or task creator can update anything
           (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid) ||
           (resource.data.createdBy == request.auth.uid) ||
@@ -59,15 +113,15 @@ service cloud.firestore {
             request.resource.data.diff(resource.data).affectedKeys()
               .hasOnly(['status', 'completedBy', 'completedAt', 'isLate', 'subTasks', 'assignedTo', 'updatedAt', 'submissionUrl', 'submissionFileName'])
           )
-        );
+        ));
       }
 
       match /activities/{activityId} {
-        allow read, write: if isMember(projectId);
+        allow read, write: if isSuperAdmin() || isMember(projectId);
       }
 
       match /messages/{messageId} {
-        allow read, write: if isMember(projectId);
+        allow read, write: if isSuperAdmin() || isMember(projectId);
       }
     }
   }

@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -30,6 +31,9 @@ export const db = initializeFirestore(app, {
 // Initialize Firebase Storage — pass the bucket URL explicitly so the SDK
 // resolves the new .firebasestorage.app domain correctly on all platforms.
 export const storage = getStorage(app, `gs://${firebaseConfig.storageBucket}`);
+
+// Initialize Firebase Functions
+export const firebaseFunctions = getFunctions(app);
 
 // Debug: Listen to auth state changes
 onAuthStateChanged(auth, (user) => {

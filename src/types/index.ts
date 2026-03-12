@@ -123,3 +123,15 @@ export interface ChatMessage {
     pinnedAt?: Timestamp | null;
     reactions?: Record<string, string[]>;
 }
+
+export interface AdminInviteToken {
+    token: string;
+    createdAt: Timestamp;
+    expiresAt: Timestamp;
+    used: boolean;
+    usedByUid: string | null;
+    email: string;
+    createdByUid?: string;
+    usedAt?: Timestamp;
+}
+

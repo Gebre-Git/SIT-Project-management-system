@@ -9,6 +9,9 @@ import ProjectDetails from './pages/ProjectDetails';
 import JoinProject from './pages/JoinProject';
 import Profile from './pages/Profile';
 import AppLayout from './layouts/AppLayout';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute';
+import AdminDashboard from './admin/pages/AdminDashboard';
+import AdminInvitePage from './admin/pages/AdminInvitePage';
 
 function App() {
     return (
@@ -28,6 +31,16 @@ function App() {
                             <Route path="/join/:inviteCode" element={<JoinProject />} />
                             <Route path="/profile" element={<Profile />} />
                         </Route>
+
+                        {/* Admin Routes – protected by super_admin claim */}
+                        <Route element={<ProtectedAdminRoute />}>
+                            <Route element={<AppLayout />}>
+                                <Route path="/admin" element={<AdminDashboard />} />
+                            </Route>
+                        </Route>
+
+                        {/* Admin Invite – accessible by any authenticated user */}
+                        <Route path="/admin-invite" element={<AdminInvitePage />} />
 
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { auth, db } from '../lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 interface AuthContextType {
     currentUser: User | null;
@@ -8,6 +9,7 @@ interface AuthContextType {
     loginAsGuest: () => void;
     logout: () => Promise<void>;
     isGuest: boolean;
+    isSuperAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -15,7 +17,8 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     loginAsGuest: () => { },
     logout: async () => { },
-    isGuest: false
+    isGuest: false,
+    isSuperAdmin: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -23,6 +26,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
     const [isGuest, setIsGuest] = useState(() => {
         return localStorage.getItem('isGuest') === 'true';
     });
@@ -30,16 +34,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         // If guest, don't listen to firebase
         if (isGuest) {
+            setIsSuperAdmin(false);
             setLoading(false);
             return;
         }
 
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        let adminUnsubscribe: (() => void) | null = null;
+
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
-            setLoading(false);
+
+            // Cleanup previous admin listener if exists
+            if (adminUnsubscribe) {
+                adminUnsubscribe();
+                adminUnsubscribe = null;
+            }
+
+            if (user) {
+                // Listen for the super_admin status in Firestore (Spark-plan compatible)
+                adminUnsubscribe = onSnapshot(doc(db, 'super_admins', user.uid), (doc) => {
+                    setIsSuperAdmin(doc.exists());
+                    setLoading(false);
+                }, (error) => {
+                    console.error('Error listening to super_admin doc:', error);
+                    setIsSuperAdmin(false);
+                    setLoading(false);
+                });
+            } else {
+                setIsSuperAdmin(false);
+                setLoading(false);
+            }
         });
 
-        return unsubscribe;
+        return () => {
+            unsubscribe();
+            if (adminUnsubscribe) adminUnsubscribe();
+        };
     }, [isGuest]);
 
     const loginAsGuest = () => {
@@ -72,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } as unknown as User;
 
         setIsGuest(true);
+        setIsSuperAdmin(false);
         localStorage.setItem('isGuest', 'true');
         setCurrentUser(guestUser);
     };
@@ -81,6 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsGuest(false);
             localStorage.removeItem('isGuest');
             setCurrentUser(null);
+            setIsSuperAdmin(false);
         } else {
             await firebaseSignOut(auth);
         }
@@ -91,7 +123,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         loginAsGuest,
         logout,
-        isGuest
+        isGuest,
+        isSuperAdmin,
     };
 
     return (

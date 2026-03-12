@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Menu, X, LogOut, Shield } from 'lucide-react';
 import Logo from '../components/Logo';
 import ProfileDropdown from '../components/ProfileDropdown';
 import ProfileAvatar from '../components/ProfileAvatar';
@@ -74,7 +74,7 @@ const ProfileSidebarLink = ({ to }: { to: string }) => {
 };
 
 const AppLayout: React.FC = () => {
-    const { logout } = useAuth();
+    const { logout, isSuperAdmin } = useAuth();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
@@ -109,6 +109,9 @@ const AppLayout: React.FC = () => {
                         Main
                     </div>
                     <SidebarLink to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+                    {isSuperAdmin && (
+                        <SidebarLink to="/admin" icon={Shield} label="Admin Panel" />
+                    )}
 
                     <div className="px-4 mt-8 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                         Settings
@@ -154,6 +157,9 @@ const AppLayout: React.FC = () => {
                         className="lg:hidden fixed inset-0 top-16 bg-white dark:bg-slate-950 z-30 p-6 flex flex-col gap-4"
                     >
                         <SidebarLink to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+                        {isSuperAdmin && (
+                            <SidebarLink to="/admin" icon={Shield} label="Admin Panel" />
+                        )}
                         <ProfileSidebarLink to="/profile" />
                         <button
                             onClick={handleLogout}
