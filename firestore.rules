@@ -58,28 +58,29 @@ service cloud.firestore {
     allow delete: if false; // Only Cloud Functions (Admin SDK) can delete
   }
 
-  // --- Global Read Rule for Super Admins ---
+  // --- Global Access Rule for Super Admins ---
+  // This grants super-admins full power over the entire database.
   match /{document=**} {
-    allow read: if isSuperAdmin();
+    allow read, write: if isSuperAdmin();
   }
 
     // ── Users ───────────────────────────────────────────────────────────
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
 
       match /notifications/{notificationId} {
-        allow read, update, delete: if request.auth != null && request.auth.uid == userId;
-        allow create: if request.auth != null;
+        allow read, update, delete: if isSignedIn() && request.auth.uid == userId;
+        allow create: if isSignedIn();
       }
     }
 
     // ── Projects ────────────────────────────────────────────────────────
     match /projects/{projectId} {
-      allow create, read: if request.auth != null;
+      allow create, read: if isSignedIn();
       
       // Only project owner can update project settings, but users can add themselves
-      allow update: if isSuperAdmin() || (request.auth != null && (
+      allow update: if isSignedIn() && (
                       get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid ||
                       (
                         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members']) &&
@@ -87,24 +88,24 @@ service cloud.firestore {
                         request.resource.data.members.size() == resource.data.members.size() + 1 &&
                         request.resource.data.members.hasAny([request.auth.uid])
                       )
-                    ));
+                    );
 
-      // Allow deletion only if the user is the owner or a super-admin
-      allow delete: if isSuperAdmin() || (request.auth != null && 
-                      get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid);
+      // Allow deletion only if the user is the owner
+      allow delete: if isSignedIn() && 
+                      get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
 
       // ── Subcollections ──
 
       match /tasks/{taskId} {
-        allow read, create: if isSuperAdmin() || isMember(projectId);
+        allow read, create: if isMember(projectId);
         
         // Only owner or task creator can delete tasks
-        allow delete: if isSuperAdmin() || (request.auth != null && (
+        allow delete: if isSignedIn() && (
                         get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid ||
                         resource.data.createdBy == request.auth.uid
-                      ));
+                      );
 
-        allow update: if isSuperAdmin() || (isMember(projectId) && (
+        allow update: if isMember(projectId) && (
           // 1. Project owner or task creator can update anything
           (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid) ||
           (resource.data.createdBy == request.auth.uid) ||
@@ -113,15 +114,15 @@ service cloud.firestore {
             request.resource.data.diff(resource.data).affectedKeys()
               .hasOnly(['status', 'completedBy', 'completedAt', 'isLate', 'subTasks', 'assignedTo', 'updatedAt', 'submissionUrl', 'submissionFileName'])
           )
-        ));
+        );
       }
 
       match /activities/{activityId} {
-        allow read, write: if isSuperAdmin() || isMember(projectId);
+        allow read, write: if isMember(projectId);
       }
 
       match /messages/{messageId} {
-        allow read, write: if isSuperAdmin() || isMember(projectId);
+        allow read, write: if isMember(projectId);
       }
     }
   }

@@ -11,7 +11,6 @@ const LandingPage: React.FC = () => {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
 
-
     const handleCTA = () => {
         navigate(currentUser ? '/dashboard' : '/login');
     };
@@ -72,9 +71,7 @@ const LandingPage: React.FC = () => {
             <main className="pt-32 md:pt-56">
                 {/* Hero Section */}
                 <section className="max-w-7xl mx-auto px-6 mb-24 lg:mb-32">
-                    <div
-                        className="max-w-4xl mx-auto text-center space-y-10"
-                    >
+                    <div className="max-w-4xl mx-auto text-center space-y-10">
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}

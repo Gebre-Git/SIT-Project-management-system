@@ -1,3 +1,4 @@
+console.log("🔥 FIREBASE.TS EXECUTING");
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
@@ -12,6 +13,9 @@ const firebaseConfig = {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
+
+export const isFirebaseAvailable = !!firebaseConfig.apiKey;
+export const firebaseConfigError = isFirebaseAvailable ? null : "Missing Firebase configuration in .env";
 
 // Debug log to verify keys are loaded
 console.log("🔥 Firebase Config Debug:", {

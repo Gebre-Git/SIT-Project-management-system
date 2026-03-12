@@ -5,8 +5,13 @@ import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { ChevronDown, User, LogOut } from 'lucide-react';
 import ProfileAvatar from './ProfileAvatar';
+import { cn } from '../lib/utils';
 
-const ProfileDropdown: React.FC = () => {
+interface ProfileDropdownProps {
+    collapsed?: boolean;
+}
+
+const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ collapsed = false }) => {
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -51,18 +56,28 @@ const ProfileDropdown: React.FC = () => {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className={cn(
+                    "flex items-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300",
+                    collapsed ? "justify-center w-full p-2" : "gap-2 px-3 py-2"
+                )}
+                title={collapsed ? currentUser.displayName || 'Profile' : undefined}
             >
                 <ProfileAvatar
                     photoURL={photoURL || currentUser.photoURL}
                     displayName={currentUser.displayName}
-                    size="md"
+                    size={collapsed ? 'lg' : 'md'}
+                    className={cn(
+                        "transition-all duration-300",
+                        collapsed ? "ring-4 ring-blue-500/10 hover:ring-blue-500/30 hover:scale-105 shadow-xl shadow-blue-500/10" : "ring-transparent"
+                    )}
                 />
-                <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{currentUser.displayName}</p>
-                    <p className="text-xs text-slate-500 dark:text-gray-400">{currentUser.email}</p>
-                </div>
-                <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                {!collapsed && (
+                    <div className="hidden md:block text-left">
+                        <p className="text-sm font-medium text-slate-900 dark:text-white line-clamp-1">{currentUser.displayName}</p>
+                        <p className="text-xs text-slate-500 dark:text-gray-400 line-clamp-1">{currentUser.email}</p>
+                    </div>
+                )}
+                {!collapsed && <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
             </button>
 
             {isOpen && (

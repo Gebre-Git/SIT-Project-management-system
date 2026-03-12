@@ -14,6 +14,8 @@ import { Project, User as AppUser, ChatMessage, Task } from '../../types';
 export interface TaskStats {
     total: number;
     todo: number;
+    inProgress: number;
+    underReview: number;
     done: number;
     overdue: number;
 }
@@ -33,7 +35,7 @@ export const useAdminData = (): AdminData => {
     const [users, setUsers] = useState<AppUser[]>([]);
     const [recentMessages, setRecentMessages] = useState<(ChatMessage & { projectId?: string })[]>([]);
     const [allTasks, setAllTasks] = useState<Task[]>([]);
-    const [taskStats, setTaskStats] = useState<TaskStats>({ total: 0, todo: 0, done: 0, overdue: 0 });
+    const [taskStats, setTaskStats] = useState<TaskStats>({ total: 0, todo: 0, inProgress: 0, underReview: 0, done: 0, overdue: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -106,9 +108,11 @@ export const useAdminData = (): AdminData => {
                     const stats: TaskStats = {
                         total: tasks.length,
                         todo: tasks.filter(t => t.status === 'todo').length,
+                        inProgress: tasks.filter(t => t.status === 'in_progress').length,
+                        underReview: tasks.filter(t => t.status === 'under_review').length,
                         done: tasks.filter(t => t.status === 'done').length,
                         overdue: tasks.filter(t => {
-                            return t.status === 'todo' && t.deadline && t.deadline.toMillis() < now.toMillis();
+                            return t.status !== 'done' && t.deadline && t.deadline.toMillis() < now.toMillis();
                         }).length,
                     };
 

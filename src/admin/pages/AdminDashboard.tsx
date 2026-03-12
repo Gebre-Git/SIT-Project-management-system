@@ -98,6 +98,8 @@ const AdminDashboard: React.FC = () => {
     // Chart data
     const chartData = [
         { name: 'To Do', value: taskStats.todo, color: '#3b82f6' },
+        { name: 'In Progress', value: taskStats.inProgress, color: '#f59e0b' },
+        { name: 'Under Review', value: taskStats.underReview, color: '#8b5cf6' },
         { name: 'Done', value: taskStats.done, color: '#22c55e' },
         { name: 'Overdue', value: taskStats.overdue, color: '#ef4444' },
     ];
@@ -214,6 +216,12 @@ const AdminDashboard: React.FC = () => {
                     <div className="flex items-center gap-6 mt-4 text-xs text-slate-500 dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
                             <span className="w-3 h-3 rounded bg-blue-500" /> To Do ({taskStats.todo})
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded bg-amber-500" /> In Progress ({taskStats.inProgress})
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded bg-purple-500" /> Under Review ({taskStats.underReview})
                         </span>
                         <span className="flex items-center gap-1.5">
                             <span className="w-3 h-3 rounded bg-emerald-500" /> Done ({taskStats.done})

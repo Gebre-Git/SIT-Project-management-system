@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
     doc,
     getDoc,
@@ -22,7 +22,28 @@ import {
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { Project, Task, User, TaskWeight, Activity, SubTask, TaskStatus, Notification } from '../types';
-import { Loader2, Plus, Calendar, CheckCircle, Clock, Share2, ArrowLeft, Layout, BarChart2, List, Trash2, MessageSquare, AlertTriangle, Edit3, Upload, Download } from 'lucide-react';
+import {
+    Loader2,
+    Plus,
+    Calendar,
+    CheckCircle,
+    Clock,
+    Share2,
+    ArrowLeft,
+    Layout,
+    BarChart2,
+    List,
+    Trash2,
+    MessageSquare,
+    AlertTriangle,
+    Edit3,
+    Upload,
+    Settings,
+    Users,
+    Check,
+    ChevronDown,
+    Columns
+} from 'lucide-react';
 import NotificationPanel from '../components/NotificationPanel';
 import { useProjects } from '../hooks/useProjects';
 import { useAlert } from '../context/AlertContext';
@@ -35,17 +56,19 @@ import ActivityFeed from '../components/ActivityFeed';
 import ChatSystem from '../components/ChatSystem';
 import { AccountabilityEngine } from '../lib/AccountabilityEngine';
 import EditTaskModal from '../components/EditTaskModal';
+import TaskViewModal from '../components/TaskViewModal';
+import KanbanBoard from '../components/KanbanBoard';
 import { format } from 'date-fns';
-import { downloadFile } from '../utils/downloadFile';
 
-type Tab = 'tasks' | 'calendar' | 'analytics' | 'chat' | 'settings';
+type Tab = 'tasks' | 'kanban' | 'calendar' | 'analytics' | 'chat' | 'settings';
 
 const ProjectDetails: React.FC = () => {
     const { projectId } = useParams<{ projectId: string }>();
     const { currentUser, isGuest } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const { deleteProject } = useProjects();
-    const { showAlert } = useAlert();
+    const { showAlert, showConfirm } = useAlert();
 
     const [project, setProject] = useState<Project | null>(null);
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -65,11 +88,102 @@ const ProjectDetails: React.FC = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [confirmName, setConfirmName] = useState('');
     const [editingTask, setEditingTask] = useState<Task | null>(null);
+    const [viewingTask, setViewingTask] = useState<Task | null>(null);
 
     // File-upload-required feature state
     const [newTaskRequiresUpload, setNewTaskRequiresUpload] = useState(false);
     const [uploadingTaskId, setUploadingTaskId] = useState<string | null>(null);
     const [taskUploadProgress, setTaskUploadProgress] = useState(0);
+
+    // Project Settings Edit State
+    const [editName, setEditName] = useState('');
+    const [editCourse, setEditCourse] = useState('');
+    const [isUpdatingProject, setIsUpdatingProject] = useState(false);
+    const [showCompletedTasks, setShowCompletedTasks] = useState(false);
+    const [groupByPriority, setGroupByPriority] = useState(false);
+    const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+
+    useEffect(() => {
+        if (project) {
+            setEditName(project.name);
+            setEditCourse(project.course || '');
+        }
+    }, [project]);
+
+    const handleUpdateProjectInfo = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!projectId || !project || !currentUser || isGuest) return;
+        if (project.ownerId !== currentUser.uid) return;
+
+        setIsUpdatingProject(true);
+        try {
+            await updateDoc(doc(db, 'projects', projectId), {
+                name: editName,
+                course: editCourse,
+                updatedAt: serverTimestamp()
+            });
+            showAlert("Project settings updated!", "success");
+        } catch (err) {
+            console.error(err);
+            showAlert("Failed to update project settings.", "error");
+        } finally {
+            setIsUpdatingProject(false);
+        }
+    };
+
+    const handleRemoveMember = async (memberId: string) => {
+        if (!projectId || !project || !currentUser || isGuest) return;
+        if (project.ownerId !== currentUser.uid) return;
+        if (memberId === currentUser.uid) {
+            showAlert("You cannot remove yourself from your own project.", "error");
+            return;
+        }
+
+        const member = membersData.find(m => m.uid === memberId);
+        const confirmed = await showConfirm({
+            title: 'Remove Team Member',
+            message: `Are you sure you want to remove ${member?.displayName || member?.username} from the team?`,
+            confirmLabel: 'Remove Member',
+            type: 'danger'
+        });
+        if (!confirmed) return;
+
+        try {
+            await updateDoc(doc(db, 'projects', projectId), {
+                members: arrayRemove(memberId)
+            });
+            showAlert("Member removed from team.", "success");
+            await logActivity('task_created' as any, `removed ${member?.displayName || member?.username} from the team`);
+        } catch (err) {
+            console.error(err);
+            showAlert("Failed to remove member.", "error");
+        }
+    };
+
+    const handleRotateInviteCode = async () => {
+        if (!projectId || !project || !currentUser || isGuest) return;
+        if (project.ownerId !== currentUser.uid) return;
+
+        const confirmed = await showConfirm({
+            title: 'Regenerate Invite Code',
+            message: 'Generating a new invite code will immediately invalidate the current one. Continue?',
+            confirmLabel: 'Regenerate',
+            type: 'warning'
+        });
+        if (!confirmed) return;
+
+        const newCode = Math.random().toString(36).substring(2, 9).toUpperCase();
+        try {
+            await updateDoc(doc(db, 'projects', projectId), {
+                inviteCode: newCode,
+                updatedAt: serverTimestamp()
+            });
+            showAlert("New invite code generated!", "success");
+        } catch (err) {
+            console.error(err);
+            showAlert("Failed to regenerate invite code.", "error");
+        }
+    };
 
     // Fetch Project & Activity
     useEffect(() => {
@@ -230,6 +344,20 @@ const ProjectDetails: React.FC = () => {
 
     const isPersonal = project?.type === 'personal';
     const isOwner = project?.ownerId === currentUser?.uid;
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab');
+
+        if (tab === 'settings') {
+            setActiveTab(isOwner ? 'settings' : 'tasks');
+            return;
+        }
+
+        if (tab === 'tasks' || tab === 'kanban' || tab === 'calendar' || tab === 'analytics' || tab === 'chat') {
+            setActiveTab(tab);
+        }
+    }, [location.search, isOwner]);
 
     const handleAddTask = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -506,7 +634,13 @@ const ProjectDetails: React.FC = () => {
         const isCreator = task?.createdBy === currentUser?.uid;
         if (!projectId || (!isOwner && !isCreator)) return;
 
-        if (!window.confirm("Are you sure you want to delete this task?")) return;
+        const confirmed = await showConfirm({
+            title: 'Delete Task',
+            message: 'Are you sure you want to delete this task? This action cannot be undone.',
+            confirmLabel: 'Delete Task',
+            type: 'danger'
+        });
+        if (!confirmed) return;
 
         try {
             await deleteDoc(doc(db, 'projects', projectId, 'tasks', taskId));
@@ -515,6 +649,17 @@ const ProjectDetails: React.FC = () => {
         } catch (err) {
             console.error("Error deleting task:", err);
             showAlert("Failed to delete task", "error");
+        }
+    };
+    
+    const handleTaskClick = (task: Task) => {
+        setActiveTab('tasks');
+        setViewingTask(task);
+        if (task.status === 'done') {
+            setShowCompletedTasks(true);
+        }
+        if (groupByPriority && collapsedGroups[task.weight]) {
+            setCollapsedGroups(prev => ({ ...prev, [task.weight]: false }));
         }
     };
 
@@ -646,6 +791,203 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    const renderTaskItem = (task: Task, isDone: boolean, isOverdue: boolean, isLate: boolean) => (
+        <motion.div
+            layout
+            key={task.id}
+            className={cn(
+                "group relative glass-card rounded-3xl p-6 border transition-all duration-300",
+                isDone ? "opacity-75 bg-slate-50/50 dark:bg-slate-900/30" : "hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900/60"
+            )}
+        >
+            <div className={cn(
+                "absolute left-0 top-6 bottom-6 w-1.5 rounded-r-full transition-colors",
+                isDone ? (isLate ? "bg-amber-400" : "bg-emerald-500") : isOverdue ? "bg-red-500" : "bg-blue-600"
+            )} />
+
+            <div className="flex items-start gap-5 pl-4">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleTaskStatus(task);
+                    }}
+                    className={cn(
+                        "mt-1 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
+                        isDone
+                            ? "bg-emerald-500 border-emerald-500 text-white"
+                            : (task.requiresUpload && !task.submissionUrl
+                                ? "border-amber-400 text-amber-300 cursor-not-allowed opacity-70"
+                                : "border-slate-300 dark:border-slate-600 hover:border-blue-600 text-transparent hover:text-blue-600")
+                    )}
+                >
+                    <CheckCircle className="w-5 h-5 pointer-events-none" />
+                </button>
+
+                <div className="flex-1 space-y-4">
+                    <div>
+                        <div className="flex items-start justify-between">
+                            <div className="flex flex-wrap gap-2 items-center mb-1">
+                                <h3 className={cn(
+                                    "text-xl font-bold transition-all tracking-tight",
+                                    isDone ? "text-slate-500 line-through decoration-2" : "text-slate-900 dark:text-white"
+                                )}>
+                                    {task.title}
+                                </h3>
+                                <span className="text-[10px] font-black uppercase border border-slate-200 dark:border-slate-700 text-slate-500 px-2 py-0.5 rounded-lg">
+                                    {task.weight}
+                                </span>
+                                {isLate && <span className="text-[10px] font-black uppercase bg-amber-50 text-amber-600 px-2 py-0.5 rounded-lg border border-amber-200">Late</span>}
+                                {isOverdue && <span className="text-[10px] font-black uppercase bg-red-50 text-red-600 px-2 py-0.5 rounded-lg border border-red-100">Overdue</span>}
+                            </div>
+                        </div>
+                        {task.description && <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{task.description}</p>}
+                    </div>
+
+                    {/* Display Sub-tasks */}
+                    {task.subTasks && task.subTasks.length > 0 && (
+                        <div className="space-y-2 bg-slate-50/50 dark:bg-slate-950/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                            {task.subTasks.map(st => {
+                                const stMember = membersData.find(m => m.uid === st.assignedTo);
+                                return (
+                                    <div key={st.id} className="flex items-center justify-between group/st">
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={() => toggleSubTask(task, st.id)}
+                                                className={cn(
+                                                    "w-4 h-4 rounded-md border flex items-center justify-center transition-all",
+                                                    st.status === 'done' ? "bg-blue-500 border-blue-500 text-white" : "border-slate-300 dark:border-slate-600"
+                                                )}
+                                            >
+                                                {st.status === 'done' && <CheckCircle className="w-3 h-3" />}
+                                            </button>
+                                            <span className={cn("text-xs font-medium transition-colors", st.status === 'done' ? "text-slate-400 line-through" : "text-slate-700 dark:text-slate-300")}>
+                                                {st.title}
+                                            </span>
+                                            {st.isLate && <span className="text-[8px] font-black uppercase text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 ml-1">Late</span>}
+                                            {st.requiresUpload && (
+                                                <span className={cn(
+                                                    "text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ml-1",
+                                                    st.submissionUrl
+                                                        ? "text-emerald-600 bg-emerald-50 border-emerald-200"
+                                                        : "text-amber-600 bg-amber-50 border-amber-200"
+                                                )}>
+                                                    {st.submissionUrl ? "File✓" : "File Req"}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-3 opacity-100 lg:opacity-60 lg:group-hover/st:opacity-100 transition-opacity">
+                                            {/* Sub-task upload button */}
+                                            {st.requiresUpload && st.assignedTo === currentUser?.uid && st.status !== 'done' && (
+                                                <div className="flex items-center gap-2">
+                                                    {uploadingTaskId === st.id ? (
+                                                        <div className="flex items-center gap-1">
+                                                            <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
+                                                            <span className="text-[9px] font-bold text-blue-600">{taskUploadProgress}%</span>
+                                                        </div>
+                                                    ) : (
+                                                        <label className="cursor-pointer flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase transition-colors bg-amber-500 hover:bg-amber-600 text-white">
+                                                            <Upload className="w-2.5 h-2.5" />
+                                                            {st.submissionUrl ? 'Re' : 'UP'}
+                                                            <input
+                                                                type="file"
+                                                                className="hidden"
+                                                                onChange={(e) => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file) handleTaskFileUpload({ id: st.id, title: st.title, isSubTask: true, parentTaskId: task.id }, file);
+                                                                    e.target.value = '';
+                                                                }}
+                                                            />
+                                                        </label>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {stMember && (
+                                                <div className="w-5 h-5 rounded-full overflow-hidden border border-white dark:border-slate-800 shadow-sm" title={stMember.displayName || stMember.username}>
+                                                    {stMember.photoURL ? <img src={stMember.photoURL} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[8px] font-bold uppercase">{stMember.username[0]}</div>}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/50 mt-4">
+                        <div className="flex items-center gap-4 text-slate-400">
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+                                <Clock className="w-4 h-4" />
+                                {format(task.deadline.toDate(), 'MMM d, yyyy')}
+                            </div>
+
+                            {!isPersonal && (
+                                <div className="flex items-center gap-2">
+                                    {task.assignedTo.length > 0 ? (
+                                        <div className="flex -space-x-1.5">
+                                            {task.assignedTo.map(uid => {
+                                                const m = membersData.find(u => u.uid === uid);
+                                                return (
+                                                    <div key={uid} title={m?.displayName || m?.username} className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 overflow-hidden bg-slate-200">
+                                                        {m?.photoURL ? <img src={m.photoURL} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] font-bold uppercase">{m?.username?.[0] || '?'}</div>}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unassigned</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="absolute top-6 right-6 flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
+                    {(isOwner || task.createdBy === currentUser?.uid) && (
+                        <>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingTask(task);
+                                }}
+                                className="p-2 bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 rounded-xl backdrop-blur-sm transition-all shadow-sm"
+                                title="Edit Task"
+                            >
+                                <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTask(task.id);
+                                }}
+                                className="p-2 bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-red-600 rounded-xl backdrop-blur-sm transition-all shadow-sm"
+                                title="Delete Task"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </>
+                    )}
+                    {!isPersonal && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                joinTask(task);
+                            }}
+                            className={cn(
+                                "text-[10px] font-black uppercase tracking-tighter px-3 py-2 rounded-xl border transition-all backdrop-blur-sm shadow-sm",
+                                task.assignedTo.includes(currentUser?.uid || '')
+                                    ? "bg-red-50/80 border-red-200 text-red-600 hover:bg-red-100 dark:bg-red-900/40 dark:border-red-900"
+                                    : "bg-blue-50/80 border-blue-200 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/40 dark:border-blue-900"
+                            )}
+                        >
+                            {task.assignedTo.includes(currentUser?.uid || '') ? 'Leave' : 'Take Task'}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </motion.div>
+    );
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -670,8 +1012,8 @@ const ProjectDetails: React.FC = () => {
                             <Layout className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{project?.name}</h1>
+                            <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{project?.name}</h1>
                                 {project?.course && (
                                     <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
                                         {project.course}
@@ -689,21 +1031,24 @@ const ProjectDetails: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                     {isOwner && !isPersonal && (
                         <button
                             onClick={copyInvite}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition font-medium"
+                            className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition font-medium text-sm"
                         >
-                            <Share2 className="w-4 h-4" /> Invite Team
+                            <Share2 className="w-4 h-4" /> <span className="hidden sm:inline">Invite Team</span>
                         </button>
                     )}
                     <NotificationPanel />
                     <button
-                        onClick={() => setNewTaskMode(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition hover:scale-105"
+                        onClick={() => {
+                            setActiveTab('tasks');
+                            setNewTaskMode(true);
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition hover:scale-105 text-sm"
                     >
-                        <Plus className="w-5 h-5" /> Add Task
+                        <Plus className="w-5 h-5" /> <span className="hidden xs:inline">Add Task</span>
                     </button>
                 </div>
             </header>
@@ -721,6 +1066,12 @@ const ProjectDetails: React.FC = () => {
                     className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'chat' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                 >
                     <MessageSquare className="w-4 h-4" /> Chat & Files
+                </button>
+                <button
+                    onClick={() => setActiveTab('kanban')}
+                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'kanban' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                >
+                    <Columns className="w-4 h-4" /> Kanban
                 </button>
                 <button
                     onClick={() => setActiveTab('calendar')}
@@ -741,7 +1092,7 @@ const ProjectDetails: React.FC = () => {
                         onClick={() => setActiveTab('settings')}
                         className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'settings' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                     >
-                        <Layout className="w-4 h-4" /> Settings
+                        <Settings className="w-4 h-4" /> Settings
                     </button>
                 )}
             </div>
@@ -941,7 +1292,7 @@ const ProjectDetails: React.FC = () => {
                             )}
                         </AnimatePresence>
 
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {tasks.length === 0 && !newTaskMode ? (
                                 <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/30 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[2rem]">
                                     <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -950,388 +1301,428 @@ const ProjectDetails: React.FC = () => {
                                     <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Focus starts here. Create your first task.</p>
                                 </div>
                             ) : (
-                                tasks.map(task => {
-                                    const isDone = task.status === 'done';
-                                    const isOverdue = !isDone && new Date(task.deadline.toDate()) < new Date();
-                                    const isLate = task.isLate;
+                                (() => {
+                                    const todoTasks = tasks.filter(t => t.status === 'todo').sort((a, b) => {
+                                        const now = new Date();
+                                        const aDeadline = new Date(a.deadline.toDate());
+                                        const bDeadline = new Date(b.deadline.toDate());
+                                        const aOverdue = aDeadline < now;
+                                        const bOverdue = bDeadline < now;
+
+                                        // 1. Overdue priority
+                                        if (aOverdue && !bOverdue) return -1;
+                                        if (!aOverdue && bOverdue) return 1;
+
+                                        // 2. Weight priority
+                                        const weightMap = { large: 3, medium: 2, small: 1 };
+                                        const aWeight = weightMap[a.weight] || 0;
+                                        const bWeight = weightMap[b.weight] || 0;
+                                        if (aWeight !== bWeight) return bWeight - aWeight;
+
+                                        // 3. Deadline priority
+                                        return aDeadline.getTime() - bDeadline.getTime();
+                                    });
+
+                                    const doneTasks = tasks.filter(t => t.status === 'done').sort((a, b) =>
+                                        (b.completedAt?.toMillis() || 0) - (a.completedAt?.toMillis() || 0)
+                                    );
 
                                     return (
-                                        <motion.div
-                                            layout
-                                            key={task.id}
-                                            className={cn(
-                                                "group relative glass-card rounded-3xl p-6 border transition-all duration-300",
-                                                isDone ? "opacity-75 bg-slate-50/50 dark:bg-slate-900/30" : "hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900/60"
-                                            )}
-                                        >
-                                            <div className={cn(
-                                                "absolute left-0 top-6 bottom-6 w-1.5 rounded-r-full transition-colors",
-                                                isDone ? (isLate ? "bg-amber-400" : "bg-emerald-500") : isOverdue ? "bg-red-500" : "bg-blue-600"
-                                            )} />
-
-                                            <div className="flex items-start gap-5 pl-4">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleTaskStatus(task);
-                                                    }}
-                                                    className={cn(
-                                                        "mt-1 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
-                                                        isDone
-                                                            ? "bg-emerald-500 border-emerald-500 text-white"
-                                                            : (task.requiresUpload && !task.submissionUrl
-                                                                ? "border-amber-400 text-amber-300 cursor-not-allowed opacity-70"
-                                                                : "border-slate-300 dark:border-slate-600 hover:border-blue-600 text-transparent hover:text-blue-600")
-                                                    )}
-                                                >
-                                                    <CheckCircle className="w-5 h-5 pointer-events-none" />
-                                                </button>
-
-                                                <div className="flex-1 space-y-4">
-                                                    <div>
-                                                        <div className="flex items-start justify-between">
-                                                            <div className="flex flex-wrap gap-2 items-center mb-1">
-                                                                <h3 className={cn(
-                                                                    "text-xl font-bold transition-all tracking-tight",
-                                                                    isDone ? "text-slate-500 line-through decoration-2" : "text-slate-900 dark:text-white"
-                                                                )}>
-                                                                    {task.title}
-                                                                </h3>
-                                                                <span className="text-[10px] font-black uppercase border border-slate-200 dark:border-slate-700 text-slate-500 px-2 py-0.5 rounded-lg">
-                                                                    {task.weight}
-                                                                </span>
-                                                                {isLate && <span className="text-[10px] font-black uppercase bg-amber-50 text-amber-600 px-2 py-0.5 rounded-lg border border-amber-200">Late</span>}
-                                                                {isOverdue && <span className="text-[10px] font-black uppercase bg-red-50 text-red-600 px-2 py-0.5 rounded-lg border border-red-100">Overdue</span>}
-                                                            </div>
-                                                        </div>
-                                                        {task.description && <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{task.description}</p>}
+                                        <>
+                                            {/* Active Tasks Section */}
+                                            {todoTasks.length > 0 && (
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                                            Active Tasks
+                                                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full text-[10px]">{todoTasks.length}</span>
+                                                        </h3>
+                                                        <button
+                                                            onClick={() => setGroupByPriority(!groupByPriority)}
+                                                            className={cn(
+                                                                "flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all text-[10px] font-bold uppercase tracking-wider border",
+                                                                groupByPriority
+                                                                    ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/30 dark:border-blue-800 ring-2 ring-blue-500/10"
+                                                                    : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/50 dark:border-slate-800 hover:text-slate-600 hover:border-slate-200 dark:hover:border-slate-700"
+                                                            )}
+                                                        >
+                                                            <Layout className="w-3 h-3" />
+                                                            {groupByPriority ? "Ungroup" : "Group by Priority"}
+                                                        </button>
                                                     </div>
 
-                                                    {/* Display Sub-tasks */}
-                                                    {task.subTasks && task.subTasks.length > 0 && (
-                                                        <div className="space-y-2 bg-slate-50/50 dark:bg-slate-950/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
-                                                            {task.subTasks.map(st => {
-                                                                const stMember = membersData.find(m => m.uid === st.assignedTo);
+                                                    {groupByPriority ? (
+                                                        <div className="space-y-6">
+                                                            {(['large', 'medium', 'small'] as TaskWeight[]).map((priority) => {
+                                                                const groupTasks = todoTasks.filter(t => t.weight === priority);
+                                                                if (groupTasks.length === 0) return null;
+
+                                                                const isCollapsed = collapsedGroups[priority];
+                                                                const toggleCollapse = () => setCollapsedGroups(prev => ({ ...prev, [priority]: !prev[priority] }));
+
                                                                 return (
-                                                                    <div key={st.id} className="flex items-center justify-between group/st">
-                                                                        <div className="flex items-center gap-3">
-                                                                            <button
-                                                                                onClick={() => toggleSubTask(task, st.id)}
-                                                                                className={cn(
-                                                                                    "w-4 h-4 rounded-md border flex items-center justify-center transition-all",
-                                                                                    st.status === 'done' ? "bg-blue-500 border-blue-500 text-white" : "border-slate-300 dark:border-slate-600"
-                                                                                )}
-                                                                            >
-                                                                                {st.status === 'done' && <CheckCircle className="w-3 h-3" />}
-                                                                            </button>
-                                                                            <span className={cn("text-xs font-medium transition-colors", st.status === 'done' ? "text-slate-400 line-through" : "text-slate-700 dark:text-slate-300")}>
-                                                                                {st.title}
-                                                                            </span>
-                                                                            {st.isLate && <span className="text-[8px] font-black uppercase text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 ml-1">Late</span>}
-                                                                            {st.requiresUpload && (
-                                                                                <span className={cn(
-                                                                                    "text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ml-1",
-                                                                                    st.submissionUrl
-                                                                                        ? "text-emerald-600 bg-emerald-50 border-emerald-200"
-                                                                                        : "text-amber-600 bg-amber-50 border-amber-200"
-                                                                                )}>
-                                                                                    {st.submissionUrl ? "File✓" : "File Req"}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-                                                                        <div className="flex items-center gap-3 opacity-100 lg:opacity-60 lg:group-hover/st:opacity-100 transition-opacity">
-                                                                            {/* Sub-task upload button */}
-                                                                            {st.requiresUpload && st.assignedTo === currentUser?.uid && st.status !== 'done' && (
-                                                                                <div className="flex items-center gap-2">
-                                                                                    {uploadingTaskId === st.id ? (
-                                                                                        <div className="flex items-center gap-1">
-                                                                                            <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
-                                                                                            <span className="text-[9px] font-bold text-blue-600">{taskUploadProgress}%</span>
-                                                                                        </div>
-                                                                                    ) : (
-                                                                                        <label className="cursor-pointer flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase transition-colors bg-amber-500 hover:bg-amber-600 text-white">
-                                                                                            <Upload className="w-2.5 h-2.5" />
-                                                                                            {st.submissionUrl ? 'Re' : 'UP'}
-                                                                                            <input
-                                                                                                type="file"
-                                                                                                className="hidden"
-                                                                                                onChange={(e) => {
-                                                                                                    const file = e.target.files?.[0];
-                                                                                                    if (file) handleTaskFileUpload({ id: st.id, title: st.title, isSubTask: true, parentTaskId: task.id }, file);
-                                                                                                    e.target.value = '';
-                                                                                                }}
-                                                                                            />
-                                                                                        </label>
-                                                                                    )}
+                                                                    <div key={priority} className="space-y-4">
+                                                                        <button
+                                                                            onClick={toggleCollapse}
+                                                                            className="w-full flex items-center justify-between p-3 rounded-2xl bg-slate-50/30 dark:bg-slate-900/10 border border-slate-100 dark:border-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                                                                        >
+                                                                            <div className="flex items-center gap-3">
+                                                                                <div className={cn("transition-transform duration-300", isCollapsed ? "-rotate-90" : "rotate-0")}>
+                                                                                    <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                                                                                 </div>
-                                                                            )}
-                                                                            {st.submissionUrl && (
-                                                                                <button
-                                                                                    onClick={() => downloadFile(st.submissionUrl!, st.submissionFileName || 'file')}
-                                                                                    className="text-[10px] text-blue-500 hover:underline font-bold flex items-center gap-0.5"
-                                                                                    title="Download submitted file"
+                                                                                <div className={cn(
+                                                                                    "w-2 h-2 rounded-full shadow-[0_0_8px]",
+                                                                                    priority === 'large' ? "bg-red-500 shadow-red-500/50" : priority === 'medium' ? "bg-amber-500 shadow-amber-500/50" : "bg-blue-500 shadow-blue-500/50"
+                                                                                )} />
+                                                                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400">{priority} Priority</span>
+                                                                                <span className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full">{groupTasks.length}</span>
+                                                                            </div>
+                                                                        </button>
+
+                                                                        <AnimatePresence>
+                                                                            {!isCollapsed && (
+                                                                                <motion.div
+                                                                                    initial={{ height: 0, opacity: 0 }}
+                                                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                                                    exit={{ height: 0, opacity: 0 }}
+                                                                                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                                                                    className="overflow-hidden"
                                                                                 >
-                                                                                    <Download className="w-2.5 h-2.5" /> Download
-                                                                                </button>
+                                                                                    <div className="space-y-4 pt-1">
+                                                                                        {groupTasks.map(task => {
+                                                                                            const isDone = false;
+                                                                                            const isOverdue = new Date(task.deadline.toDate()) < new Date();
+                                                                                            return renderTaskItem(task, isDone, isOverdue, !!task.isLate);
+                                                                                        })}
+                                                                                    </div>
+                                                                                </motion.div>
                                                                             )}
-                                                                            <span className="text-[10px] font-medium text-slate-400">
-                                                                                {st.deadline ? format(st.deadline.toDate(), 'MMM d') : ''}
-                                                                            </span>
-                                                                            {stMember && (
-                                                                                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
-                                                                                    <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400">@{stMember.username}</span>
-                                                                                </div>
-                                                                            )}
-                                                                        </div>
+                                                                        </AnimatePresence>
                                                                     </div>
                                                                 );
                                                             })}
                                                         </div>
-                                                    )}
+                                                    ) : (
+                                                        <div className="space-y-4">
+                                                            {todoTasks.map(task => {
+                                                                const isDone = false;
+                                                                const isOverdue = new Date(task.deadline.toDate()) < new Date();
+                                                                const isLate = task.isLate;
 
-                                                    {/* Task File Submission Panel */}
-                                                    {task.requiresUpload && (
-                                                        <div className={cn(
-                                                            "flex items-center gap-3 p-3 rounded-2xl border",
-                                                            task.submissionUrl
-                                                                ? "bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-900/30"
-                                                                : "bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800/40"
-                                                        )}>
-                                                            <Upload className={cn("w-4 h-4 shrink-0", task.submissionUrl ? "text-emerald-600" : "text-amber-600")} />
-                                                            <div className="flex-1 min-w-0">
-                                                                <p className={cn(
-                                                                    "text-[10px] font-black uppercase tracking-widest",
-                                                                    task.submissionUrl ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
-                                                                )}>
-                                                                    {task.submissionUrl ? "File Submitted ✓" : "File Submission Required"}
-                                                                </p>
-                                                                <p className="text-xs text-slate-500 truncate">
-                                                                    {task.submissionUrl
-                                                                        ? (task.submissionFileName || "File uploaded")
-                                                                        : "Upload a file to complete this task"}
-                                                                </p>
-                                                                {uploadingTaskId === task.id && (
-                                                                    <div className="mt-1.5 h-1 bg-amber-200 dark:bg-amber-900 rounded-full overflow-hidden">
-                                                                        <div
-                                                                            className="h-full bg-amber-500 rounded-full transition-all duration-300"
-                                                                            style={{ width: `${taskUploadProgress}%` }}
-                                                                        />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-
-                                                            {/* Download button if file already submitted */}
-                                                            {task.submissionUrl && (
-                                                                <button
-                                                                    onClick={() => downloadFile(task.submissionUrl!, task.submissionFileName || 'submission')}
-                                                                    className="shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-                                                                    title="Download submitted file"
-                                                                >
-                                                                    <Download className="w-3 h-3" /> Download
-                                                                </button>
-                                                            )}
-
-                                                            {/* Upload button — only for assigned members on todo tasks */}
-                                                            {task.assignedTo.includes(currentUser?.uid || '') && !isDone && (
-                                                                uploadingTaskId === task.id ? (
-                                                                    <div className="flex items-center gap-1.5 shrink-0">
-                                                                        <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                                                                        <span className="text-[10px] font-bold text-blue-600">{taskUploadProgress}%</span>
-                                                                    </div>
-                                                                ) : (
-                                                                    <label className="cursor-pointer shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors
-                                                                        bg-amber-500 hover:bg-amber-600 text-white">
-                                                                        <Upload className="w-3 h-3" />
-                                                                        {task.submissionUrl ? 'Replace' : 'Upload'}
-                                                                        <input
-                                                                            type="file"
-                                                                            className="hidden"
-                                                                            onChange={(e) => {
-                                                                                const file = e.target.files?.[0];
-                                                                                if (file) handleTaskFileUpload(task, file);
-                                                                                e.target.value = '';
-                                                                            }}
-                                                                        />
-                                                                    </label>
-                                                                )
-                                                            )}
+                                                                return renderTaskItem(task, isDone, isOverdue, !!isLate);
+                                                            })}
                                                         </div>
                                                     )}
+                                                </div>
+                                            )}
 
-                                                    <div className="flex items-center gap-6 pt-2">
-                                                        <div className={cn("flex items-center gap-2 text-xs font-semibold", isOverdue ? "text-red-500" : "text-slate-500")}>
-                                                            <Clock className="w-4 h-4" />
-                                                            {format(task.deadline.toDate(), 'MMM d, yyyy')}
-                                                        </div>
-
-                                                        {!isPersonal && (
-                                                            <div className="flex items-center gap-2">
-                                                                {task.assignedTo.length > 0 ? (
-                                                                    <div className="flex -space-x-1.5">
-                                                                        {task.assignedTo.map(uid => {
-                                                                            const m = membersData.find(u => u.uid === uid);
-                                                                            return (
-                                                                                <div key={uid} title={m?.displayName || m?.username} className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 overflow-hidden bg-slate-200">
-                                                                                    {m?.photoURL ? <img src={m.photoURL} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] font-bold uppercase">{m?.username?.[0] || '?'}</div>}
-                                                                                </div>
-                                                                            )
-                                                                        })}
-                                                                    </div>
-                                                                ) : (
-                                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unassigned</span>
-                                                                )}
+                                            {/* Completed Tasks Section */}
+                                            {doneTasks.length > 0 && (
+                                                <div className="mt-8">
+                                                    <button
+                                                        onClick={() => setShowCompletedTasks(!showCompletedTasks)}
+                                                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={cn("p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 transition-transform duration-300", showCompletedTasks ? "rotate-180" : "rotate-0")}>
+                                                                <ChevronDown className="w-4 h-4" />
                                                             </div>
+                                                            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Completed Tasks</span>
+                                                            <span className="text-[10px] font-black bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 px-2 py-0.5 rounded-full uppercase tracking-widest ml-2">
+                                                                {doneTasks.length}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-blue-500 transition-colors">
+                                                            {showCompletedTasks ? 'Hide' : 'Show'}
+                                                        </span>
+                                                    </button>
+
+                                                    <AnimatePresence>
+                                                        {showCompletedTasks && (
+                                                            <motion.div
+                                                                initial={{ height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={{ height: 0, opacity: 0 }}
+                                                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                                                className="overflow-hidden"
+                                                            >
+                                                                <div className="space-y-4 pt-4">
+                                                                    {doneTasks.map(task => {
+                                                                        const isDone = true;
+                                                                        const isOverdue = false;
+                                                                        const isLate = task.isLate;
+                                                                        return renderTaskItem(task, isDone, isOverdue, !!isLate);
+                                                                    })}
+                                                                </div>
+                                                            </motion.div>
                                                         )}
-                                                    </div>
+                                                    </AnimatePresence>
                                                 </div>
-
-                                                <div className="absolute top-6 right-6 flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
-                                                    {(isOwner || task.createdBy === currentUser?.uid) && (
-                                                        <>
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setEditingTask(task);
-                                                                }}
-                                                                className="p-2 bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 rounded-xl backdrop-blur-sm transition-all shadow-sm"
-                                                                title="Edit Task"
-                                                            >
-                                                                <Edit3 className="w-4 h-4" />
-                                                            </button>
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleDeleteTask(task.id);
-                                                                }}
-                                                                className="p-2 bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-red-600 rounded-xl backdrop-blur-sm transition-all shadow-sm"
-                                                                title="Delete Task"
-                                                            >
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                    {!isPersonal && (
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                joinTask(task);
-                                                            }}
-                                                            className={cn(
-                                                                "text-[10px] font-black uppercase tracking-tighter px-3 py-2 rounded-xl border transition-all backdrop-blur-sm shadow-sm",
-                                                                task.assignedTo.includes(currentUser?.uid || '')
-                                                                    ? "bg-red-50/80 border-red-200 text-red-600 hover:bg-red-100 dark:bg-red-900/40 dark:border-red-900"
-                                                                    : "bg-blue-50/80 border-blue-200 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/40 dark:border-blue-900"
-                                                            )}
-                                                        >
-                                                            {task.assignedTo.includes(currentUser?.uid || '') ? 'Leave' : 'Take Task'}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </motion.div>
+                                            )}
+                                        </>
                                     );
-                                })
+                                })()
                             )}
                         </div>
                     </div>
 
                     {/* Sidebar Column (Hidden for Personal) */}
-                    {!isPersonal && (
-                        <div className="space-y-6">
-                            <div className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                    Team Members
-                                    <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full">{membersData.length}</span>
-                                </h3>
-                                <div className="space-y-4">
-                                    {membersData.map(member => {
-                                        const stats = project ? AccountabilityEngine.calculateMemberStats(member.uid, tasks, project) : null;
-                                        return (
-                                            <div key={member.uid} className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                                                <ProfileAvatar photoURL={member.photoURL} displayName={member.displayName || member.username} size="sm" />
-                                                <div className="min-w-0 flex-1">
-                                                    <div className="flex justify-between items-center">
-                                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate flex items-center gap-2">
-                                                            {member.displayName || member.username}
-                                                            {member.uid === project?.ownerId && (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 shadow-sm shadow-blue-500/5">Admin</span>
+                    {
+                        !isPersonal && (
+                            <div className="space-y-6">
+                                <div className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                        Team Members
+                                        <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full">{membersData.length}</span>
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {membersData.map(member => {
+                                            const stats = project ? AccountabilityEngine.calculateMemberStats(member.uid, tasks, project) : null;
+                                            return (
+                                                <div key={member.uid} className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                                    <ProfileAvatar photoURL={member.photoURL} displayName={member.displayName || member.username} size="sm" />
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="flex justify-between items-center">
+                                                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate flex items-center gap-2">
+                                                                {member.displayName || member.username}
+                                                                {member.uid === project?.ownerId && (
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 shadow-sm shadow-blue-500/5">Admin</span>
+                                                                )}
+                                                            </p>
+                                                            {stats?.isAtRisk && (
+                                                                <span className="text-[8px] font-black text-white bg-red-500 px-1.5 py-0.5 rounded">AT RISK</span>
                                                             )}
-                                                        </p>
-                                                        {stats?.isAtRisk && (
-                                                            <span className="text-[8px] font-black text-white bg-red-500 px-1.5 py-0.5 rounded">AT RISK</span>
-                                                        )}
+                                                        </div>
+                                                        <p className="text-[10px] font-semibold text-slate-400 truncate tracking-tight">@{member.username}</p>
                                                     </div>
-                                                    <p className="text-[10px] font-semibold text-slate-400 truncate tracking-tight">@{member.username}</p>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Overall Progress</h3>
+                                    <div className="flex items-end gap-2 mb-2">
+                                        <span className="text-4xl font-black text-slate-900 dark:text-white tabular-nums">
+                                            {tasks.length > 0 ? Math.round((tasks.filter(t => t.status === 'done').length / tasks.length) * 100) : 0}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${tasks.length > 0 ? (tasks.filter(t => t.status === 'done').length / tasks.length) * 100 : 0}% ` }}
+                                            transition={{ duration: 1.5, ease: 'circOut' }}
+                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                                        />
+                                    </div>
+                                </div>
+
+                                <ActivityFeed activities={activities} members={membersData} />
+                            </div>
+                        )
+                    }
+                </div>
+            )}
+
+            {
+                activeTab === 'chat' && project && (
+                    <ChatSystem projectId={projectId!} members={membersData} isPersonal={isPersonal} />
+                )
+            }
+
+            {
+                activeTab === 'analytics' && project && !isPersonal && (
+                    <ProjectAnalytics project={project} tasks={tasks} members={membersData} />
+                )
+            }
+
+            {
+                activeTab === 'calendar' && (
+                    <CalendarView tasks={tasks} members={membersData} projectName={project?.name} onTaskClick={handleTaskClick} />
+                )
+            }
+
+            {
+                activeTab === 'kanban' && (
+                    <KanbanBoard
+                        tasks={tasks}
+                        members={membersData}
+                        onStatusChange={async (taskId, newStatus) => {
+                            if (!projectId) return;
+                            const task = tasks.find(t => t.id === taskId);
+                            if (!task) return;
+
+                            const isLate = newStatus === 'done' && new Date() > task.deadline.toDate();
+                            const updates: any = {
+                                status: newStatus,
+                                updatedAt: isGuest ? Timestamp.now() : serverTimestamp()
+                            };
+
+                            if (newStatus === 'done') {
+                                updates.completedBy = currentUser?.uid;
+                                updates.completedAt = isGuest ? Timestamp.now() : serverTimestamp();
+                                updates.isLate = isLate;
+                            } else {
+                                updates.completedBy = null;
+                                updates.completedAt = null;
+                                updates.isLate = false;
+                            }
+
+                            if (isGuest) {
+                                setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+                                return;
+                            }
+
+                            try {
+                                await updateDoc(doc(db, 'projects', projectId, 'tasks', taskId), updates);
+                                showAlert(`Task moved to ${newStatus === 'todo' ? 'To Do' : newStatus === 'in_progress' ? 'In Progress' : newStatus === 'under_review' ? 'Under Review' : 'Completed'}`, 'success');
+                            } catch (err) {
+                                showAlert('Failed to update task status', 'error');
+                            }
+                        }}
+                        onTaskClick={handleTaskClick}
+                    />
+                )
+            }
+
+            {
+                activeTab === 'settings' && isOwner && (
+                    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+                        {/* Project Information */}
+                        <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full -mr-16 -mt-16" />
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                                <Settings className="w-5 h-5 text-blue-500" /> General Settings
+                            </h2>
+                            <form onSubmit={handleUpdateProjectInfo} className="space-y-6 max-w-2xl relative z-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Project Name</label>
+                                        <input
+                                            type="text"
+                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                            value={editName}
+                                            onChange={e => setEditName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Course / Prefix</label>
+                                        <input
+                                            type="text"
+                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                            value={editCourse}
+                                            onChange={e => setEditCourse(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={isUpdatingProject || (editName === project?.name && editCourse === (project?.course || ''))}
+                                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2"
+                                >
+                                    {isUpdatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                    Save Changes
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Member Management */}
+                        {!isPersonal && (
+                            <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-blue-500" /> Team Management
+                                </h2>
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {membersData.map(member => (
+                                        <div key={member.uid} className="py-4 flex items-center justify-between group">
+                                            <div className="flex items-center gap-3">
+                                                <ProfileAvatar photoURL={member.photoURL} displayName={member.displayName || member.username} size="sm" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                                        {member.displayName || member.username}
+                                                        {member.uid === project?.ownerId && (
+                                                            <span className="text-[10px] bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-black uppercase tracking-widest">Admin</span>
+                                                        )}
+                                                    </p>
+                                                    <p className="text-[11px] font-medium text-slate-400">@{member.username}</p>
                                                 </div>
                                             </div>
-                                        )
-                                    })}
+                                            {member.uid !== currentUser?.uid && (
+                                                <button
+                                                    onClick={() => handleRemoveMember(member.uid)}
+                                                    className="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                                                    title="Remove from team"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
+                        )}
 
-                            <div className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-                                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Overall Progress</h3>
-                                <div className="flex items-end gap-2 mb-2">
-                                    <span className="text-4xl font-black text-slate-900 dark:text-white tabular-nums">
-                                        {tasks.length > 0 ? Math.round((tasks.filter(t => t.status === 'done').length / tasks.length) * 100) : 0}%
-                                    </span>
+                {/* Invite Management */}
+                        <div className="glass-card rounded-[2rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm bg-slate-50/30 dark:bg-slate-900/30">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                                <Share2 className="w-5 h-5 text-blue-500" /> Invite Settings
+                            </h2>
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 font-mono text-sm bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                                <div>
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Current Invite Code</p>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider">
+                                            {project?.inviteCode}
+                                        </span>
+                                        <button
+                                            onClick={copyInvite}
+                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-blue-500"
+                                        >
+                                            <Share2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${tasks.length > 0 ? (tasks.filter(t => t.status === 'done').length / tasks.length) * 100 : 0}% ` }}
-                                        transition={{ duration: 1.5, ease: 'circOut' }}
-                                        className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full shadow-[0_0_10px_rgba(37,99,235,0.3)]"
-                                    />
-                                </div>
+                                <button
+                                    onClick={handleRotateInviteCode}
+                                    className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all text-xs uppercase tracking-widest"
+                                >
+                                    Regenerate Code
+                                </button>
                             </div>
-
-                            <ActivityFeed activities={activities} members={membersData} />
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'chat' && project && (
-                <ChatSystem projectId={projectId!} members={membersData} isPersonal={isPersonal} />
-            )}
-
-            {activeTab === 'analytics' && project && !isPersonal && (
-                <ProjectAnalytics project={project} tasks={tasks} members={membersData} />
-            )}
-
-            {activeTab === 'calendar' && (
-                <CalendarView tasks={tasks} members={membersData} projectName={project?.name} />
-            )}
-
-            {activeTab === 'settings' && (
-                <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="glass-card rounded-[2.5rem] p-10 border border-red-200/30 dark:border-red-900/20 bg-red-50/5 dark:bg-red-950/5">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-2xl">
-                                <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-slate-900 dark:text-white">Danger Zone</h2>
-                                <p className="text-slate-500 dark:text-slate-400 font-medium">Irreversible actions for your project.</p>
-                            </div>
+                            <p className="mt-4 text-[11px] text-slate-500 font-medium leading-relaxed max-w-xl">
+                                Regenerating the invite code will immediately invalidate all older invite links for this project.
+                            </p>
                         </div>
 
-                        <div className="p-8 bg-white dark:bg-slate-900/50 rounded-3xl border border-red-100 dark:border-red-900/20 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                            <div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Delete this project</h3>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Once you delete a project, there is no going back. Please be certain.</p>
+                        {/* Danger Zone */}
+                        <div className="glass-card rounded-[2.5rem] p-10 border border-red-200/30 dark:border-red-900/20 bg-red-50/5 dark:bg-red-950/5 mt-12">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-2xl">
+                                    <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-black text-slate-900 dark:text-white">Danger Zone</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 font-medium">Irreversible actions for your project.</p>
+                                </div>
                             </div>
-                            <button
-                                onClick={() => setShowDeleteModal(true)}
-                                className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-red-600/20 whitespace-nowrap"
-                            >
-                                Delete Project
-                            </button>
+
+                            <div className="p-8 bg-white dark:bg-slate-900/50 rounded-3xl border border-red-100 dark:border-red-900/20 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Delete this project</h3>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Once you delete a project, there is no going back. Please be certain.</p>
+                                </div>
+                                <button
+                                    onClick={() => setShowDeleteModal(true)}
+                                    className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-red-600/20 whitespace-nowrap"
+                                >
+                                    Delete Project
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Delete Confirmation Modal */}
             <AnimatePresence>
@@ -1391,7 +1782,7 @@ const ProjectDetails: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            {/* Task Editing Modal */}
+            {/* Task Modals */}
             <AnimatePresence>
                 {editingTask && (
                     <EditTaskModal
@@ -1401,6 +1792,14 @@ const ProjectDetails: React.FC = () => {
                         members={membersData}
                         onUpdate={handleUpdateTask}
                         isPersonal={isPersonal}
+                    />
+                )}
+                {viewingTask && (
+                    <TaskViewModal
+                        isOpen={!!viewingTask}
+                        onClose={() => setViewingTask(null)}
+                        task={viewingTask}
+                        members={membersData}
                     />
                 )}
             </AnimatePresence>

@@ -9,10 +9,12 @@ import {
     updateDoc,
     doc,
     serverTimestamp,
+    arrayUnion
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { User, ChatMessage } from '../types';
+import { useAlert } from '../context/AlertContext';
 import {
     Send,
     Smile,
@@ -29,8 +31,7 @@ import {
     X,
     ChevronDown,
     Check,
-    FileText,
-    Mic
+    FileText
 } from 'lucide-react';
 import EmojiPicker, { Theme as EmojiTheme } from 'emoji-picker-react';
 import { format, isToday, isYesterday, isSameDay } from 'date-fns';
@@ -49,6 +50,7 @@ const QUICK_REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🔥'];
 
 const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal }) => {
     const { currentUser } = useAuth();
+    const { showConfirm } = useAlert();
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isUploading, setIsUploading] = useState(false);
@@ -112,6 +114,37 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
     useEffect(() => {
         if (messages.length) scrollToBottom(false);
     }, [messages.length]); // eslint-disable-line
+
+    // ── Seen Tracking ───────────────────────────────────────────────────
+    useEffect(() => {
+        if (!currentUser || !projectId || messages.length === 0) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(async (entry) => {
+                if (entry.isIntersecting) {
+                    const msgId = entry.target.getAttribute('data-message-id');
+                    if (!msgId) return;
+
+                    const msg = messages.find(m => m.id === msgId);
+                    if (msg && msg.senderId !== currentUser.uid && !msg.seenBy?.includes(currentUser.uid)) {
+                        try {
+                            await updateDoc(doc(db, 'projects', projectId, 'messages', msgId), {
+                                seenBy: arrayUnion(currentUser.uid)
+                            });
+                        } catch (err) {
+                            console.error("Error updating seen status:", err);
+                        }
+                    }
+                }
+            });
+        }, { threshold: 0.5 }); // 50% of the message must be visible
+
+        messageRefs.current.forEach((el) => {
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, [messages, currentUser, projectId]);
 
     const handleScroll = () => {
         if (!scrollRef.current) return;
@@ -187,7 +220,13 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
 
         // Warn for large files
         if (file.size > 25 * 1024 * 1024) {
-            if (!window.confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)}MB. Files over 25MB may fail. Continue?`)) {
+            const confirmed = await showConfirm({
+                title: 'Large File Warning',
+                message: `This file is ${(file.size / 1024 / 1024).toFixed(1)}MB. Files over 25MB may fail to upload. Do you want to continue?`,
+                confirmLabel: 'Continue Anyway',
+                type: 'warning'
+            });
+            if (!confirmed) {
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 return;
             }
@@ -495,6 +534,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                 {/* Message Bubble */}
                                 <div
                                     ref={(el) => { if (el) messageRefs.current.set(msg.id, el); }}
+                                    data-message-id={msg.id}
                                     className={cn(
                                         "group flex items-end gap-2 transition-all rounded-2xl",
                                         isMe ? "flex-row-reverse" : "flex-row",
@@ -679,7 +719,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                                         {msg.editedAt && <span className="italic">edited</span>}
                                                         {msg.createdAt && format(msg.createdAt.toDate(), 'HH:mm')}
                                                         {isMe && (
-                                                            <Check className="w-3 h-3 opacity-70" />
+                                                            <div className="flex items-center -space-x-1 ml-1">
+                                                                <Check className={cn("w-3 h-3 transition-colors", msg.seenBy && msg.seenBy.length > 0 ? "text-blue-300" : "opacity-70")} />
+                                                                {msg.seenBy && msg.seenBy.length > 0 && <Check className="w-3 h-3 text-blue-300" />}
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </>
@@ -754,30 +797,43 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                 )}
             </AnimatePresence>
 
-            {/* ── Reply / Edit Bar ─────────────────────────────────── */}
+            {/* ── Reply / Edit Bar (Refined) ────────────────────────── */}
             <AnimatePresence>
                 {(replyingTo || editingMessage) && (
                     <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="px-6 md:px-8 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/80 overflow-hidden shrink-0"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="px-4 md:px-6 relative z-10"
                     >
-                        <div className="flex items-center gap-3 py-2.5">
+                        <div className="max-w-5xl mx-auto w-full bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-t-2xl border-x border-t border-slate-200 dark:border-slate-700 p-2 flex items-center gap-3">
                             <div className={cn(
-                                "w-1 h-8 rounded-full shrink-0",
+                                "w-1 h-10 rounded-full shrink-0",
                                 editingMessage ? "bg-amber-500" : "bg-blue-500"
                             )} />
-                            <div className="flex-1 min-w-0">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-                                    {editingMessage ? '✏️ Editing message' : `↩ Replying to ${getSender(replyingTo!.senderId)?.displayName || 'Unknown'}`}
-                                </p>
-                                <p className="text-xs text-slate-500 truncate">
-                                    {editingMessage ? editingMessage.text : (replyingTo?.text || `📎 ${replyingTo?.fileName || 'Media'}`)}
+                            <div className="flex-1 min-w-0 pr-2">
+                                <div className="flex items-center gap-1.5 mb-0.5">
+                                    {editingMessage ? (
+                                        <Pencil className="w-3 h-3 text-amber-500" />
+                                    ) : (
+                                        <Reply className="w-3 h-3 text-blue-500" />
+                                    )}
+                                    <span className={cn(
+                                        "text-[10px] font-bold uppercase tracking-wider",
+                                        editingMessage ? "text-amber-500" : "text-blue-500"
+                                    )}>
+                                        {editingMessage ? 'Editing message' : `Reply to ${getSender(replyingTo!.senderId)?.displayName || 'User'}`}
+                                    </span>
+                                </div>
+                                <p className="text-[13px] text-slate-600 dark:text-gray-300 truncate">
+                                    {editingMessage ? editingMessage.text : (replyingTo?.text || (replyingTo?.fileName ? `📎 ${replyingTo.fileName}` : 'Media'))}
                                 </p>
                             </div>
-                            <button onClick={cancelEditReply} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400">
-                                <X className="w-4 h-4" />
+                            <button
+                                onClick={cancelEditReply}
+                                className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-400 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
                     </motion.div>
@@ -877,16 +933,6 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                         )}
                     </motion.button>
 
-                    {/* If message is empty, show Mic (placeholder/aesthetic) */}
-                    {(!newMessage.trim() && !isUploading) && (
-                        <motion.button
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="p-3 mb-0.5 rounded-full bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-all pointer-events-none"
-                        >
-                            <Mic className="w-6 h-6" />
-                        </motion.button>
-                    )}
                 </form>
 
                 {/* Emoji picker - positioned relative to input area */}

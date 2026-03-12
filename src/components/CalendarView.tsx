@@ -27,11 +27,12 @@ interface CalendarViewProps {
     tasks: Task[];
     members: User[];
     projectName?: string;
+    onTaskClick?: (task: Task) => void;
 }
 
 type ViewType = 'week' | 'month' | 'year';
 
-const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName, onTaskClick }) => {
     const [viewType, setViewType] = useState<ViewType>('week');
     const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -117,8 +118,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
                     transition={{ duration: 0.4, ease: 'backOut' }}
                     className="min-h-[600px]"
                 >
-                    {viewType === 'week' && <WeekMode days={weekDays} tasks={tasks} members={members} />}
-                    {viewType === 'month' && <MonthMode days={monthDays} tasks={tasks} currentMonth={currentDate} projectName={projectName} />}
+                    {viewType === 'week' && <WeekMode days={weekDays} tasks={tasks} members={members} onTaskClick={onTaskClick} />}
+                    {viewType === 'month' && <MonthMode days={monthDays} tasks={tasks} currentMonth={currentDate} projectName={projectName} onTaskClick={onTaskClick} />}
                     {viewType === 'year' && <YearMode months={yearMonths} tasks={tasks} members={members} />}
                 </motion.div>
             </AnimatePresence>
@@ -126,16 +127,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
     );
 };
 
-const WeekMode: React.FC<{ days: Date[], tasks: Task[], members: User[] }> = ({ days, tasks, members }) => (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+const WeekMode: React.FC<{ days: Date[], tasks: Task[], members: User[], onTaskClick?: (task: Task) => void }> = ({ days, tasks, members, onTaskClick }) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-3 sm:gap-4">
         {days.map((day, i) => {
             const dayTasks = tasks.filter(t => t.deadline && isSameDay(t.deadline.toDate(), day));
-            return <DayCard key={i} day={day} tasks={dayTasks} members={members} fullHeight />;
+            return <DayCard key={i} day={day} tasks={dayTasks} members={members} fullHeight onTaskClick={onTaskClick} />;
         })}
     </div>
 );
 
-const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, projectName?: string }> = ({ days, tasks, currentMonth, projectName }) => (
+const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, projectName?: string, onTaskClick?: (task: Task) => void }> = ({ days, tasks, currentMonth, projectName, onTaskClick }) => (
     <div className="overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="min-w-[700px] lg:min-w-0 grid grid-cols-7 gap-2 sm:gap-3 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
@@ -166,10 +167,14 @@ const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, pro
 
                         <div className="space-y-1 sm:space-y-1.5 overflow-hidden">
                             {dayTasks.slice(0, window.innerWidth < 640 ? 2 : 5).map(t => (
-                                <div key={t.id} className={cn(
-                                    "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-bold truncate transition-colors",
-                                    isTodayDay ? "bg-white/20 text-white" : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                                )}>
+                                <div 
+                                    key={t.id} 
+                                    onClick={() => onTaskClick?.(t)}
+                                    className={cn(
+                                        "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-bold truncate transition-colors cursor-pointer",
+                                        isTodayDay ? "bg-white/20 text-white hover:bg-white/30" : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800"
+                                    )}
+                                >
                                     {t.title}
                                 </div>
                             ))}
@@ -255,7 +260,7 @@ const YearMode: React.FC<{ months: Date[], tasks: Task[], members: User[] }> = (
     </div>
 );
 
-const DayCard: React.FC<{ day: Date, tasks: Task[], members: User[], fullHeight?: boolean }> = ({ day, tasks, members, fullHeight }) => {
+const DayCard: React.FC<{ day: Date, tasks: Task[], members: User[], fullHeight?: boolean, onTaskClick?: (task: Task) => void }> = ({ day, tasks, members, fullHeight, onTaskClick }) => {
     const isCurrentDay = isToday(day);
 
     return (
@@ -299,9 +304,7 @@ const DayCard: React.FC<{ day: Date, tasks: Task[], members: User[], fullHeight?
 
                         return (
                             <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                key={task.id}
+                                onClick={() => onTaskClick?.(task)}
                                 className={cn(
                                     "p-4 rounded-2xl text-[10px] font-bold border transition-all shadow-sm cursor-pointer",
                                     isDone

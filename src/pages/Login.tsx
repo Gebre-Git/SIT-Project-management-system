@@ -1,6 +1,6 @@
 import React from 'react';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth, db } from '../lib/firebase';
+import { auth, db, firebaseConfigError, isFirebaseAvailable } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,12 @@ const Login: React.FC = () => {
 
     const handleGoogleLogin = async () => {
         if (isLoggingIn) return;
+
+        if (!isFirebaseAvailable) {
+            alert(`Firebase is not configured correctly. ${firebaseConfigError || 'Check your VITE_FIREBASE_* values.'}`);
+            return;
+        }
+
         setIsLoggingIn(true);
         try {
             console.log("Starting Google Login...");
@@ -75,10 +81,16 @@ const Login: React.FC = () => {
                     </div>
 
                     <div className="space-y-4 pt-4">
+                        {!isFirebaseAvailable && (
+                            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+                                Firebase auth is unavailable. Add valid `VITE_FIREBASE_*` values to your local environment and restart Vite.
+                            </div>
+                        )}
+
                         <button
                             onClick={handleGoogleLogin}
-                            disabled={isLoggingIn}
-                            className={`w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 text-slate-700 dark:text-white font-semibold py-4 px-6 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={isLoggingIn || !isFirebaseAvailable}
+                            className={`w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 text-slate-700 dark:text-white font-semibold py-4 px-6 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 ${(isLoggingIn || !isFirebaseAvailable) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             {isLoggingIn ? (
                                 <span className="animate-pulse">Signing in...</span>
