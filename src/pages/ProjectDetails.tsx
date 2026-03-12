@@ -160,28 +160,32 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    const [isRegeneratingCode, setIsRegeneratingCode] = useState(false);
     const handleRotateInviteCode = async () => {
         if (!projectId || !project || !currentUser || isGuest) return;
         if (project.ownerId !== currentUser.uid) return;
 
         const confirmed = await showConfirm({
             title: 'Regenerate Invite Code',
-            message: 'Generating a new invite code will immediately invalidate the current one. Continue?',
+            message: 'Generating a new invite code will immediately invalidate the current link. Do you want to proceed?',
             confirmLabel: 'Regenerate',
             type: 'warning'
         });
         if (!confirmed) return;
 
+        setIsRegeneratingCode(true);
         const newCode = Math.random().toString(36).substring(2, 9).toUpperCase();
         try {
             await updateDoc(doc(db, 'projects', projectId), {
                 inviteCode: newCode,
                 updatedAt: serverTimestamp()
             });
-            showAlert("New invite code generated!", "success");
+            showAlert("New invite code generated successfully!", "success");
         } catch (err) {
             console.error(err);
             showAlert("Failed to regenerate invite code.", "error");
+        } finally {
+            setIsRegeneratingCode(false);
         }
     };
 
@@ -1670,14 +1674,15 @@ const ProjectDetails: React.FC = () => {
                             </h2>
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 font-mono text-sm bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                                 <div>
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Current Invite Code</p>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider">
-                                            {project?.inviteCode}
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Current Invite Link</p>
+                                    <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3">
+                                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-xs md:max-w-sm">
+                                            {window.location.origin}/join/{project?.inviteCode}
                                         </span>
                                         <button
                                             onClick={copyInvite}
-                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-blue-500"
+                                            className="p-1.5 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-blue-500 shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                            title="Copy Invite Link"
                                         >
                                             <Share2 className="w-4 h-4" />
                                         </button>
@@ -1685,8 +1690,10 @@ const ProjectDetails: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={handleRotateInviteCode}
-                                    className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all text-xs uppercase tracking-widest"
+                                    disabled={isRegeneratingCode}
+                                    className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 disabled:opacity-50 transition-all text-xs uppercase tracking-widest whitespace-nowrap flex items-center gap-2"
                                 >
+                                    {isRegeneratingCode && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                                     Regenerate Code
                                 </button>
                             </div>

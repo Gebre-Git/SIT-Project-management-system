@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, HelpCircle, X } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { ConfirmConfig } from '../types/confirm';
+import { ConfirmConfig } from '../types';
 
 interface CustomConfirmProps {
     config: ConfirmConfig | null;
