@@ -95,6 +95,9 @@ const ProjectDetails: React.FC = () => {
     const [uploadingTaskId, setUploadingTaskId] = useState<string | null>(null);
     const [taskUploadProgress, setTaskUploadProgress] = useState(0);
 
+    // Final Project state
+    const [newTaskIsFinalProject, setNewTaskIsFinalProject] = useState(false);
+
     // Project Settings Edit State
     const [editName, setEditName] = useState('');
     const [editCourse, setEditCourse] = useState('');
@@ -390,6 +393,7 @@ const ProjectDetails: React.FC = () => {
             deadline: Timestamp.fromDate(new Date(newTaskDate)),
             assignedTo: project?.type === 'personal' ? [currentUser.uid] : [],
             requiresUpload: project?.type !== 'personal' && newTaskRequiresUpload,
+            isFinalProject: newTaskIsFinalProject,
             subTasks: subTasksList,
             createdBy: currentUser.uid,
             createdAt: serverTimestamp() as Timestamp,
@@ -435,6 +439,7 @@ const ProjectDetails: React.FC = () => {
         setNewTaskDate('');
         setNewSubTasks([]);
         setNewTaskRequiresUpload(false);
+        setNewTaskIsFinalProject(false);
     };
 
     const toggleTaskStatus = async (task: Task) => {
@@ -1249,27 +1254,54 @@ const ProjectDetails: React.FC = () => {
 
                                                 {/* File Upload Required Toggle (team tasks only) */}
                                                 {!isPersonal && (
-                                                    <div
-                                                        onClick={() => setNewTaskRequiresUpload(prev => !prev)}
-                                                        className={cn(
-                                                            "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all mt-2",
-                                                            newTaskRequiresUpload
-                                                                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
-                                                                : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50"
-                                                        )}
-                                                    >
-                                                        <div className={cn(
-                                                            "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
-                                                            newTaskRequiresUpload ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-700"
-                                                        )}>
+                                                    <div className="flex flex-col gap-2 w-full mt-2">
+                                                        <div
+                                                            onClick={() => setNewTaskRequiresUpload(prev => !prev)}
+                                                            className={cn(
+                                                                "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all",
+                                                                newTaskRequiresUpload
+                                                                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                                                                    : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50"
+                                                            )}
+                                                        >
                                                             <div className={cn(
-                                                                "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
-                                                                newTaskRequiresUpload ? "left-5" : "left-0.5"
-                                                            )} />
+                                                                "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
+                                                                newTaskRequiresUpload ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-700"
+                                                            )}>
+                                                                <div className={cn(
+                                                                    "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
+                                                                    newTaskRequiresUpload ? "left-5" : "left-0.5"
+                                                                )} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-900 dark:text-white">Requires file upload to complete</p>
+                                                                <p className="text-[10px] text-slate-500">Assigned member must upload a file before marking this done</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <p className="text-xs font-bold text-slate-900 dark:text-white">Requires file upload to complete</p>
-                                                            <p className="text-[10px] text-slate-500">Assigned member must upload a file before marking this done</p>
+
+                                                        {/* Final Project Toggle */}
+                                                        <div
+                                                            onClick={() => setNewTaskIsFinalProject(prev => !prev)}
+                                                            className={cn(
+                                                                "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all",
+                                                                newTaskIsFinalProject
+                                                                    ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+                                                                    : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-purple-200 dark:hover:border-purple-900/50"
+                                                            )}
+                                                        >
+                                                            <div className={cn(
+                                                                "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
+                                                                newTaskIsFinalProject ? "bg-purple-600" : "bg-slate-300 dark:bg-slate-700"
+                                                            )}>
+                                                                <div className={cn(
+                                                                    "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
+                                                                    newTaskIsFinalProject ? "left-5" : "left-0.5"
+                                                                )} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-900 dark:text-white">(Final Project)</p>
+                                                                <p className="text-[10px] text-slate-500">Mark this task as a final project for instructor monitoring</p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 )}

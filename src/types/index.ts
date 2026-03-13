@@ -60,6 +60,7 @@ export interface Task {
     requiresUpload?: boolean;        // If true, member must upload a file to complete
     submissionUrl?: string | null;   // Download URL of submitted file
     submissionFileName?: string | null; // Original filename for display
+    isFinalProject?: boolean;        // If true, marked as a final project
     createdBy: string; // User UID who created the task
     createdAt: Timestamp;
     updatedAt: Timestamp;
@@ -122,6 +123,7 @@ export interface ChatMessage {
     pinnedBy?: string | null;
     pinnedAt?: Timestamp | null;
     reactions?: Record<string, string[]>;
+    seenBy?: string[];
 }
 
 export interface AdminInviteToken {
