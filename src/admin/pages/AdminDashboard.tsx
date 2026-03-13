@@ -567,15 +567,15 @@ const AdminDashboard: React.FC = () => {
                             {displayedUsers.map((u) => (
                                 <tr key={u.uid} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
                                     <td className="py-4 px-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-sm font-black text-white shadow-lg shadow-violet-500/20 shrink-0">
+                                        <Link to={`/admin/user/${u.uid}`} className="flex items-center gap-3 group/link">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-sm font-black text-white shadow-lg shadow-violet-500/20 shrink-0 group-hover/link:scale-110 transition-transform">
                                                 {(u.displayName || u.email || '?').charAt(0).toUpperCase()}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="font-bold text-slate-800 dark:text-slate-200 truncate">{u.displayName || 'Unnamed User'}</p>
+                                                <p className="font-bold text-slate-800 dark:text-slate-200 truncate group-hover/link:text-violet-500 transition-colors">{u.displayName || 'Unnamed User'}</p>
                                                 <p className="text-[10px] text-slate-400 sm:hidden truncate font-bold uppercase tracking-wider">{u.email}</p>
                                             </div>
-                                        </div>
+                                        </Link>
                                     </td>
                                     <td className="py-4 px-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell font-medium truncate max-w-[180px]">{u.email}</td>
                                     <td className="py-4 px-3 text-center">

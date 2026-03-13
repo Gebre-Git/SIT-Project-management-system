@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
     Shield,
@@ -218,9 +218,9 @@ const AdminGroupDetail: React.FC = () => {
                                 return (
                                     <tr key={member.uid} className={`group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all rounded-2xl border-b border-slate-50 dark:border-slate-800/30 ${stats?.isAtRisk ? 'bg-red-50/30' : ''}`}>
                                         <td className="py-5 px-2">
-                                            <div className="flex items-center gap-4">
+                                            <Link to={`/admin/user/${member.uid}`} className="flex items-center gap-4 group/link hover:opacity-80 transition-opacity cursor-pointer">
                                                 <div className="relative">
-                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-lg font-black text-slate-600 dark:text-slate-400 overflow-hidden shadow-inner">
+                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-lg font-black text-slate-600 dark:text-slate-400 overflow-hidden shadow-inner group-hover/link:scale-110 transition-transform">
                                                         {member.photoURL ? (
                                                             <img src={member.photoURL} alt={member.displayName || ''} className="w-full h-full object-cover" />
                                                         ) : (
@@ -234,10 +234,10 @@ const AdminGroupDetail: React.FC = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{member.displayName || 'Anonymous User'}</p>
+                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover/link:text-blue-600 transition-colors">{member.displayName || 'Anonymous User'}</p>
                                                     <p className="text-xs font-bold text-slate-500">@{member.username || 'user'}</p>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         </td>
                                         <td className="py-5 px-2">
                                             <p className="text-sm font-bold text-slate-700 dark:text-slate-300">{member.email}</p>

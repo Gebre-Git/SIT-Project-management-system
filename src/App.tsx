@@ -10,6 +10,7 @@ import AppLayout from './layouts/AppLayout';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import AdminDashboard from './admin/pages/AdminDashboard';
 import AdminGroupDetail from './admin/pages/AdminGroupDetail';
+import AdminUserDetail from './admin/pages/AdminUserDetail';
 import AdminInvitePage from './admin/pages/AdminInvitePage';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
                     <Route element={<AppLayout />}>
                         <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/admin/group/:projectId" element={<AdminGroupDetail />} />
+                        <Route path="/admin/user/:userId" element={<AdminUserDetail />} />
                     </Route>
                 </Route>
 
