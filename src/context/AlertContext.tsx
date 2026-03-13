@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import CustomAlert, { AlertType } from '../components/CustomAlert';
 import CustomConfirm from '../components/CustomConfirm';
 import { ConfirmConfig } from '../types';
@@ -60,12 +60,14 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 isOpen={alert.isOpen}
                 onClose={hideAlert}
             />
-            <CustomConfirm
-                config={confirmState.config}
-                isOpen={confirmState.isOpen}
-                onConfirm={handleConfirm}
-                onCancel={handleCancel}
-            />
+            {confirmState.config && (
+                <CustomConfirm
+                    config={confirmState.config}
+                    isOpen={confirmState.isOpen}
+                    onConfirm={handleConfirm}
+                    onCancel={handleCancel}
+                />
+            )}
         </AlertContext.Provider>
     );
 };

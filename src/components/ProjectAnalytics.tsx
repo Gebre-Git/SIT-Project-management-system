@@ -15,7 +15,11 @@ interface AnalyticsProps {
     members: User[];
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+const getMemberColor = (index: number) => {
+    // Golden angle (approx 137.508°) provides excellent distribution across the hue spectrum
+    const hue = (index * 137.5) % 360;
+    return `hsl(${hue}, 75%, 55%)`;
+};
 
 const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members }) => {
 
@@ -33,7 +37,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                 // If total score is 0, give everyone equal weight for the visual placeholder
                 value: totalScore > 0 ? stat.relativeContribution : (100 / (members.length || 1)),
                 score: stat.contributionScore,
-                color: COLORS[index % COLORS.length]
+                color: getMemberColor(index)
             };
         });
 
@@ -89,9 +93,10 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                     cy="50%"
                                     innerRadius={window.innerWidth < 640 ? 50 : 70}
                                     outerRadius={window.innerWidth < 640 ? 80 : 100}
-                                    paddingAngle={8}
+                                    paddingAngle={2}
                                     dataKey="value"
-                                    stroke="none"
+                                    stroke="#fff"
+                                    strokeWidth={2}
                                     isAnimationActive={true}
                                 >
                                     {contributionData.map((entry, index) => (
@@ -99,6 +104,8 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                             key={`cell-${index}`}
                                             fill={hasCompletedTasks ? entry.color : '#e2e8f0'}
                                             opacity={hasCompletedTasks ? 1 : 0.4}
+                                            stroke="#fff"
+                                            strokeWidth={2}
                                         />
                                     ))}
                                 </Pie>

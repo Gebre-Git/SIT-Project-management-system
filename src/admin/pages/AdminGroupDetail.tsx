@@ -10,7 +10,9 @@ import {
     Clock, 
     TrendingUp,
     Briefcase,
-    AlertTriangle
+    AlertTriangle,
+    ChevronDown,
+    ClipboardList
 } from 'lucide-react';
 import { useGroupDetailData } from '../hooks/useGroupDetailData';
 import ProjectAnalytics from '../../components/ProjectAnalytics';
@@ -124,11 +126,64 @@ const AdminGroupDetail: React.FC = () => {
                 <ProjectAnalytics project={project} tasks={tasks} members={members} />
             </div>
 
-            {/* Team Members List */}
+            {/* Task Oversight Section */}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
+                className="glass-card rounded-[3rem] p-10 border-2 border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-blue-500/5"
+            >
+                <div className="flex items-center gap-6 mb-10">
+                    <div className="p-4 rounded-[2rem] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-lg shadow-blue-500/20">
+                        <BarChart3 className="w-8 h-8" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none mb-2">Project Roadmap & Task Oversight</h2>
+                        <p className="text-sm font-bold text-slate-500 tracking-tight">Real-time status synchronization • Deadline protection active</p>
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    <TaskGroup 
+                        title="To Do" 
+                        status="todo" 
+                        tasks={tasks.filter(t => t.status === 'todo')} 
+                        members={members} 
+                        icon={ClipboardList} 
+                        color="text-slate-500 bg-slate-50/80"
+                    />
+                    <TaskGroup 
+                        title="Active Development" 
+                        status="in_progress" 
+                        tasks={tasks.filter(t => t.status === 'in_progress')} 
+                        members={members} 
+                        icon={Clock} 
+                        color="text-amber-600 bg-amber-50/80"
+                    />
+                    <TaskGroup 
+                        title="Awaiting Review" 
+                        status="under_review" 
+                        tasks={tasks.filter(t => t.status === 'under_review')} 
+                        members={members} 
+                        icon={AlertTriangle} 
+                        color="text-purple-600 bg-purple-50/80"
+                    />
+                    <TaskGroup 
+                        title="Completed Archive" 
+                        status="done" 
+                        tasks={tasks.filter(t => t.status === 'done')} 
+                        members={members} 
+                        icon={CheckCircle2} 
+                        color="text-emerald-600 bg-emerald-50/80"
+                    />
+                </div>
+            </motion.div>
+
+            {/* Team Members List */}
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
                 className="glass-card rounded-[2.5rem] p-8 border-2 border-slate-100 dark:border-slate-800/50"
             >
                 <div className="flex items-center gap-4 mb-8">
@@ -197,6 +252,156 @@ const AdminGroupDetail: React.FC = () => {
         </div>
     );
 };
+
+const TaskGroup: React.FC<{
+    title: string;
+    status: string;
+    tasks: any[];
+    members: any[];
+    icon: any;
+    color: string;
+}> = ({ title, status, tasks, members, icon: Icon, color }) => {
+    const [isOpen, setIsOpen] = React.useState(status === 'in_progress');
+
+    return (
+        <div className="border border-slate-100 dark:border-slate-800 rounded-[1.5rem] overflow-hidden bg-white/50 dark:bg-slate-900/50">
+            <button 
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+            >
+                <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-xl ${color}`}>
+                        <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{title}</h3>
+                        <p className="text-xs font-bold text-slate-500">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'} assigned</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex -space-x-2">
+                        {Array.from(new Set(tasks.flatMap(t => t.assignedTo))).slice(0, 3).map(uid => {
+                            const m = members.find(u => u.uid === uid);
+                            return (
+                                <div key={uid} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black uppercase overflow-hidden">
+                                    {m?.photoURL ? <img src={m.photoURL} alt="" /> : (m?.displayName || '?')[0]}
+                                </div>
+                            );
+                        })}
+                        {new Set(tasks.flatMap(t => t.assignedTo)).size > 3 && (
+                            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">
+                                +{new Set(tasks.flatMap(t => t.assignedTo)).size - 3}
+                            </div>
+                        )}
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                </div>
+            </button>
+
+            {isOpen && (
+                <div className="p-6 pt-0 border-t border-slate-50 dark:border-slate-800/50">
+                    {tasks.length === 0 ? (
+                        <div className="py-8 text-center bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No tasks currently in this status</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            {tasks.map(task => (
+                                <TaskCard key={task.id} task={task} members={members} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
+const TaskCard: React.FC<{ task: any, members: any[] }> = ({ task, members }) => {
+    const isOverdue = task.status !== 'done' && task.deadline && new Date(task.deadline.toDate()) < new Date();
+    
+    return (
+        <div className="p-6 rounded-[2rem] border bg-white dark:bg-slate-800/80 border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-2xl transition-all duration-300 group/card relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500/20 group-hover/card:bg-blue-500 transition-colors" />
+            
+            <div className="flex justify-between items-start mb-6">
+                <span className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ${
+                    task.weight === 'large' ? 'bg-red-50 text-red-600 border border-red-100' : 
+                    task.weight === 'medium' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
+                    'bg-sky-50 text-sky-600 border border-sky-100'
+                }`}>
+                    {task.weight} Intensity
+                </span>
+                {isOverdue && (
+                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-500 text-white text-[9px] font-black uppercase tracking-widest animate-pulse">
+                        <AlertTriangle className="w-3 h-3" />
+                        Critical Overdue
+                    </span>
+                )}
+            </div>
+            
+            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter text-lg mb-6 leading-[1.1]">
+                {task.title}
+            </h4>
+
+            {/* Sub-tasks Section */}
+            {task.subTasks && task.subTasks.length > 0 && (
+                <div className="mb-6 space-y-3 bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Sub-Task Execution</p>
+                    {task.subTasks.map((st: any) => {
+                        const m = members.find(u => u.uid === st.assignedTo);
+                        return (
+                            <div key={st.id} className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className={`p-1 rounded-md ${st.status === 'done' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
+                                        <CheckCircle2 className="w-3 h-3" />
+                                    </div>
+                                    <span className={`text-xs font-bold truncate tracking-tight ${st.status === 'done' ? 'text-slate-400 line-through' : 'text-slate-600 dark:text-slate-300'}`}>
+                                        {st.title}
+                                    </span>
+                                </div>
+                                {m && (
+                                    <div className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm">
+                                        <div className="w-4 h-4 rounded-full overflow-hidden flex-shrink-0">
+                                            {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-[8px] font-black">{m.username[0]}</div>}
+                                        </div>
+                                        <span className="text-[8px] font-black uppercase text-slate-500">{m.username}</span>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+            
+            <div className="flex items-center justify-between pt-6 border-t border-slate-50 dark:border-slate-800/50">
+                <div className="flex items-center gap-3">
+                    <div className="flex -space-x-2">
+                        {task.assignedTo?.map((uid: string) => {
+                            const m = members.find(u => u.uid === uid);
+                            return (
+                                <div key={uid} title={m?.displayName || ''} className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-[10px] font-black text-slate-600 dark:text-slate-400 border-2 border-white dark:border-slate-900 overflow-hidden shadow-sm">
+                                    {m?.photoURL ? <img src={m.photoURL} alt="" className="w-full h-full object-cover" /> : (m?.displayName || '?')[0]}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+                
+                <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-1.5 text-slate-400 mb-0.5">
+                        <Clock className="w-3 h-3" />
+                        <span className="text-[9px] font-black uppercase tracking-widest">Target Date</span>
+                    </div>
+                    <span className={`text-xs font-black tracking-tight ${isOverdue ? 'text-red-500' : 'text-slate-900 dark:text-white'}`}>
+                        {task.deadline ? format(task.deadline.toDate(), 'MMM dd, yyyy') : 'NO DEADLINE'}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 const StatBox: React.FC<{
     label: string, 

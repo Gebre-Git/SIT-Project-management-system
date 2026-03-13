@@ -1338,7 +1338,7 @@ const ProjectDetails: React.FC = () => {
                                 </div>
                             ) : (
                                 (() => {
-                                    const todoTasks = tasks.filter(t => t.status === 'todo').sort((a, b) => {
+                                    const todoTasks = tasks.filter(t => t.status !== 'done').sort((a, b) => {
                                         const now = new Date();
                                         const aDeadline = new Date(a.deadline.toDate());
                                         const bDeadline = new Date(b.deadline.toDate());
