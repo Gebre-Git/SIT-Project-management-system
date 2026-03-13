@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
     doc,
     getDoc,
@@ -66,6 +66,7 @@ const ProjectDetails: React.FC = () => {
     const { projectId } = useParams<{ projectId: string }>();
     const { currentUser, isGuest } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const { deleteProject } = useProjects();
     const { showAlert, showConfirm } = useAlert();
 
@@ -93,6 +94,9 @@ const ProjectDetails: React.FC = () => {
     const [newTaskRequiresUpload, setNewTaskRequiresUpload] = useState(false);
     const [uploadingTaskId, setUploadingTaskId] = useState<string | null>(null);
     const [taskUploadProgress, setTaskUploadProgress] = useState(0);
+
+    // Final Project state
+    const [newTaskIsFinalProject, setNewTaskIsFinalProject] = useState(false);
 
     // Project Settings Edit State
     const [editName, setEditName] = useState('');
@@ -159,28 +163,32 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    const [isRegeneratingCode, setIsRegeneratingCode] = useState(false);
     const handleRotateInviteCode = async () => {
         if (!projectId || !project || !currentUser || isGuest) return;
         if (project.ownerId !== currentUser.uid) return;
 
         const confirmed = await showConfirm({
             title: 'Regenerate Invite Code',
-            message: 'Generating a new invite code will immediately invalidate the current one. Continue?',
+            message: 'Generating a new invite code will immediately invalidate the current link. Do you want to proceed?',
             confirmLabel: 'Regenerate',
             type: 'warning'
         });
         if (!confirmed) return;
 
+        setIsRegeneratingCode(true);
         const newCode = Math.random().toString(36).substring(2, 9).toUpperCase();
         try {
             await updateDoc(doc(db, 'projects', projectId), {
                 inviteCode: newCode,
                 updatedAt: serverTimestamp()
             });
-            showAlert("New invite code generated!", "success");
+            showAlert("New invite code generated successfully!", "success");
         } catch (err) {
             console.error(err);
             showAlert("Failed to regenerate invite code.", "error");
+        } finally {
+            setIsRegeneratingCode(false);
         }
     };
 
@@ -344,6 +352,20 @@ const ProjectDetails: React.FC = () => {
     const isPersonal = project?.type === 'personal';
     const isOwner = project?.ownerId === currentUser?.uid;
 
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab');
+
+        if (tab === 'settings') {
+            setActiveTab(isOwner ? 'settings' : 'tasks');
+            return;
+        }
+
+        if (tab === 'tasks' || tab === 'kanban' || tab === 'calendar' || tab === 'analytics' || tab === 'chat') {
+            setActiveTab(tab);
+        }
+    }, [location.search, isOwner]);
+
     const handleAddTask = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newTaskTitle || !newTaskDate || !currentUser || !projectId) return;
@@ -371,6 +393,7 @@ const ProjectDetails: React.FC = () => {
             deadline: Timestamp.fromDate(new Date(newTaskDate)),
             assignedTo: project?.type === 'personal' ? [currentUser.uid] : [],
             requiresUpload: project?.type !== 'personal' && newTaskRequiresUpload,
+            isFinalProject: newTaskIsFinalProject,
             subTasks: subTasksList,
             createdBy: currentUser.uid,
             createdAt: serverTimestamp() as Timestamp,
@@ -416,6 +439,7 @@ const ProjectDetails: React.FC = () => {
         setNewTaskDate('');
         setNewSubTasks([]);
         setNewTaskRequiresUpload(false);
+        setNewTaskIsFinalProject(false);
     };
 
     const toggleTaskStatus = async (task: Task) => {
@@ -1230,27 +1254,54 @@ const ProjectDetails: React.FC = () => {
 
                                                 {/* File Upload Required Toggle (team tasks only) */}
                                                 {!isPersonal && (
-                                                    <div
-                                                        onClick={() => setNewTaskRequiresUpload(prev => !prev)}
-                                                        className={cn(
-                                                            "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all mt-2",
-                                                            newTaskRequiresUpload
-                                                                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
-                                                                : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50"
-                                                        )}
-                                                    >
-                                                        <div className={cn(
-                                                            "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
-                                                            newTaskRequiresUpload ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-700"
-                                                        )}>
+                                                    <div className="flex flex-col gap-2 w-full mt-2">
+                                                        <div
+                                                            onClick={() => setNewTaskRequiresUpload(prev => !prev)}
+                                                            className={cn(
+                                                                "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all",
+                                                                newTaskRequiresUpload
+                                                                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                                                                    : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50"
+                                                            )}
+                                                        >
                                                             <div className={cn(
-                                                                "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
-                                                                newTaskRequiresUpload ? "left-5" : "left-0.5"
-                                                            )} />
+                                                                "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
+                                                                newTaskRequiresUpload ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-700"
+                                                            )}>
+                                                                <div className={cn(
+                                                                    "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
+                                                                    newTaskRequiresUpload ? "left-5" : "left-0.5"
+                                                                )} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-900 dark:text-white">Requires file upload to complete</p>
+                                                                <p className="text-[10px] text-slate-500">Assigned member must upload a file before marking this done</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <p className="text-xs font-bold text-slate-900 dark:text-white">Requires file upload to complete</p>
-                                                            <p className="text-[10px] text-slate-500">Assigned member must upload a file before marking this done</p>
+
+                                                        {/* Final Project Toggle */}
+                                                        <div
+                                                            onClick={() => setNewTaskIsFinalProject(prev => !prev)}
+                                                            className={cn(
+                                                                "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all",
+                                                                newTaskIsFinalProject
+                                                                    ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+                                                                    : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-purple-200 dark:hover:border-purple-900/50"
+                                                            )}
+                                                        >
+                                                            <div className={cn(
+                                                                "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
+                                                                newTaskIsFinalProject ? "bg-purple-600" : "bg-slate-300 dark:bg-slate-700"
+                                                            )}>
+                                                                <div className={cn(
+                                                                    "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
+                                                                    newTaskIsFinalProject ? "left-5" : "left-0.5"
+                                                                )} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-900 dark:text-white">(Final Project)</p>
+                                                                <p className="text-[10px] text-slate-500">Mark this task as a final project for instructor monitoring</p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 )}
@@ -1655,14 +1706,15 @@ const ProjectDetails: React.FC = () => {
                             </h2>
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 font-mono text-sm bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                                 <div>
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Current Invite Code</p>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider">
-                                            {project?.inviteCode}
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Current Invite Link</p>
+                                    <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3">
+                                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-xs md:max-w-sm">
+                                            {window.location.origin}/join/{project?.inviteCode}
                                         </span>
                                         <button
                                             onClick={copyInvite}
-                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-blue-500"
+                                            className="p-1.5 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-blue-500 shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                            title="Copy Invite Link"
                                         >
                                             <Share2 className="w-4 h-4" />
                                         </button>
@@ -1670,8 +1722,10 @@ const ProjectDetails: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={handleRotateInviteCode}
-                                    className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all text-xs uppercase tracking-widest"
+                                    disabled={isRegeneratingCode}
+                                    className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 disabled:opacity-50 transition-all text-xs uppercase tracking-widest whitespace-nowrap flex items-center gap-2"
                                 >
+                                    {isRegeneratingCode && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                                     Regenerate Code
                                 </button>
                             </div>

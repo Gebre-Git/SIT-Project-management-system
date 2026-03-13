@@ -1,7 +1,9 @@
+console.log("🔥 FIREBASE.TS EXECUTING");
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,6 +13,9 @@ const firebaseConfig = {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
+
+export const isFirebaseAvailable = !!firebaseConfig.apiKey;
+export const firebaseConfigError = isFirebaseAvailable ? null : "Missing Firebase configuration in .env";
 
 // Debug log to verify keys are loaded
 console.log("🔥 Firebase Config Debug:", {
@@ -30,6 +35,9 @@ export const db = initializeFirestore(app, {
 // Initialize Firebase Storage — pass the bucket URL explicitly so the SDK
 // resolves the new .firebasestorage.app domain correctly on all platforms.
 export const storage = getStorage(app, `gs://${firebaseConfig.storageBucket}`);
+
+// Initialize Firebase Functions
+export const firebaseFunctions = getFunctions(app);
 
 // Debug: Listen to auth state changes
 onAuthStateChanged(auth, (user) => {

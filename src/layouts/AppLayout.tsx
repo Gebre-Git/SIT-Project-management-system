@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Menu, X, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Menu, X, LogOut, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import Logo from '../components/Logo';
 import ProfileDropdown from '../components/ProfileDropdown';
 import ProfileAvatar from '../components/ProfileAvatar';
@@ -10,22 +10,30 @@ import NotificationPanel from '../components/NotificationPanel';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 
-const SidebarLink = ({ to, icon: Icon, label, collapsed }: { to: string, icon: any, label: string, collapsed?: boolean }) => (
+interface SidebarLinkProps {
+    to: string;
+    icon: any;
+    label: string;
+    collapsed?: boolean;
+}
+
+const SidebarLink = ({ to, icon: Icon, label, collapsed }: SidebarLinkProps) => (
     <NavLink
         to={to}
         title={collapsed ? label : undefined}
         className={({ isActive }) => cn(
-            "flex items-center rounded-xl transition-all duration-300 group relative overflow-hidden",
-            collapsed ? "justify-center p-2" : "gap-3 px-4 py-3",
+            "flex items-center gap-3 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+            collapsed ? "justify-center px-0 mx-2" : "px-4",
             isActive
                 ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
         )}
+        title={collapsed ? label : undefined}
     >
         {({ isActive }) => (
             <>
-                <Icon className={cn("w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110", isActive && "fill-current opacity-100")} />
-                {!collapsed && <span className="relative z-10 whitespace-nowrap overflow-hidden">{label}</span>}
+                <Icon className={cn("w-5 h-5 transition-transform duration-300 group-hover:scale-110", isActive && "fill-current opacity-100")} />
+                {!collapsed && <span className="relative z-10">{label}</span>}
                 {!isActive && (
                     <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 )}
@@ -42,27 +50,24 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
             to={to}
             title={collapsed ? "My Profile" : undefined}
             className={({ isActive }) => cn(
-                "flex items-center rounded-xl transition-all duration-300 group relative overflow-hidden",
-                collapsed ? "justify-center p-2" : "gap-3 px-4 py-2.5",
+                "flex items-center gap-3 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden",
+                collapsed ? "justify-center px-0 mx-2" : "px-4",
                 isActive
                     ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
             )}
+            title={collapsed ? "Account Settings" : undefined}
         >
             {({ isActive }) => (
                 <>
                     <ProfileAvatar
-                    photoURL={currentUser?.photoURL}
-                    displayName={currentUser?.displayName}
-                    size={collapsed ? 'md' : 'sm'}
-                    className={cn(
-                        "transition-all duration-300",
-                        isActive ? "ring-2 ring-white/50" : (collapsed ? "ring-2 ring-blue-500/20 group-hover:ring-blue-500/50" : "group-hover:ring-blue-500/30"),
-                        collapsed && "scale-110 shadow-lg shadow-blue-500/10"
-                    )}
-                />
-                {!collapsed && (
-                    <div className="flex flex-col min-w-0 flex-1">
+                        photoURL={currentUser?.photoURL}
+                        displayName={currentUser?.displayName}
+                        size="sm"
+                        className={cn("ring-2 ring-transparent transition-all", isActive ? "ring-white/50" : "group-hover:ring-blue-500/30")}
+                    />
+                    {!collapsed && (
+                        <div className="flex flex-col min-w-0">
                             <span className="relative z-10 font-medium truncate">
                                 {currentUser?.displayName || 'My Profile'}
                             </span>
@@ -84,7 +89,7 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
 };
 
 const AppLayout: React.FC = () => {
-    const { logout } = useAuth();
+    const { logout, isSuperAdmin } = useAuth();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -104,47 +109,43 @@ const AppLayout: React.FC = () => {
         <div className="flex min-h-screen bg-bg-secondary dark:bg-bg-primary transition-colors duration-300">
             {/* Desktop Sidebar */}
             <motion.aside
-                initial={false}
-                animate={{ 
-                    width: isSidebarCollapsed ? 80 : 260,
-                    x: 0,
-                    opacity: 1
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="hidden lg:flex flex-col border-r border-border-color bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl fixed inset-y-0 z-40 overflow-hidden"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className={cn(
+                    "hidden lg:flex flex-col border-r border-border-color bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl fixed inset-y-0 z-40 transition-all duration-300",
+                    isSidebarCollapsed ? "w-[80px]" : "w-[260px]"
+                )}
             >
-                <div className={cn("h-20 flex items-center justify-between", isSidebarCollapsed ? "px-4 pt-4 flex-col gap-4 h-auto" : "px-6")}>
-                    <div className={cn("flex items-center gap-3 overflow-hidden", isSidebarCollapsed && "justify-center w-full")}>
-                        <Logo collapsed={isSidebarCollapsed} />
-                    </div>
-                    {!isSidebarCollapsed && (
-                        <button
-                            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors"
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
+                <div className={cn("flex flex-col flex-shrink-0 transition-all duration-300", isSidebarCollapsed ? "pt-6 pb-2 items-center gap-4" : "h-20 px-6 justify-center")}>
+                    {isSidebarCollapsed ? (
+                        <>
+                            <div className="flex justify-center w-full">
+                                <Logo collapsed={true} animate={false} />
+                            </div>
+                            <button onClick={() => setIsSidebarCollapsed(false)} className="p-1.5 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors shadow-sm">
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex items-center justify-between w-full">
+                            <Logo collapsed={false} animate={false} />
+                            <button onClick={() => setIsSidebarCollapsed(true)} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                        </div>
                     )}
                 </div>
 
-                {isSidebarCollapsed && (
-                    <div className="py-2 flex justify-center">
-                        <button
-                            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                            className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors shadow-sm"
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
-                )}
-
-                <nav className={cn("flex-1 py-6 space-y-4 transition-all duration-300", isSidebarCollapsed ? "px-2" : "px-4")}>
+                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
                     {!isSidebarCollapsed && (
                         <div className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                             Main
                         </div>
                     )}
                     <SidebarLink to="/dashboard" icon={LayoutDashboard} label="Dashboard" collapsed={isSidebarCollapsed} />
+                    {isSuperAdmin && (
+                        <SidebarLink to="/admin" icon={Shield} label="Admin Panel" collapsed={isSidebarCollapsed} />
+                    )}
 
                     {!isSidebarCollapsed && (
                         <div className="px-4 mt-8 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -157,22 +158,20 @@ const AppLayout: React.FC = () => {
                         onClick={handleLogout}
                         title={isSidebarCollapsed ? "Logout" : undefined}
                         className={cn(
-                            "w-full flex items-center text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all duration-300 group",
-                            isSidebarCollapsed ? "justify-center p-3 h-12" : "gap-3 px-4 py-3 mt-4"
+                            "w-full flex items-center gap-3 py-3 mt-4 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all duration-300 group",
+                            isSidebarCollapsed ? "justify-center px-0 mx-2" : "px-4"
                         )}
                     >
-                        <LogOut className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" />
-                        {!isSidebarCollapsed && <span className="font-medium whitespace-nowrap">Logout</span>}
+                        <LogOut className="w-5 h-5 transition-transform group-hover:scale-110" />
+                        {!isSidebarCollapsed && <span className="font-medium">Logout</span>}
                     </button>
                 </nav>
 
-                <div className={cn("mt-auto space-y-6 border-t border-border-color bg-white/30 dark:bg-slate-900/30 transition-all duration-300", isSidebarCollapsed ? "p-2" : "p-4")}>
-                    <div className="flex justify-center">
+                <div className={cn("p-4 border-t border-border-color bg-white/30 dark:bg-slate-900/30 flex flex-col gap-4", isSidebarCollapsed ? "items-center" : "")}>
+                    <div className={cn("flex", isSidebarCollapsed ? "justify-center" : "justify-center w-full")}>
                         <ThemeToggle collapsed={isSidebarCollapsed} />
                     </div>
-                    <div className={cn("flex flex-col items-center gap-3", !isSidebarCollapsed && "px-2 items-start")}>
-                        <ProfileDropdown collapsed={isSidebarCollapsed} />
-                    </div>
+                    <ProfileDropdown collapsed={isSidebarCollapsed} />
                 </div>
             </motion.aside>
 
@@ -184,8 +183,7 @@ const AppLayout: React.FC = () => {
                 <Logo collapsed animate={false} />
                 <div className="flex items-center gap-3">
                     <NotificationPanel />
-                    <ThemeToggle />
-                    <ProfileDropdown />
+                    <ProfileDropdown collapsed={true} />
                 </div>
             </div>
 
@@ -199,7 +197,16 @@ const AppLayout: React.FC = () => {
                         className="lg:hidden fixed inset-0 top-16 bg-white dark:bg-slate-950 z-30 p-6 flex flex-col gap-4"
                     >
                         <SidebarLink to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+                        {isSuperAdmin && (
+                            <SidebarLink to="/admin" icon={Shield} label="Admin Panel" />
+                        )}
                         <ProfileSidebarLink to="/profile" />
+                        
+                        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 mt-4">
+                            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Theme</span>
+                            <ThemeToggle />
+                        </div>
+
                         <button
                             onClick={handleLogout}
                             className="flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
@@ -212,14 +219,7 @@ const AppLayout: React.FC = () => {
             </AnimatePresence>
 
             {/* Main Content Area */}
-            <motion.main 
-                initial={false}
-                animate={{ 
-                    paddingLeft: window.innerWidth >= 1024 ? (isSidebarCollapsed ? 80 : 260) : 0
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="flex-1 pt-16 lg:pt-0 min-h-screen"
-            >
+            <main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[260px]")}>
                 <div className="max-w-7xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Outlet />
                 </div>

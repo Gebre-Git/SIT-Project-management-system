@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { ArrowRight, Globe, Zap, Shield, Sparkles, Calendar as CalendarIcon, PieChart, Layout, Users } from 'lucide-react';
 import Logo from '../components/Logo';
@@ -10,11 +10,6 @@ import ProfileAvatar from '../components/ProfileAvatar';
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const { scrollY } = useScroll();
-
-    // Smooth transitions for scroll-based effects
-    const heroOpacity = useTransform(scrollY, [0, 200], [1, 0]);
-    const heroScale = useTransform(scrollY, [0, 300], [1, 0.95]);
 
     const handleCTA = () => {
         navigate(currentUser ? '/dashboard' : '/login');
@@ -76,9 +71,7 @@ const LandingPage: React.FC = () => {
             <main className="pt-32 md:pt-56">
                 {/* Hero Section */}
                 <section className="max-w-7xl mx-auto px-6 mb-24 lg:mb-32">
-                    <div
-                        className="max-w-4xl mx-auto text-center space-y-10"
-                    >
+                    <div className="max-w-4xl mx-auto text-center space-y-10">
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}

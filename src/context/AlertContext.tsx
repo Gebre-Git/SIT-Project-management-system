@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import CustomAlert, { AlertType } from '../components/CustomAlert';
 import CustomConfirm from '../components/CustomConfirm';
-import { ConfirmConfig } from '../types/confirm';
+import { ConfirmConfig } from '../types';
 
 interface AlertContextType {
     showAlert: (message: string, type?: AlertType) => void;
@@ -17,12 +17,15 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         isOpen: false
     });
 
-    const [confirm, setConfirm] = useState<{ config: ConfirmConfig | null, isOpen: boolean }>({
+    const [confirmState, setConfirmState] = useState<{
+        config: ConfirmConfig | null;
+        resolve: ((value: boolean) => void) | null;
+        isOpen: boolean;
+    }>({
         config: null,
+        resolve: null,
         isOpen: false
     });
-
-    const resolveRef = useRef<((value: boolean) => void) | null>(null);
 
     const showAlert = useCallback((message: string, type: AlertType = 'info') => {
         setAlert({ message, type, isOpen: true });
@@ -32,28 +35,21 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setAlert(prev => ({ ...prev, isOpen: false }));
     }, []);
 
-    const showConfirm = useCallback((config: ConfirmConfig): Promise<boolean> => {
-        setConfirm({ config, isOpen: true });
-        return new Promise((resolve) => {
-            resolveRef.current = resolve;
+    const showConfirm = useCallback((config: ConfirmConfig) => {
+        return new Promise<boolean>((resolve) => {
+            setConfirmState({ config, resolve, isOpen: true });
         });
     }, []);
 
     const handleConfirm = useCallback(() => {
-        setConfirm(prev => ({ ...prev, isOpen: false }));
-        if (resolveRef.current) {
-            resolveRef.current(true);
-            resolveRef.current = null;
-        }
-    }, []);
+        if (confirmState.resolve) confirmState.resolve(true);
+        setConfirmState(prev => ({ ...prev, isOpen: false }));
+    }, [confirmState.resolve]);
 
     const handleCancel = useCallback(() => {
-        setConfirm(prev => ({ ...prev, isOpen: false }));
-        if (resolveRef.current) {
-            resolveRef.current(false);
-            resolveRef.current = null;
-        }
-    }, []);
+        if (confirmState.resolve) confirmState.resolve(false);
+        setConfirmState(prev => ({ ...prev, isOpen: false }));
+    }, [confirmState.resolve]);
 
     return (
         <AlertContext.Provider value={{ showAlert, showConfirm }}>
@@ -65,8 +61,8 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 onClose={hideAlert}
             />
             <CustomConfirm
-                config={confirm.config}
-                isOpen={confirm.isOpen}
+                config={confirmState.config}
+                isOpen={confirmState.isOpen}
                 onConfirm={handleConfirm}
                 onCancel={handleCancel}
             />
