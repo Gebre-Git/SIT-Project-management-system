@@ -61,6 +61,7 @@ const AdminDashboard: React.FC = () => {
     const { projects, users, taskStats, allTasks, loading, error } = useAdminData();
     const [projectSearch, setProjectSearch] = useState('');
     const [userSearch, setUserSearch] = useState('');
+    const [finalSearch, setFinalSearch] = useState('');
     const [showAllProjects, setShowAllProjects] = useState(false);
     const [showAllUsers, setShowAllUsers] = useState(false);
     const [groupFilter, setGroupFilter] = useState<'all' | 'team' | 'personal'>('all');
@@ -159,6 +160,15 @@ const AdminDashboard: React.FC = () => {
     const sortedFinalTasks = useMemo(() => {
         let result = allTasks.filter(t => t.isFinalProject);
 
+        if (finalSearch.trim()) {
+            const term = finalSearch.toLowerCase();
+            result = result.filter(t => {
+                const parentProject = projects.find(p => p.id === t.projectId);
+                return t.title.toLowerCase().includes(term) || 
+                       (parentProject?.name || '').toLowerCase().includes(term);
+            });
+        }
+
         result.sort((a, b) => {
             if (finalSort.by === 'date') {
                 const timeA = a.deadline?.toMillis() || 0;
@@ -173,7 +183,7 @@ const AdminDashboard: React.FC = () => {
         });
 
         return result;
-    }, [allTasks, finalSort]);
+    }, [allTasks, projects, finalSearch, finalSort]);
 
     // Chart data
     const chartData = [
@@ -467,7 +477,19 @@ const AdminDashboard: React.FC = () => {
                         gradient="from-amber-500 to-orange-500"
                         shadowColor="shadow-amber-500/25"
                     />
-                    <SortControls sortBy={finalSort.by} sortOrder={finalSort.order} setSort={setFinalSort} scoreLabel="Status Rank" />
+                    <div className="flex flex-wrap items-center gap-4">
+                        <div className="relative min-w-[240px]">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            <input
+                                type="text"
+                                value={finalSearch}
+                                onChange={(e) => setFinalSearch(e.target.value)}
+                                placeholder="Search tasks or groups..."
+                                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all font-medium"
+                            />
+                        </div>
+                        <SortControls sortBy={finalSort.by} sortOrder={finalSort.order} setSort={setFinalSort} scoreLabel="Status Rank" />
+                    </div>
                 </div>
                 
                 <div className="overflow-x-auto">
@@ -478,6 +500,7 @@ const AdminDashboard: React.FC = () => {
                                 <th className="text-left py-4 px-3 text-xs font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">Group</th>
                                 <th className="text-center py-4 px-3 text-xs font-black uppercase tracking-widest text-slate-400">Status</th>
                                 <th className="text-right py-4 px-3 text-xs font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">Deadline</th>
+                                <th className="text-right py-4 px-3 text-xs font-black uppercase tracking-widest text-slate-400">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -507,6 +530,14 @@ const AdminDashboard: React.FC = () => {
                                             <span className={`text-[11px] font-bold ${isOverdue ? 'text-red-500' : 'text-slate-400'}`}>
                                                 {task.deadline ? format(task.deadline.toDate(), 'MMM dd, yyyy') : '—'}
                                             </span>
+                                        </td>
+                                        <td className="py-4 px-3 text-right">
+                                            <Link
+                                                to={`/admin/final-project/${task.projectId}/${task.id}`}
+                                                className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-all inline-flex items-center gap-2"
+                                            >
+                                                Details <ExternalLink className="w-3 h-3" />
+                                            </Link>
                                         </td>
                                     </tr>
                                 );
