@@ -426,7 +426,7 @@ const AdminDashboard: React.FC = () => {
                                     </td>
                                     <td className="py-4 px-3 text-right">
                                         <Link
-                                            to={`/project/${p.id}`}
+                                            to={`/admin/group/${p.id}`}
                                             className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all inline-flex items-center gap-2"
                                         >
                                             View <ExternalLink className="w-3 h-3" />

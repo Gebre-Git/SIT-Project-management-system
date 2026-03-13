@@ -28,7 +28,6 @@ const SidebarLink = ({ to, icon: Icon, label, collapsed }: SidebarLinkProps) => 
                 ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
         )}
-        title={collapsed ? label : undefined}
     >
         {({ isActive }) => (
             <>
@@ -56,7 +55,6 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
                     ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
             )}
-            title={collapsed ? "Account Settings" : undefined}
         >
             {({ isActive }) => (
                 <>
@@ -219,7 +217,7 @@ const AppLayout: React.FC = () => {
             </AnimatePresence>
 
             {/* Main Content Area */}
-            <main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[260px]")}>
+            <motion.main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[260px]")}>
                 <div className="max-w-7xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Outlet />
                 </div>

@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import AppLayout from './layouts/AppLayout';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import AdminDashboard from './admin/pages/AdminDashboard';
+import AdminGroupDetail from './admin/pages/AdminGroupDetail';
 import AdminInvitePage from './admin/pages/AdminInvitePage';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
                 <Route element={<ProtectedAdminRoute />}>
                     <Route element={<AppLayout />}>
                         <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/admin/group/:projectId" element={<AdminGroupDetail />} />
                     </Route>
                 </Route>
 
