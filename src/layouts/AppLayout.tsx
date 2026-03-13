@@ -20,6 +20,7 @@ interface SidebarLinkProps {
 const SidebarLink = ({ to, icon: Icon, label, collapsed }: SidebarLinkProps) => (
     <NavLink
         to={to}
+        title={collapsed ? label : undefined}
         className={({ isActive }) => cn(
             "flex items-center gap-3 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
             collapsed ? "justify-center px-0 mx-2" : "px-4",
@@ -47,6 +48,7 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
     return (
         <NavLink
             to={to}
+            title={collapsed ? "My Profile" : undefined}
             className={({ isActive }) => cn(
                 "flex items-center gap-3 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden",
                 collapsed ? "justify-center px-0 mx-2" : "px-4",
@@ -221,7 +223,7 @@ const AppLayout: React.FC = () => {
                 <div className="max-w-7xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Outlet />
                 </div>
-            </main>
+            </motion.main>
         </div>
     );
 };

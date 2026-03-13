@@ -23,6 +23,7 @@ export interface Project {
     ownerId: string;
     members: string[]; // User UIDs
     inviteCode: string;
+    inviteCodeExpiresAt?: Timestamp;
     type: 'personal' | 'team';
     createdAt: Timestamp;
     updatedAt: Timestamp;
