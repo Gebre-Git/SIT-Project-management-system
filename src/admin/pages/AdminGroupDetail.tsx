@@ -2,21 +2,24 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-    Shield, 
-    Users, 
-    ArrowLeft, 
-    BarChart3, 
+    Shield,
+    Users,
+    ArrowLeft,
+    BarChart3,
     CheckCircle2, 
     Clock, 
     TrendingUp,
     Briefcase,
     AlertTriangle,
     ChevronDown,
-    ClipboardList
+    ClipboardList,
+    LucideIcon
 } from 'lucide-react';
 import { useGroupDetailData } from '../hooks/useGroupDetailData';
+import { AccountabilityEngine } from '../../lib/AccountabilityEngine';
 import ProjectAnalytics from '../../components/ProjectAnalytics';
 import { format } from 'date-fns';
+import { Task, User, SubTask } from '../../types';
 
 const AdminGroupDetail: React.FC = () => {
     const { projectId } = useParams<{ projectId: string }>();
@@ -49,9 +52,9 @@ const AdminGroupDetail: React.FC = () => {
         );
     }
 
-    const completedTasks = tasks.filter(t => t.status === 'done').length;
-    const progressTasks = tasks.filter(t => t.status === 'in_progress' || t.status === 'under_review').length;
-    const overdueTasks = tasks.filter(t => t.status !== 'done' && t.deadline && new Date(t.deadline.toDate()) < new Date()).length;
+    const completedTasks = tasks.filter((t: Task) => t.status === 'done').length;
+    const progressTasks = tasks.filter((t: Task) => t.status === 'in_progress' || t.status === 'under_review').length;
+    const overdueTasks = tasks.filter((t: Task) => t.status !== 'done' && t.deadline && new Date(t.deadline.toDate()) < new Date()).length;
     const efficiency = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
     return (
@@ -147,7 +150,7 @@ const AdminGroupDetail: React.FC = () => {
                     <TaskGroup 
                         title="To Do" 
                         status="todo" 
-                        tasks={tasks.filter(t => t.status === 'todo')} 
+                        tasks={tasks.filter((t: Task) => t.status === 'todo')} 
                         members={members} 
                         icon={ClipboardList} 
                         color="text-slate-500 bg-slate-50/80"
@@ -155,7 +158,7 @@ const AdminGroupDetail: React.FC = () => {
                     <TaskGroup 
                         title="Active Development" 
                         status="in_progress" 
-                        tasks={tasks.filter(t => t.status === 'in_progress')} 
+                        tasks={tasks.filter((t: Task) => t.status === 'in_progress')} 
                         members={members} 
                         icon={Clock} 
                         color="text-amber-600 bg-amber-50/80"
@@ -163,7 +166,7 @@ const AdminGroupDetail: React.FC = () => {
                     <TaskGroup 
                         title="Awaiting Review" 
                         status="under_review" 
-                        tasks={tasks.filter(t => t.status === 'under_review')} 
+                        tasks={tasks.filter((t: Task) => t.status === 'under_review')} 
                         members={members} 
                         icon={AlertTriangle} 
                         color="text-purple-600 bg-purple-50/80"
@@ -171,7 +174,7 @@ const AdminGroupDetail: React.FC = () => {
                     <TaskGroup 
                         title="Completed Archive" 
                         status="done" 
-                        tasks={tasks.filter(t => t.status === 'done')} 
+                        tasks={tasks.filter((t: Task) => t.status === 'done')} 
                         members={members} 
                         icon={CheckCircle2} 
                         color="text-emerald-600 bg-emerald-50/80"
@@ -202,49 +205,76 @@ const AdminGroupDetail: React.FC = () => {
                             <tr className="border-b-2 border-slate-50 dark:border-slate-800/50">
                                 <th className="text-left font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Member</th>
                                 <th className="text-left font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Contact</th>
+                                <th className="text-center font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Efficiency</th>
                                 <th className="text-center font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Role</th>
-                                <th className="text-right font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Joined</th>
+                                <th className="text-right font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Performance</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {members.map((member) => (
-                                <tr key={member.uid} className="group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all rounded-2xl border-b border-slate-50 dark:border-slate-800/30">
-                                    <td className="py-5 px-2">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-lg font-black text-slate-600 dark:text-slate-400 overflow-hidden shadow-inner">
-                                                {member.photoURL ? (
-                                                    <img src={member.photoURL} alt={member.displayName || ''} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    (member.displayName || member.email || '?').charAt(0).toUpperCase()
-                                                )}
+                            {members.map((member: User) => {
+                                const stats = project ? AccountabilityEngine.calculateMemberStats(member.uid, tasks, project) : null;
+                                const completionRate = stats ? Math.round((stats.tasksCompleted / (stats.tasksAssigned || 1)) * 100) : 0;
+                                
+                                return (
+                                    <tr key={member.uid} className={`group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all rounded-2xl border-b border-slate-50 dark:border-slate-800/30 ${stats?.isAtRisk ? 'bg-red-50/30' : ''}`}>
+                                        <td className="py-5 px-2">
+                                            <div className="flex items-center gap-4">
+                                                <div className="relative">
+                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-lg font-black text-slate-600 dark:text-slate-400 overflow-hidden shadow-inner">
+                                                        {member.photoURL ? (
+                                                            <img src={member.photoURL} alt={member.displayName || ''} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            (member.displayName || member.email || '?').charAt(0).toUpperCase()
+                                                        )}
+                                                    </div>
+                                                    {stats?.isAtRisk && (
+                                                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center shadow-lg" title="Member at Risk">
+                                                            <AlertTriangle className="w-2.5 h-2.5 text-white" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{member.displayName || 'Anonymous User'}</p>
+                                                    <p className="text-xs font-bold text-slate-500">@{member.username || 'user'}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{member.displayName || 'Anonymous User'}</p>
-                                                <p className="text-xs font-bold text-slate-500">@{member.username || 'user'}</p>
+                                        </td>
+                                        <td className="py-5 px-2">
+                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-300">{member.email}</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{member.school || 'Unverified Region'}</p>
+                                        </td>
+                                        <td className="py-5 px-2">
+                                            <div className="flex flex-col items-center gap-2">
+                                                <div className="relative w-8 h-8">
+                                                    <svg className="w-full h-full -rotate-90">
+                                                        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-100 dark:text-slate-800" />
+                                                        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={88} strokeDashoffset={88 - (88 * completionRate) / 100} className={completionRate > 80 ? 'text-emerald-500' : completionRate > 40 ? 'text-blue-500' : 'text-red-500'} strokeLinecap="round" />
+                                                    </svg>
+                                                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-black">{completionRate}%</span>
+                                                </div>
+                                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-tighter">{stats?.tasksCompleted}/{stats?.tasksAssigned} Tasks</p>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="py-5 px-2">
-                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-300">{member.email}</p>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{member.school || 'Unverified Region'}</p>
-                                    </td>
-                                    <td className="py-5 px-2 text-center">
-                                        <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
-                                            member.uid === project.ownerId 
-                                            ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' 
-                                            : 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:border-slate-700'
-                                        }`}>
-                                            {member.uid === project.ownerId ? 'Project Lead' : 'Collaborator'}
-                                        </span>
-                                    </td>
-                                    <td className="py-5 px-2 text-right">
-                                        <p className="text-sm font-black text-slate-900 dark:text-white">
-                                            {member.createdAt ? format(member.createdAt.toDate(), 'MMM yyyy') : '—'}
-                                        </p>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Status</p>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        <td className="py-5 px-2 text-center">
+                                            <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
+                                                member.uid === project.ownerId 
+                                                ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' 
+                                                : 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:border-slate-700'
+                                            }`}>
+                                                {member.uid === project.ownerId ? 'Project Lead' : 'Collaborator'}
+                                            </span>
+                                        </td>
+                                        <td className="py-5 px-2 text-right">
+                                            <div className="flex flex-col items-end">
+                                                <p className={`text-sm font-black uppercase tracking-tighter ${stats?.contributionScore && stats.contributionScore > 30 ? 'text-blue-600' : 'text-slate-900 dark:text-white'}`}>
+                                                    {stats?.contributionScore || 0} pts
+                                                </p>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Performance</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
@@ -253,14 +283,16 @@ const AdminGroupDetail: React.FC = () => {
     );
 };
 
-const TaskGroup: React.FC<{
+interface TaskGroupProps {
     title: string;
     status: string;
-    tasks: any[];
-    members: any[];
-    icon: any;
+    tasks: Task[];
+    members: User[];
+    icon: LucideIcon;
     color: string;
-}> = ({ title, status, tasks, members, icon: Icon, color }) => {
+}
+
+const TaskGroup: React.FC<TaskGroupProps> = ({ title, status, tasks, members, icon: Icon, color }) => {
     const [isOpen, setIsOpen] = React.useState(status === 'in_progress');
 
     return (
@@ -280,17 +312,17 @@ const TaskGroup: React.FC<{
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="flex -space-x-2">
-                        {Array.from(new Set(tasks.flatMap(t => t.assignedTo))).slice(0, 3).map(uid => {
-                            const m = members.find(u => u.uid === uid);
+                        {Array.from(new Set(tasks.flatMap((t: Task) => t.assignedTo))).slice(0, 3).map(uid => {
+                            const m = members.find((u: User) => u.uid === uid);
                             return (
                                 <div key={uid} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black uppercase overflow-hidden">
                                     {m?.photoURL ? <img src={m.photoURL} alt="" /> : (m?.displayName || '?')[0]}
                                 </div>
                             );
                         })}
-                        {new Set(tasks.flatMap(t => t.assignedTo)).size > 3 && (
+                        {new Set(tasks.flatMap((t: Task) => t.assignedTo)).size > 3 && (
                             <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">
-                                +{new Set(tasks.flatMap(t => t.assignedTo)).size - 3}
+                                +{new Set(tasks.flatMap((t: Task) => t.assignedTo)).size - 3}
                             </div>
                         )}
                     </div>
@@ -306,7 +338,7 @@ const TaskGroup: React.FC<{
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                            {tasks.map(task => (
+                            {tasks.map((task: Task) => (
                                 <TaskCard key={task.id} task={task} members={members} />
                             ))}
                         </div>
@@ -317,7 +349,12 @@ const TaskGroup: React.FC<{
     );
 };
 
-const TaskCard: React.FC<{ task: any, members: any[] }> = ({ task, members }) => {
+interface TaskCardProps {
+    task: Task;
+    members: User[];
+}
+
+const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
     const isOverdue = task.status !== 'done' && task.deadline && new Date(task.deadline.toDate()) < new Date();
     
     return (
@@ -348,8 +385,8 @@ const TaskCard: React.FC<{ task: any, members: any[] }> = ({ task, members }) =>
             {task.subTasks && task.subTasks.length > 0 && (
                 <div className="mb-6 space-y-3 bg-slate-50/50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Sub-Task Execution</p>
-                    {task.subTasks.map((st: any) => {
-                        const m = members.find(u => u.uid === st.assignedTo);
+                    {task.subTasks.map((st: SubTask) => {
+                        const m = members.find((u: User) => u.uid === st.assignedTo);
                         return (
                             <div key={st.id} className="flex items-center justify-between gap-3">
                                 <div className="flex items-center gap-3 min-w-0">
@@ -363,7 +400,7 @@ const TaskCard: React.FC<{ task: any, members: any[] }> = ({ task, members }) =>
                                 {m && (
                                     <div className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm">
                                         <div className="w-4 h-4 rounded-full overflow-hidden flex-shrink-0">
-                                            {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-[8px] font-black">{m.username[0]}</div>}
+                                            {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-[8px] font-black">{(m.username || 'U')[0]}</div>}
                                         </div>
                                         <span className="text-[8px] font-black uppercase text-slate-500">{m.username}</span>
                                     </div>
@@ -378,7 +415,7 @@ const TaskCard: React.FC<{ task: any, members: any[] }> = ({ task, members }) =>
                 <div className="flex items-center gap-3">
                     <div className="flex -space-x-2">
                         {task.assignedTo?.map((uid: string) => {
-                            const m = members.find(u => u.uid === uid);
+                            const m = members.find((u: User) => u.uid === uid);
                             return (
                                 <div key={uid} title={m?.displayName || ''} className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-[10px] font-black text-slate-600 dark:text-slate-400 border-2 border-white dark:border-slate-900 overflow-hidden shadow-sm">
                                     {m?.photoURL ? <img src={m.photoURL} alt="" className="w-full h-full object-cover" /> : (m?.displayName || '?')[0]}
