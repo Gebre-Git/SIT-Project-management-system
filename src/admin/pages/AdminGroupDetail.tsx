@@ -398,12 +398,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
                                     </span>
                                 </div>
                                 {m && (
-                                    <div className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm">
-                                        <div className="w-4 h-4 rounded-full overflow-hidden flex-shrink-0">
+                                    <Link 
+                                        to={`/admin/user/${m.uid}`}
+                                        className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm hover:border-blue-500 transition-colors group/member"
+                                    >
+                                        <div className="w-4 h-4 rounded-full overflow-hidden flex-shrink-0 group-hover/member:scale-110 transition-transform">
                                             {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-[8px] font-black">{(m.username || 'U')[0]}</div>}
                                         </div>
-                                        <span className="text-[8px] font-black uppercase text-slate-500">{m.username}</span>
-                                    </div>
+                                        <span className="text-[8px] font-black uppercase text-slate-500 group-hover/member:text-blue-500 transition-colors">{m.username}</span>
+                                    </Link>
                                 )}
                             </div>
                         );
@@ -417,9 +420,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
                         {task.assignedTo?.map((uid: string) => {
                             const m = members.find((u: User) => u.uid === uid);
                             return (
-                                <div key={uid} title={m?.displayName || ''} className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-[10px] font-black text-slate-600 dark:text-slate-400 border-2 border-white dark:border-slate-900 overflow-hidden shadow-sm">
+                                <Link 
+                                    key={uid} 
+                                    to={`/admin/user/${uid}`}
+                                    title={m?.displayName || ''} 
+                                    className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-[10px] font-black text-slate-600 dark:text-slate-400 border-2 border-white dark:border-slate-900 overflow-hidden shadow-sm hover:scale-110 hover:z-10 transition-transform"
+                                >
                                     {m?.photoURL ? <img src={m.photoURL} alt="" className="w-full h-full object-cover" /> : (m?.displayName || '?')[0]}
-                                </div>
+                                </Link>
                             );
                         })}
                     </div>

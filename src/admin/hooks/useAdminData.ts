@@ -26,6 +26,7 @@ export interface AdminData {
     recentMessages: (ChatMessage & { projectId?: string })[];
     taskStats: TaskStats;
     allTasks: Task[];
+    superAdmins: string[];
     loading: boolean;
     error: string | null;
 }
@@ -35,6 +36,7 @@ export const useAdminData = (): AdminData => {
     const [users, setUsers] = useState<AppUser[]>([]);
     const [recentMessages, setRecentMessages] = useState<(ChatMessage & { projectId?: string })[]>([]);
     const [allTasks, setAllTasks] = useState<Task[]>([]);
+    const [superAdmins, setSuperAdmins] = useState<string[]>([]);
     const [taskStats, setTaskStats] = useState<TaskStats>({ total: 0, todo: 0, inProgress: 0, underReview: 0, done: 0, overdue: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -124,6 +126,18 @@ export const useAdminData = (): AdminData => {
                 })
             );
 
+            // 5. Super Admins
+            const superAdminsQuery = query(collection(db, 'super_admins'));
+            unsubscribers.push(
+                onSnapshot(superAdminsQuery, (snap) => {
+                    const ids = snap.docs.map(d => d.id);
+                    setSuperAdmins(ids);
+                }, (err) => {
+                    console.error('Admin: super_admins error', err);
+                    setError('Failed to fetch admin roles.');
+                })
+            );
+
             // Loading complete after first snapshot settles
             const timer = setTimeout(() => setLoading(false), 1500);
             unsubscribers.push(() => clearTimeout(timer));
@@ -139,5 +153,5 @@ export const useAdminData = (): AdminData => {
         };
     }, []);
 
-    return { projects, users, recentMessages, taskStats, allTasks, loading, error };
+    return { projects, users, recentMessages, taskStats, allTasks, superAdmins, loading, error };
 };

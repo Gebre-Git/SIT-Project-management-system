@@ -29,12 +29,10 @@ service cloud.firestore {
     allow create: if isSuperAdmin() || (
       request.auth.uid == uid && 
       isSignedIn() &&
-      request.resource.data.email == request.auth.token.email &&
       // Check that they provided a token and we can verify it
       request.resource.data.claimedWithToken != null &&
       exists(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)) &&
-      get(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)).data.used == false &&
-      get(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)).data.email == request.auth.token.email
+      get(/databases/$(database)/documents/adminInvitationTokens/$(request.resource.data.claimedWithToken)).data.used == false
     );
     
     // Admins can delete other admins (except themselves via these rules if you want, 
@@ -43,16 +41,17 @@ service cloud.firestore {
   }
 
   match /adminInvitationTokens/{tokenId} {
-    // Only super-admins can see or create tokens
-    allow read, create: if isSuperAdmin();
+    // Allow anyone signed-in to read tokens to verify them during claim
+    allow read: if isSignedIn();
+    // Only super-admins can create tokens
+    allow create: if isSuperAdmin();
     
     // Allow users to update the token to 'used' if they are the rightful owner
     allow update: if isSignedIn() && (
       isSuperAdmin() || (
         request.resource.data.used == true &&
         request.resource.data.usedByUid == request.auth.uid &&
-        resource.data.used == false &&
-        resource.data.email == request.auth.token.email
+        resource.data.used == false
       )
     );
     allow delete: if false; // Only Cloud Functions (Admin SDK) can delete

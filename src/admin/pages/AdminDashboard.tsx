@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAdminData } from '../hooks/useAdminData';
 import AdminInviteManager from '../components/AdminInviteManager';
+import AdminList from '../components/AdminList';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
@@ -58,10 +59,13 @@ const SectionHeader: React.FC<{
 );
 
 const AdminDashboard: React.FC = () => {
-    const { projects, users, taskStats, allTasks, loading, error } = useAdminData();
+    const { projects, users, recentMessages, taskStats, allTasks, superAdmins, loading, error } = useAdminData();
     const [projectSearch, setProjectSearch] = useState('');
     const [userSearch, setUserSearch] = useState('');
     const [finalSearch, setFinalSearch] = useState('');
+    const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+    const adminUsers = users.filter(u => superAdmins.includes(u.uid));
     const [showAllProjects, setShowAllProjects] = useState(false);
     const [showAllUsers, setShowAllUsers] = useState(false);
     const [groupFilter, setGroupFilter] = useState<'all' | 'team' | 'personal'>('all');
@@ -335,13 +339,14 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </motion.div>
 
-                {/* Invite Manager */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
+                    className="flex flex-col gap-6"
                 >
                     <AdminInviteManager />
+                    <AdminList admins={adminUsers} />
                 </motion.div>
             </div>
 
@@ -411,7 +416,11 @@ const AdminDashboard: React.FC = () => {
                                         <div className="sm:hidden text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-wider">{p.course}</div>
                                     </td>
                                     <td className="py-4 px-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell font-medium">{p.course}</td>
-                                    <td className="py-4 px-3 text-slate-500 dark:text-slate-400 hidden md:table-cell">{getUserName(p.ownerId)}</td>
+                                    <td className="py-4 px-3 text-slate-500 dark:text-slate-400 hidden md:table-cell">
+                                        <Link to={`/admin/user/${p.ownerId}`} className="hover:text-blue-500 transition-colors font-medium">
+                                            {getUserName(p.ownerId)}
+                                        </Link>
+                                    </td>
                                     <td className="py-4 px-3 text-center">
                                         <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-black bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                                             {p.members?.length || 0}
