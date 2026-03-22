@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIT - Group Project Performance Report Template</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        :root {
+            /* SIT Brand Colors */
+            --sit-daintree: #02272F;
+            --sit-orange: #F15A24;
+            --sit-teal: #8AC4C7;
+            --sit-yellow: #EEBE41;
+            --sit-light-blue: #CFDFDC;
+            --sit-light-yellow: #EAE4D2;
+            
+            --text-main: var(--sit-daintree);
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --corner-marker: #D1D5DB;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            line-height: 1.6;
+        }
+
+        /* Page Layout */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            position: relative;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        @media print {
+            body { background: none; }
+            .page { 
+                box-shadow: none; 
+                margin: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        /* Corner Markers */
+        .corner {
+            position: absolute;
+            width: 15mm;
+            height: 15mm;
+            border: 1px solid var(--corner-marker);
+        }
+        .corner-tl { top: 10mm; left: 10mm; border-right: none; border-bottom: none; }
+        .corner-tr { top: 10mm; right: 10mm; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 10mm; left: 10mm; border-right: none; border-top: none; }
+        .corner-br { bottom: 10mm; right: 10mm; border-left: none; border-top: none; }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-top: 10mm;
+            margin-bottom: 20mm;
+            position: relative;
+        }
+
+        .header::after {
+            content: "";
+            display: block;
+            width: 1px;
+            height: 15mm;
+            background-color: var(--sit-daintree);
+            margin: 10mm auto;
+        }
+
+        .logo-placeholder {
+            max-width: 120mm;
+            margin: 0 auto;
+        }
+
+        .logo-text-top {
+            font-weight: 900;
+            font-size: 24pt;
+            letter-spacing: 0.05em;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .motto {
+            font-size: 10pt;
+            font-weight: 700;
+            color: var(--sit-orange);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-top: 5mm;
+        }
+
+        h1.report-title {
+            font-size: 18pt;
+            font-weight: 900;
+            color: var(--sit-daintree);
+            margin-bottom: 25mm;
+            text-transform: capitalize;
+        }
+
+        /* Section Headings */
+        h2.section-title {
+            font-size: 14pt;
+            font-weight: 900;
+            color: var(--sit-daintree);
+            text-transform: capitalize;
+            margin-top: 30mm;
+            margin-bottom: 10mm;
+        }
+
+        /* Info Grid (Placeholders) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10mm;
+            margin-bottom: 20mm;
+        }
+
+        .info-item {
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 2mm;
+        }
+
+        .label {
+            font-size: 8pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 1mm;
+        }
+
+        .value {
+            font-size: 11pt;
+            font-weight: 700;
+        }
+
+        /* Data Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15mm;
+        }
+
+        th {
+            text-align: left;
+            font-size: 9pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 4mm 2mm;
+            border-bottom: 2pt solid var(--sit-daintree);
+            color: var(--sit-daintree);
+        }
+
+        td {
+            padding: 4mm 2mm;
+            font-size: 10pt;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        /* Footer */
+        .generated-date {
+            position: absolute;
+            bottom: 25mm;
+            right: 20mm;
+            font-size: 12pt;
+            font-weight: 900;
+            color: var(--sit-daintree);
+        }
+
+        .page-footer {
+            position: absolute;
+            bottom: 10mm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8pt;
+            font-weight: 700;
+            color: var(--sit-teal);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        /* Accent Elements */
+        .accent-bar {
+            height: 2pt;
+            background: linear-gradient(to right, var(--sit-orange), var(--sit-yellow));
+            width: 50mm;
+            margin: 5mm 0;
+        }
+
+        .completion-bar {
+            height: 8pt;
+            background: var(--sit-light-blue);
+            border-radius: 4pt;
+            overflow: hidden;
+            width: 40mm;
+        }
+
+        .completion-fill {
+            height: 100%;
+            background: var(--sit-teal);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Corner Markers -->
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <div class="header">
+            <!-- Simulated Logo from Screenshot -->
+            <div class="logo-placeholder">
+                <svg width="100" height="60" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 5 L60 25 L85 25 L65 40 L75 60 L50 45 L25 60 L35 40 L10 25 L40 25 Z" fill="#02272F" />
+                    <circle cx="50" cy="30" r="5" fill="#F15A24" />
+                </svg>
+                <div class="logo-text-top">SHAGGAR INSTITUTE</div>
+                <div class="logo-text-top" style="font-size: 20pt; margin-top: -2mm;">OF TECHNOLOGY</div>
+                <div class="motto">Excellence in Science and Technology</div>
+            </div>
+        </div>
+
+        <h1 class="report-title">Group Project Performance Report</h1>
+
+        <h2 class="section-title">Group Analytics</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Group Name</span>
+                <span class="value">{{group_name}}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Project / Course</span>
+                <span class="value">{{project_name}}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Total Tasks</span>
+                <span class="value">{{total_tasks}}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Overall Completion</span>
+                <span class="value">{{overall_completion}}%</span>
+                <div class="completion-bar" style="margin-top: 2mm;">
+                    <div class="completion-fill" style="width: {{overall_completion}}%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Member Analytics</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Member Name</th>
+                    <th>Assigned</th>
+                    <th>Completed</th>
+                    <th>Late</th>
+                    <th>Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Template Rows -->
+                <tr>
+                    <td>{{member_name_1}}</td>
+                    <td>{{assigned_1}}</td>
+                    <td>{{completed_1}}</td>
+                    <td>{{late_1}}</td>
+                    <td>{{rate_1}}%</td>
+                </tr>
+                <tr>
+                    <td>{{member_name_2}}</td>
+                    <td>{{assigned_2}}</td>
+                    <td>{{completed_2}}</td>
+                    <td>{{late_2}}</td>
+                    <td>{{rate_2}}%</td>
+                </tr>
+                <!-- More rows will be added dynamically -->
+            </tbody>
+        </table>
+
+        <div class="generated-date">Generated: {{generated_date}}</div>
+
+        <div class="page-footer">
+            EXCELLENCE IN INNOVATION & TECHNOLOGY
+        </div>
+    </div>
+</body>
+</html>
