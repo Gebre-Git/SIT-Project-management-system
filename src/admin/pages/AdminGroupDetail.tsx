@@ -13,11 +13,13 @@ import {
     AlertTriangle,
     ChevronDown,
     ClipboardList,
-    LucideIcon
+    LucideIcon,
+    FileText
 } from 'lucide-react';
 import { useGroupDetailData } from '../hooks/useGroupDetailData';
 import { AccountabilityEngine } from '../../lib/AccountabilityEngine';
 import ProjectAnalytics from '../../components/ProjectAnalytics';
+import { generateGroupReport } from '../../utils/reportGenerator';
 import { format } from 'date-fns';
 import { Task, User, SubTask } from '../../types';
 
@@ -66,13 +68,27 @@ const AdminGroupDetail: React.FC = () => {
                 className="flex flex-col gap-6"
             >
                 <div>
-                    <button 
-                        onClick={() => navigate('/admin')}
-                        className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors mb-4"
-                    >
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        Back to Admin Dashboard
-                    </button>
+                    <div className="flex items-center justify-between mb-4">
+                        <button 
+                            onClick={() => navigate('/admin')}
+                            className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
+                        >
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Back to Admin Dashboard
+                        </button>
+                        <button 
+                            onClick={() => {
+                                const html = generateGroupReport(project, tasks, members);
+                                const blob = new Blob([html], { type: 'text/html' });
+                                const url = URL.createObjectURL(blob);
+                                window.open(url, '_blank');
+                            }}
+                            className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors"
+                        >
+                            <FileText className="w-4 h-4" />
+                            Generate Analytics Report
+                        </button>
+                    </div>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
                             <div className="p-4 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-xl shadow-blue-500/20 text-white">
