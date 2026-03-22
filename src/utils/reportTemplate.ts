@@ -48,6 +48,8 @@ export const SIT_REPORT_TEMPLATE = `
             position: relative;
             background: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
 
         @media print {
@@ -56,8 +58,12 @@ export const SIT_REPORT_TEMPLATE = `
                 box-shadow: none; 
                 margin: 0;
                 width: 100%;
-                height: 100%;
+                min-height: 100vh;
             }
+        }
+
+        .main-content {
+            flex: 1;
         }
 
         /* Corner Markers */
@@ -66,6 +72,7 @@ export const SIT_REPORT_TEMPLATE = `
             width: 15mm;
             height: 15mm;
             border: 1px solid var(--corner-marker);
+            z-index: 10;
         }
         .corner-tl { top: 10mm; left: 10mm; border-right: none; border-bottom: none; }
         .corner-tr { top: 10mm; right: 10mm; border-left: none; border-bottom: none; }
@@ -172,25 +179,22 @@ export const SIT_REPORT_TEMPLATE = `
 
         /* Footer */
         .generated-date {
-            position: absolute;
-            bottom: 25mm;
-            right: 20mm;
+            text-align: right;
             font-size: 12pt;
             font-weight: 900;
             color: var(--sit-daintree);
+            margin-bottom: 2mm;
         }
 
         .page-footer {
-            position: absolute;
-            bottom: 10mm;
-            left: 0;
-            right: 0;
             text-align: center;
             font-size: 8pt;
             font-weight: 700;
             color: var(--sit-teal);
             text-transform: uppercase;
             letter-spacing: 0.2em;
+            padding-top: 5mm;
+            border-top: 1px solid var(--border-light);
         }
 
         /* Accent Elements */
@@ -263,6 +267,8 @@ export const SIT_REPORT_TEMPLATE = `
         <div class="corner corner-bl"></div>
         <div class="corner corner-br"></div>
 
+        <div class="main-content">
+
         <div class="header">
             <!-- SIT Logo (Updated from provided image) -->
             <div class="logo-placeholder">
@@ -312,6 +318,7 @@ export const SIT_REPORT_TEMPLATE = `
                 {{member_rows}}
             </tbody>
         </table>
+    </div> <!-- .main-content -->
 
         <div class="generated-date">Generated: {{generated_date}}</div>
 
