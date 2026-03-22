@@ -213,6 +213,45 @@
             background: var(--sit-teal);
         }
 
+        /* Interactive Elements */
+        .no-print {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+        }
+
+        .download-btn {
+            position: absolute;
+            top: 20mm;
+            right: 20mm;
+            background-color: var(--sit-orange);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 10pt;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(241, 90, 36, 0.3);
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(241, 90, 36, 0.4);
+            background-color: #f36d3e;
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body>
@@ -275,9 +314,33 @@
 
         <div class="generated-date">Generated: {{generated_date}}</div>
 
+        <!-- Download Button (Visible only on web view) -->
+        <button onclick="downloadPDF()" class="no-print download-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+        </button>
+
         <div class="page-footer">
             EXCELLENCE IN INNOVATION & TECHNOLOGY
         </div>
     </div>
+
+    <!-- PDF Generation Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            const element = document.querySelector('.page');
+            const opt = {
+                margin: 0,
+                filename: 'SIT_Report_{{group_name}}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // New Promise-based usage:
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 </html>
