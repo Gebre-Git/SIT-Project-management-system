@@ -80,15 +80,6 @@ export const SIT_REPORT_TEMPLATE = `
             position: relative;
         }
 
-        .header::after {
-            content: "";
-            display: block;
-            width: 1px;
-            height: 15mm;
-            background-color: var(--sit-daintree);
-            margin: 10mm auto;
-        }
-
         .logo-placeholder {
             max-width: 120mm;
             margin: 0 auto;
