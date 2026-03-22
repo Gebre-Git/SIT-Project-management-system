@@ -337,16 +337,36 @@
     <script>
         function downloadPDF() {
             const element = document.querySelector('.page');
+            const originalHeight = element.style.height;
+            
+            // Calculate height in pixels and convert to A4 multiples
+            // Standard A4 at 96 DPI is ~1123px. We'll use mm for calculation.
+            const rect = element.getBoundingClientRect();
+            const pxPerMm = rect.width / 210; // 210mm is A4 width
+            const currentHeightMm = rect.height / pxPerMm;
+            const totalPages = Math.ceil(currentHeightMm / 297);
+            
+            // Force container to be exact multiple of A4 height
+            element.style.height = (totalPages * 297) + 'mm';
+
             const opt = {
                 margin: 0,
                 filename: 'SIT_Report_{{group_name}}.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // New Promise-based usage:
-            html2pdf().set(opt).from(element).save();
+            // Generate and save
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                // Return to original height after PDF is captured
+                element.style.height = originalHeight;
+            }).save();
         }
     </script>
 </body>
