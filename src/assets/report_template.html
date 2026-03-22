@@ -346,8 +346,8 @@
             const currentHeightMm = rect.height / pxPerMm;
             const totalPages = Math.ceil(currentHeightMm / 297);
             
-            // Force container to be exact multiple of A4 height
-            element.style.height = (totalPages * 297) + 'mm';
+            // Force container to be exact multiple of A4 height (minus safety margin to prevent blank page)
+            element.style.height = (totalPages * 297 - 0.5) + 'mm';
 
             const opt = {
                 margin: 0,
