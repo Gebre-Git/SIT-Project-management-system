@@ -1,3 +1,4 @@
+export const SIT_REPORT_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,3 +291,4 @@
     </div>
 </body>
 </html>
+`;
