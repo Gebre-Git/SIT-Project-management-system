@@ -2,6 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
+// Note: By default it uses v1beta, but v1 is often more stable for these models.
+// If v1 fails, we might need a newer SDK or a different key.
 
 export const aiService = {
   /**
@@ -30,7 +32,7 @@ export const aiService = {
     try {
       console.log('Attempting AI summary generation...');
       
-      const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro', 'gemini-1.0-pro'];
+      const modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
       let lastError = null;
 
       for (const modelName of modelsToTry) {
