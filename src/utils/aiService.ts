@@ -28,36 +28,48 @@ export const aiService = {
     }
 
     try {
-      console.log('Initializing Gemini model...');
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      console.log('Attempting AI summary generation...');
+      
+      const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro', 'gemini-1.0-pro'];
+      let lastError = null;
 
-      const prompt = `
-        You are an expert project management analyst. Analyze the following project performance data and provide a concise, professional summary (max 3-4 sentences) for a group report.
-        
-        Project: ${data.projectName}
-        Group: ${data.groupName}
-        Overall Metrics:
-        - Total Tasks: ${data.totalTasks}
-        - Completed Tasks: ${data.completedTasks}
-        - Late Submissions: ${data.lateSubmissions}
-        - Completion Rate: ${data.completionRate}%
-        
-        Member Performance:
-        ${data.memberStats.map(m => `- ${m.name}: ${m.completed}/${m.assigned} tasks completed (${m.late} late).`).join('\n')}
-        
-        Focus on identifying the top performer, any potential bottlenecks, and an overall assessment of the group's accountability. Keep it encouraging but objective.
-      `;
+      for (const modelName of modelsToTry) {
+        try {
+          console.log(`Trying model: ${modelName}`);
+          const model = genAI.getGenerativeModel({ model: modelName });
 
-      console.log('Sending prompt to Gemini...');
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      console.log('Gemini response received.');
-      return response.text().trim();
+          const prompt = `
+            You are an expert project management analyst. Analyze the following project performance data and provide a concise, professional summary (max 3-4 sentences) for a group report.
+            
+            Project: ${data.projectName}
+            Group: ${data.groupName}
+            Overall Metrics:
+            - Total Tasks: ${data.totalTasks}
+            - Completed Tasks: ${data.completedTasks}
+            - Late Submissions: ${data.lateSubmissions}
+            - Completion Rate: ${data.completionRate}%
+            
+            Member Performance:
+            ${data.memberStats.map(m => `- ${m.name}: ${m.completed}/${m.assigned} tasks completed (${m.late} late).`).join('\n')}
+            
+            Focus on identifying the top performer, any potential bottlenecks, and an overall assessment of the group's accountability. Keep it encouraging but objective.
+          `;
+
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          console.log(`Successfully generated summary using ${modelName}`);
+          return response.text().trim();
+        } catch (err: any) {
+          console.warn(`Model ${modelName} failed:`, err.message);
+          lastError = err;
+          continue; // Try next model
+        }
+      }
+
+      throw lastError || new Error('All models failed to generate content');
     } catch (error: any) {
-      console.error('CRITICAL: Gemini API Failure:', error);
-      if (error.message) console.error('Error Message:', error.message);
-      if (error.status) console.error('Error Status:', error.status);
-      return `Failed to generate AI summary. Error: ${error.message || 'Unknown error'}`;
+      console.error('CRITICAL: Gemini API Failure after fallbacks:', error);
+      return `Failed to generate AI summary. Error: ${error.message || 'Unknown error'}. Please verify API access for these models.`;
     }
   }
 };
