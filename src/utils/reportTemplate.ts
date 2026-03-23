@@ -257,38 +257,6 @@ export const SIT_REPORT_TEMPLATE = `
             transform: translateY(0);
         }
 
-        /* AI Summary Card Styling */
-        .ai-summary-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid var(--sit-teal);
-            border-left: 5mm solid var(--sit-teal);
-            padding: 15px 20px;
-            border-radius: 4px;
-            margin-top: 5mm;
-            position: relative;
-        }
-
-        .ai-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--sit-teal);
-            color: var(--sit-daintree);
-            font-size: 8pt;
-            font-weight: 900;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
-        }
-
-        .ai-text {
-            font-size: 10pt;
-            font-style: italic;
-            color: var(--sit-daintree);
-            margin: 0;
-            line-height: 1.5;
-        }
     </style>
 </head>
 <body>
@@ -350,18 +318,6 @@ export const SIT_REPORT_TEMPLATE = `
                 {{member_rows}}
             </tbody>
         </table>
-
-        <!-- AI Powered Insights Section -->
-        <h2 class="section-title">AI-Powered Insights</h2>
-        <div class="ai-summary-card">
-            <div class="ai-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                Gemini Analysis
-            </div>
-            <p class="ai-text">
-                {{ai_summary}}
-            </p>
-        </div>
     </div> <!-- .main-content -->
 
         <div class="generated-date">Generated: {{generated_date}}</div>
