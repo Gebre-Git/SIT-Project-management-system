@@ -268,19 +268,6 @@ export const SIT_REPORT_TEMPLATE = `
             position: relative;
         }
 
-        .ai-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--sit-teal);
-            color: var(--sit-daintree);
-            font-size: 8pt;
-            font-weight: 900;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
-        }
 
         .ai-text {
             font-size: 10pt;
@@ -354,10 +341,7 @@ export const SIT_REPORT_TEMPLATE = `
         <!-- AI Powered Insights Section -->
         <h2 class="section-title">AI-Powered Insights</h2>
         <div class="ai-summary-card">
-            <div class="ai-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                Gemini Analysis
-            </div>
+
             <p class="ai-text">
                 {{ai_summary}}
             </p>
