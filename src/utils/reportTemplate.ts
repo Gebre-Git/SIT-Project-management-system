@@ -259,8 +259,8 @@ export const SIT_REPORT_TEMPLATE = `
 
         /* AI Summary Card Styling */
         .ai-summary-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid var(--sit-teal);
+            background-color: #ffffff;
+            border: none;
             border-left: 5mm solid var(--sit-teal);
             padding: 15px 20px;
             border-radius: 4px;
