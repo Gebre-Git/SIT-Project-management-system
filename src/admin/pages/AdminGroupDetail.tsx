@@ -27,6 +27,7 @@ const AdminGroupDetail: React.FC = () => {
     const { projectId } = useParams<{ projectId: string }>();
     const navigate = useNavigate();
     const { project, tasks, members, loading, error } = useGroupDetailData(projectId || '');
+    const [isGeneratingReport, setIsGeneratingReport] = React.useState(false);
 
     if (loading) {
         return (
@@ -77,16 +78,31 @@ const AdminGroupDetail: React.FC = () => {
                             Back to Admin Dashboard
                         </button>
                         <button 
-                            onClick={() => {
-                                const html = generateGroupReport(project, tasks, members);
-                                const blob = new Blob([html], { type: 'text/html' });
-                                const url = URL.createObjectURL(blob);
-                                window.open(url, '_blank');
+                            onClick={async () => {
+                                setIsGeneratingReport(true);
+                                try {
+                                    const html = await generateGroupReport(project, tasks, members);
+                                    const blob = new Blob([html], { type: 'text/html' });
+                                    const url = URL.createObjectURL(blob);
+                                    window.open(url, '_blank');
+                                } catch (err) {
+                                    console.error('Report generation failed:', err);
+                                    alert('Failed to generate report. Please check your AI API key.');
+                                } finally {
+                                    setIsGeneratingReport(false);
+                                }
                             }}
-                            className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors"
+                            disabled={isGeneratingReport}
+                            className={`group flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-colors ${
+                                isGeneratingReport ? 'text-slate-400 cursor-not-allowed' : 'text-emerald-600 hover:text-emerald-700'
+                            }`}
                         >
-                            <FileText className="w-4 h-4" />
-                            Generate Analytics Report
+                            {isGeneratingReport ? (
+                                <div className="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+                            ) : (
+                                <FileText className="w-4 h-4" />
+                            )}
+                            {isGeneratingReport ? 'Generating AI Report...' : 'Generate Analytics Report'}
                         </button>
                     </div>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

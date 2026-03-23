@@ -2,8 +2,9 @@ import { Project, Task, User } from '../types';
 import { AccountabilityEngine } from '../lib/AccountabilityEngine';
 import { format } from 'date-fns';
 import { SIT_REPORT_TEMPLATE } from './reportTemplate';
+import { aiService } from './aiService';
 
-export const generateGroupReport = (project: Project, tasks: Task[], members: User[]): string => {
+export const generateGroupReport = async (project: Project, tasks: Task[], members: User[]): Promise<string> => {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.status === 'done').length;
     const lateSubmissions = tasks.filter(t => {
@@ -18,7 +19,6 @@ export const generateGroupReport = (project: Project, tasks: Task[], members: Us
     }).length;
 
     const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-    const onTimeRate = completedTasks > 0 ? Math.round(((completedTasks - lateSubmissions) / completedTasks) * 100) : 0;
 
     const memberStats = members.map(member => {
         const stats = AccountabilityEngine.calculateMemberStats(member.uid, tasks, project);
@@ -35,6 +35,17 @@ export const generateGroupReport = (project: Project, tasks: Task[], members: Us
     });
 
     const reportDate = format(new Date(), 'PPPP p');
+
+    // Generate AI Summary
+    const aiSummary = await aiService.generateReportSummary({
+        projectName: project.name || 'N/A',
+        groupName: project.course || 'N/A',
+        totalTasks,
+        completedTasks,
+        lateSubmissions,
+        completionRate,
+        memberStats
+    });
 
     // Generate member rows HTML
     const memberRows = memberStats.map(m => `
@@ -55,6 +66,7 @@ export const generateGroupReport = (project: Project, tasks: Task[], members: Us
     html = html.split('{{overall_completion}}').join(completionRate.toString());
     html = html.split('{{member_rows}}').join(memberRows);
     html = html.split('{{generated_date}}').join(reportDate);
+    html = html.split('{{ai_summary}}').join(aiSummary);
 
     return html;
 };
