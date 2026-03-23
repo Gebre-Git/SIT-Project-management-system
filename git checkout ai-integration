@@ -1,0 +1,19 @@
+[33m48c7ab2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: revert: Revert "Added gemin api for AI report summery generation"
+[33m88ad8a6[m[33m ([m[1;32mai-integration[m[33m)[m HEAD@{1}: checkout: moving from ai-integration to main
+[33m88ad8a6[m[33m ([m[1;32mai-integration[m[33m)[m HEAD@{2}: checkout: moving from main to ai-integration
+[33m88ad8a6[m[33m ([m[1;32mai-integration[m[33m)[m HEAD@{3}: pull: Fast-forward
+[33ma424041[m HEAD@{4}: reset: moving to HEAD~1
+[33m88ad8a6[m[33m ([m[1;32mai-integration[m[33m)[m HEAD@{5}: checkout: moving from main to main
+[33m88ad8a6[m[33m ([m[1;32mai-integration[m[33m)[m HEAD@{6}: commit: Added gemin api for AI report summery generation
+[33ma424041[m HEAD@{7}: commit: Remov the last page added to the pdf
+[33m933a98f[m HEAD@{8}: commit: fix the footer position in the pdf
+[33ma333ab3[m HEAD@{9}: commit: update the repor generation template
+[33m81b5ee8[m HEAD@{10}: commit: add a rejection system to pdf generator to skip the download button while generating
+[33mf1bc0c6[m HEAD@{11}: commit: convert the html report template to a downloadbale pdf
+[33mbbc55eb[m HEAD@{12}: commit: remove the vertical line from the header
+[33m8d12b11[m HEAD@{13}: commit: integrating refined report template into SIT report template
+[33me9407d5[m HEAD@{14}: commit: fix the logo visibility issue
+[33m8860a28[m HEAD@{15}: commit: change the logo of the template
+[33m8b658f2[m HEAD@{16}: commit: Create a template html file with the SIT template
+[33m1ec87c9[m HEAD@{17}: commit: Add analytics report feature
+[33mc4e9710[m HEAD@{18}: clone: from https://github.com/barkotdshetie-dotcom/Crew-Space_1.git

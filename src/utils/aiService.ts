@@ -28,6 +28,7 @@ export const aiService = {
     }
 
     try {
+      console.log('Initializing Gemini model...');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
       const prompt = `
@@ -47,12 +48,16 @@ export const aiService = {
         Focus on identifying the top performer, any potential bottlenecks, and an overall assessment of the group's accountability. Keep it encouraging but objective.
       `;
 
+      console.log('Sending prompt to Gemini...');
       const result = await model.generateContent(prompt);
       const response = await result.response;
+      console.log('Gemini response received.');
       return response.text().trim();
-    } catch (error) {
-      console.error('Error generating AI summary:', error);
-      return 'Failed to generate AI summary. Please check your connection and API limits.';
+    } catch (error: any) {
+      console.error('CRITICAL: Gemini API Failure:', error);
+      if (error.message) console.error('Error Message:', error.message);
+      if (error.status) console.error('Error Status:', error.status);
+      return `Failed to generate AI summary. Error: ${error.message || 'Unknown error'}`;
     }
   }
 };
