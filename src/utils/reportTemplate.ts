@@ -257,6 +257,23 @@ export const SIT_REPORT_TEMPLATE = `
             transform: translateY(0);
         }
 
+        /* AI Summary Card Styling */
+        .ai-summary-card {
+            background-color: #ffffff;
+            border: none;
+            border-left: 4px solid var(--sit-teal);
+            padding: 0 0 0 15px;
+            margin-top: 5mm;
+            position: relative;
+        }
+
+        .ai-text {
+            font-size: 12pt;
+            font-style: italic;
+            color: var(--sit-daintree);
+            margin: 0;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -318,6 +335,15 @@ export const SIT_REPORT_TEMPLATE = `
                 {{member_rows}}
             </tbody>
         </table>
+
+        <!-- AI Powered Insights Section -->
+        <h2 class="section-title">AI-Powered Insights</h2>
+        <div class="ai-summary-card">
+
+            <p class="ai-text">
+                {{ai_summary}}
+            </p>
+        </div>
     </div> <!-- .main-content -->
 
         <div class="generated-date">Generated: {{generated_date}}</div>
