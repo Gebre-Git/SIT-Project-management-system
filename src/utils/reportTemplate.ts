@@ -261,16 +261,14 @@ export const SIT_REPORT_TEMPLATE = `
         .ai-summary-card {
             background-color: #ffffff;
             border: none;
-            border-left: 5mm solid var(--sit-teal);
-            padding: 15px 20px;
-            border-radius: 4px;
+            border-left: 4px solid var(--sit-teal);
+            padding: 0 0 0 15px;
             margin-top: 5mm;
             position: relative;
         }
 
-
         .ai-text {
-            font-size: 10pt;
+            font-size: 12pt;
             font-style: italic;
             color: var(--sit-daintree);
             margin: 0;
