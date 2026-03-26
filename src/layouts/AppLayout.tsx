@@ -116,7 +116,7 @@ const AppLayout: React.FC = () => {
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 className={cn(
-                    "hidden lg:flex flex-col border-r border-[#0d3d46] bg-sit-dark text-white fixed inset-y-0 z-40 transition-all duration-300 shadow-2xl",
+                    "hidden lg:flex flex-col border-r border-[#1a4d57] bg-sit-dark text-white fixed inset-y-0 z-40 transition-all duration-300 shadow-2xl",
                     isSidebarCollapsed ? "w-[80px]" : "w-[280px]"
                 )}
             >
@@ -171,7 +171,7 @@ const AppLayout: React.FC = () => {
                     </button>
                 </nav>
 
-                <div className={cn("p-4 border-t border-[#0d3d46] bg-black/10 flex flex-col gap-4", isSidebarCollapsed ? "items-center" : "")}>
+                <div className={cn("p-4 border-t border-[#1a4d57] bg-black/10 flex flex-col gap-4", isSidebarCollapsed ? "items-center" : "")}>
                     <div className={cn("flex", isSidebarCollapsed ? "justify-center" : "justify-center w-full")}>
                         <ThemeToggle collapsed={isSidebarCollapsed} />
                     </div>

@@ -25,7 +25,7 @@
     --accent-glow: rgba(254, 88, 35, 0.2);
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --border-color: #0d3d46; /* SIT Dark lighter border */
+    --border-color: #1a4d57; /* Increased visibility for SIT Dark theme */
   }
 
   body {
@@ -67,18 +67,18 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-white/70 dark:bg-slate-900/70 border border-slate-200/50 dark:border-slate-800/50 backdrop-blur-md shadow-sm;
+    @apply bg-white/70 dark:bg-sit-dark/70 border border-slate-200/50 dark:border-[var(--border-color)] backdrop-blur-md shadow-sm;
   }
 
   .glass-panel {
-    @apply bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-white/10;
+    @apply bg-white/60 dark:bg-sit-dark/60 backdrop-blur-xl border border-white/20 dark:border-[var(--border-color)];
     box-shadow:
       0 8px 32px 0 rgba(31, 38, 135, 0.07),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   }
 
   .glass-panel-hero {
-    @apply bg-white/40 dark:bg-slate-900/30 backdrop-blur-3xl border border-white/30 dark:border-white/10;
+    @apply bg-white/40 dark:bg-sit-dark/30 backdrop-blur-3xl border border-white/30 dark:border-[var(--border-color)];
     box-shadow:
       0 20px 60px 0 rgba(31, 38, 135, 0.1),
       0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
