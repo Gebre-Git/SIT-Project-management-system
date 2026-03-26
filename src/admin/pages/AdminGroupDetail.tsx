@@ -14,12 +14,14 @@ import {
     ChevronDown,
     ClipboardList,
     LucideIcon,
-    FileText
+    FileText,
+    Loader2
 } from 'lucide-react';
 import { useGroupDetailData } from '../hooks/useGroupDetailData';
 import { AccountabilityEngine } from '../../lib/AccountabilityEngine';
 import ProjectAnalytics from '../../components/ProjectAnalytics';
 import { generateGroupReport } from '../../utils/reportGenerator';
+import { aiService } from '../../utils/aiService';
 import { format } from 'date-fns';
 import { Task, User, SubTask } from '../../types';
 
@@ -27,6 +29,7 @@ const AdminGroupDetail: React.FC = () => {
     const { projectId } = useParams<{ projectId: string }>();
     const navigate = useNavigate();
     const { project, tasks, members, loading, error } = useGroupDetailData(projectId || '');
+    const [generatingReport, setGeneratingReport] = React.useState(false);
 
     if (loading) {
         return (
@@ -77,16 +80,66 @@ const AdminGroupDetail: React.FC = () => {
                             Back to Admin Dashboard
                         </button>
                         <button 
-                            onClick={() => {
-                                const html = generateGroupReport(project, tasks, members);
-                                const blob = new Blob([html], { type: 'text/html' });
-                                const url = URL.createObjectURL(blob);
-                                window.open(url, '_blank');
+                            disabled={generatingReport}
+                            onClick={async () => {
+                                setGeneratingReport(true);
+                                try {
+                                    // Calculate metrics for AI summary
+                                    const totalTasks = tasks.length;
+                                    const completedTasks = tasks.filter(t => t.status === 'done').length;
+                                    const lateSubmissions = tasks.filter(t => {
+                                        if (t.isLate) return true;
+                                        if (t.status === 'done' && t.completedAt && t.deadline) {
+                                            try {
+                                                return t.completedAt.toMillis() > t.deadline.toMillis();
+                                            } catch (e) { return false; }
+                                        }
+                                        return false;
+                                    }).length;
+                                    const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+                                    const memberStats = members.map(member => {
+                                        const stats = AccountabilityEngine.calculateMemberStats(member.uid, tasks, project);
+                                        return {
+                                            name: member.displayName || member.username || 'Anonymous',
+                                            assigned: stats.tasksAssigned,
+                                            completed: stats.tasksCompleted,
+                                            late: stats.tasksLate,
+                                            rate: stats.tasksAssigned > 0 ? Math.round((stats.tasksCompleted / stats.tasksAssigned) * 100) : 0
+                                        };
+                                    });
+
+                                    // Generate AI Summary
+                                    const aiSummary = await aiService.generateReportSummary({
+                                        projectName: project.name || 'N/A',
+                                        groupName: project.name || 'N/A', // Using project name as group name if not separate
+                                        totalTasks,
+                                        completedTasks,
+                                        lateSubmissions,
+                                        completionRate,
+                                        memberStats
+                                    });
+
+                                    const html = generateGroupReport(project, tasks, members, aiSummary);
+                                    const blob = new Blob([html], { type: 'text/html' });
+                                    const url = URL.createObjectURL(blob);
+                                    window.open(url, '_blank');
+                                } catch (err) {
+                                    console.error('Failed to generate report:', err);
+                                } finally {
+                                    setGeneratingReport(false);
+                                }
                             }}
-                            className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors"
+                            className={`group flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-colors ${
+                                generatingReport ? 'text-slate-400 cursor-not-allowed' : 'text-emerald-600 hover:text-emerald-700'
+                            }`}
                         >
-                            <FileText className="w-4 h-4" />
-                            Generate Analytics Report
+                            {generatingReport ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <FileText className="w-4 h-4" />
+                            )}
+                            {generatingReport ? 'Generating...' : 'Generate Analytics Report'}
                         </button>
                     </div>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

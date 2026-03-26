@@ -1,14 +1,51 @@
 import React from 'react';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { auth, db, firebaseConfigError, isFirebaseAvailable } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    const { currentUser, loading } = useAuth();
     const [isLoggingIn, setIsLoggingIn] = React.useState(false);
 
-    const handleGoogleLogin = async () => {
+    // If already authenticated, go straight to dashboard
+    if (!loading && currentUser) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    // Handle redirect result when returning from Google sign-in
+    React.useEffect(() => {
+        if (!isFirebaseAvailable) return;
+        setIsLoggingIn(true);
+        getRedirectResult(auth)
+            .then(async (result) => {
+                if (!result) { setIsLoggingIn(false); return; }
+                const user = result.user;
+                console.log("Google Login Success:", user.uid);
+                navigate('/dashboard');
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                if (!userSnap.exists()) {
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Redirect login failed:", error);
+                alert(`Login failed: ${(error as Error).message}`);
+            })
+            .finally(() => setIsLoggingIn(false));
+    }, [navigate]);
+
+    const handleGoogleLogin = () => {
         if (isLoggingIn) return;
 
         if (!isFirebaseAvailable) {
@@ -17,53 +54,21 @@ const Login: React.FC = () => {
         }
 
         setIsLoggingIn(true);
-        try {
-            console.log("Starting Google Login...");
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            console.log("Google Login Success:", user.uid);
-
-            console.log("Navigating to dashboard...");
-            navigate('/dashboard');
-
-            const userRef = doc(db, 'users', user.uid);
-            console.log("Saving user profile in background...");
-
-            getDoc(userRef).then(userSnap => {
-                if (!userSnap.exists()) {
-                    console.log("User not found, creating new user doc...");
-                    return setDoc(userRef, {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp()
-                    });
-                } else {
-                    console.log("User already exists.");
-                }
-            }).catch(error => console.warn("Firestore error:", error));
-
-        } catch (error) {
-            console.error("Login logic failed:", error);
-            alert(`Login failed: ${(error as Error).message}`);
-            setIsLoggingIn(false);
-        }
+        const provider = new GoogleAuthProvider();
+        signInWithRedirect(auth, provider);
     };
 
 
     return (
         <div className="min-h-screen flex bg-white dark:bg-slate-950 transition-colors duration-300">
             {/* Visual Side */}
-            <div className="hidden lg:flex flex-1 relative items-center justify-center p-12 bg-slate-900 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/20 blur-[120px] rounded-full mix-blend-screen -mr-20 -mt-20" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 blur-[100px] rounded-full mix-blend-screen -ml-20 -mb-20" />
+            <div className="hidden lg:flex flex-1 relative items-center justify-center p-12 bg-sit-dark overflow-hidden">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-sit-orange/10 blur-[120px] rounded-full mix-blend-screen -mr-20 -mt-20" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sit-half-baked/10 blur-[100px] rounded-full mix-blend-screen -ml-20 -mb-20" />
 
                 <div className="relative z-10 max-w-lg text-center">
                     <h2 className="text-4xl font-bold text-white mb-6">Experience the flow.</h2>
-                    <p className="text-lg text-blue-200 leading-relaxed">
+                    <p className="text-lg text-sit-light-blue leading-relaxed opacity-80">
                         Join thousands of students managing their projects with effortless precision and clarity.
                     </p>
                 </div>
@@ -73,8 +78,8 @@ const Login: React.FC = () => {
             <div className="flex-1 flex items-center justify-center p-6 sm:p-8">
                 <div className="max-w-md w-full space-y-8">
                     <div className="text-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                            <span className="text-white text-3xl font-bold">A</span>
+                        <div className="w-20 h-20 bg-white p-2 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl ring-1 ring-slate-100">
+                            <img src="/src/assets/sit_logo.png" alt="SIT Logo" className="w-14 h-14 object-contain" />
                         </div>
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Welcome Back</h1>
                         <p className="text-slate-500 dark:text-slate-400">Sign in to continue your progress</p>
@@ -90,7 +95,7 @@ const Login: React.FC = () => {
                         <button
                             onClick={handleGoogleLogin}
                             disabled={isLoggingIn || !isFirebaseAvailable}
-                            className={`w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 text-slate-700 dark:text-white font-semibold py-4 px-6 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 ${(isLoggingIn || !isFirebaseAvailable) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 text-slate-700 dark:text-white font-semibold py-4 px-6 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-sit-orange dark:hover:border-sit-orange hover:shadow-lg hover:shadow-sit-orange/10 transition-all duration-300 ${(isLoggingIn || !isFirebaseAvailable) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             {isLoggingIn ? (
                                 <span className="animate-pulse">Signing in...</span>

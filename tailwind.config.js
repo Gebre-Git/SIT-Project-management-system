@@ -23,6 +23,14 @@ export default {
                     800: '#075985',
                     900: '#0c4a6e',
                     950: '#082f49',
+                },
+                sit: {
+                    dark: '#02272F',
+                    orange: '#FE5823',
+                    'half-baked': '#8AC4C7',
+                    yellow: '#EEBE41',
+                    'light-blue': '#CFDFDC',
+                    'light-yellow': '#EAE4D2',
                 }
             }
         },

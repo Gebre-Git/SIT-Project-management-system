@@ -4,34 +4,28 @@
 
 @layer base {
   :root {
-    /* Premium Palette - Light Mode */
+    /* SIT Brand Palette - Premium Light Mode */
     --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    /* Slate 50 */
-    --accent-primary: #3b82f6;
-    /* Blue 500 */
-    --accent-glow: rgba(59, 130, 246, 0.15);
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
+    --bg-secondary: #f3f7f6; /* Subtle SIT Light Blue mix */
+    --accent-primary: #FE5823; /* SIT Orange */
+    --accent-secondary: #02272F; /* SIT Dark */
+    --accent-glow: rgba(254, 88, 35, 0.15);
+    --text-primary: #02272F; /* SIT Dark */
+    --text-secondary: #475569;
     --border-color: #e2e8f0;
-    --quiet-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --quiet-shadow: 0 4px 12px -2px rgb(2 39 47 / 0.08);
   }
 
   .dark {
-    /* Premium Palette - Dark Mode */
-    --bg-primary: #020617;
-    /* Slate 950 */
-    --bg-secondary: #0f172a;
-    /* Slate 900 */
-    --accent-primary: #60a5fa;
-    /* Blue 400 */
-    --accent-glow: rgba(96, 165, 250, 0.15);
+    /* SIT Brand Palette - Premium Dark Mode */
+    --bg-primary: #01161a; /* Deeper SIT Dark */
+    --bg-secondary: #02272F; /* SIT Dark */
+    --accent-primary: #FE5823; /* SIT Orange */
+    --accent-secondary: #8AC4C7; /* SIT Half Baked */
+    --accent-glow: rgba(254, 88, 35, 0.2);
     --text-primary: #f8fafc;
-    /* Slate 50 */
     --text-secondary: #94a3b8;
-    /* Slate 400 */
-    --border-color: #1e293b;
-    /* Slate 800 */
+    --border-color: #0d3d46; /* SIT Dark lighter border */
   }
 
   body {
