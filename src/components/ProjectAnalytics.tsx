@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { BarChart2, Info } from 'lucide-react';
 import { cn } from '../lib/utils';
 
+import { useTheme } from '../context/ThemeContext';
+
 interface AnalyticsProps {
     project: Project;
     tasks: Task[];
@@ -22,6 +24,9 @@ const getMemberColor = (index: number) => {
 };
 
 const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members }) => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+    const strokeColor = isDark ? 'transparent' : '#fff';
 
     const stats = AccountabilityEngine.generateProjectStats(project, tasks, members);
 
@@ -53,7 +58,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
 
     if (tasks.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[300px] md:min-h-[400px] glass-card rounded-[1.5rem] sm:rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800 opacity-60 p-6 text-center">
+            <div className="flex flex-col items-center justify-center min-h-[300px] md:min-h-[400px] glass-card rounded-[1.5rem] sm:rounded-[2.5rem] border-2 border-dashed border-[#1a4d57] opacity-60 p-6 text-center">
                 <BarChart2 className="w-10 h-10 md:w-12 md:h-12 text-slate-400 mb-4" />
                 <h3 className="text-lg md:text-xl font-black text-slate-500 uppercase tracking-widest">No Data Available</h3>
                 <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-tighter">Create and complete tasks to see analytics</p>
@@ -69,7 +74,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass-card p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-col min-h-[400px] sm:min-h-[450px]"
+                    className="glass-card p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-[#1a4d57] flex flex-col min-h-[400px] sm:min-h-[450px]"
                 >
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
@@ -95,7 +100,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                     outerRadius={window.innerWidth < 640 ? 80 : 100}
                                     paddingAngle={2}
                                     dataKey="value"
-                                    stroke="#fff"
+                                    stroke={strokeColor}
                                     strokeWidth={2}
                                     isAnimationActive={true}
                                 >
@@ -104,7 +109,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                             key={`cell-${index}`}
                                             fill={hasCompletedTasks ? entry.color : '#e2e8f0'}
                                             opacity={hasCompletedTasks ? 1 : 0.4}
-                                            stroke="#fff"
+                                            stroke={strokeColor}
                                             strokeWidth={2}
                                         />
                                     ))}
@@ -128,7 +133,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="glass-card p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-col min-h-[400px] sm:min-h-[450px]"
+                    className="glass-card p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-[#1a4d57] flex flex-col min-h-[400px] sm:min-h-[450px]"
                 >
                     <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8 flex items-center gap-3">
                         <span className="w-2 h-6 bg-emerald-500 rounded-full" />
@@ -183,7 +188,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                 "p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border transition-all duration-300 shadow-sm",
                                 stat.isAtRisk
                                     ? "bg-red-50/20 border-red-200 dark:bg-red-900/10 dark:border-red-900/40"
-                                    : "glass-card border-slate-200/60 dark:border-slate-800"
+                                    : "glass-card border-[#1a4d57]"
                             )}
                         >
                             <div className="flex justify-between items-start mb-6">

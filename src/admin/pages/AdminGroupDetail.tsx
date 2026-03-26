@@ -184,7 +184,7 @@ const AdminGroupDetail: React.FC = () => {
             </div>
 
             {/* Detailed Analytics Section */}
-            <div className="glass-card rounded-[2.5rem] p-8 border-2 border-slate-100 dark:border-slate-800/50">
+            <div className="glass-card rounded-[2.5rem] p-8 border-2 border-[#1a4d57]">
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Performance Deep-Dive</h2>
@@ -203,7 +203,7 @@ const AdminGroupDetail: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="glass-card rounded-[3rem] p-10 border-2 border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl shadow-2xl shadow-blue-500/5"
+                className="glass-card rounded-[3rem] p-10 border-2 border-[#1a4d57] bg-white/40 dark:bg-sit-dark/40 backdrop-blur-2xl shadow-2xl shadow-sit-orange/5"
             >
                 <div className="flex items-center gap-6 mb-10">
                     <div className="p-4 rounded-[2rem] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-lg shadow-blue-500/20">
@@ -256,7 +256,7 @@ const AdminGroupDetail: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="glass-card rounded-[2.5rem] p-8 border-2 border-slate-100 dark:border-slate-800/50"
+                className="glass-card rounded-[2.5rem] p-8 border-2 border-[#1a4d57]"
             >
                 <div className="flex items-center gap-4 mb-8">
                     <div className="p-3 rounded-2xl bg-violet-50 dark:bg-violet-900/20 text-violet-600">
@@ -271,7 +271,7 @@ const AdminGroupDetail: React.FC = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b-2 border-slate-50 dark:border-slate-800/50">
+                            <tr className="border-b-2 border-slate-50 dark:border-[#1a4d57]">
                                 <th className="text-left font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Member</th>
                                 <th className="text-left font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Contact</th>
                                 <th className="text-center font-black text-[10px] uppercase tracking-widest text-slate-400 py-4 px-2">Efficiency</th>
@@ -285,7 +285,7 @@ const AdminGroupDetail: React.FC = () => {
                                 const completionRate = stats ? Math.round((stats.tasksCompleted / (stats.tasksAssigned || 1)) * 100) : 0;
                                 
                                 return (
-                                    <tr key={member.uid} className={`group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all rounded-2xl border-b border-slate-50 dark:border-slate-800/30 ${stats?.isAtRisk ? 'bg-red-50/30' : ''}`}>
+                                    <tr key={member.uid} className={`group hover:bg-slate-50 dark:hover:bg-sit-dark/20 transition-all rounded-2xl border-b border-slate-50 dark:border-[#1a4d57] ${stats?.isAtRisk ? 'bg-red-50/30' : ''}`}>
                                         <td className="py-5 px-2">
                                             <Link to={`/admin/user/${member.uid}`} className="flex items-center gap-4 group/link hover:opacity-80 transition-opacity cursor-pointer">
                                                 <div className="relative">
@@ -365,7 +365,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({ title, status, tasks, members, ic
     const [isOpen, setIsOpen] = React.useState(status === 'in_progress');
 
     return (
-        <div className="border border-slate-100 dark:border-slate-800 rounded-[1.5rem] overflow-hidden bg-white/50 dark:bg-slate-900/50">
+        <div className="border border-slate-100 dark:border-[#1a4d57] rounded-[1.5rem] overflow-hidden bg-white/50 dark:bg-sit-dark/50">
             <button 
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
@@ -400,7 +400,7 @@ const TaskGroup: React.FC<TaskGroupProps> = ({ title, status, tasks, members, ic
             </button>
 
             {isOpen && (
-                <div className="p-6 pt-0 border-t border-slate-50 dark:border-slate-800/50">
+                <div className="p-6 pt-0 border-t border-slate-50 dark:border-[#1a4d57]">
                     {tasks.length === 0 ? (
                         <div className="py-8 text-center bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
                             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No tasks currently in this status</p>
@@ -427,7 +427,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
     const isOverdue = task.status !== 'done' && task.deadline && new Date(task.deadline.toDate()) < new Date();
     
     return (
-        <div className="p-6 rounded-[2rem] border bg-white dark:bg-slate-800/80 border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-2xl transition-all duration-300 group/card relative overflow-hidden">
+        <div className="p-6 rounded-[2rem] border bg-white dark:bg-sit-dark/80 border-slate-100 dark:border-[#1a4d57] shadow-xl hover:shadow-2xl transition-all duration-300 group/card relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500/20 group-hover/card:bg-blue-500 transition-colors" />
             
             <div className="flex justify-between items-start mb-6">
@@ -524,7 +524,7 @@ const StatBox: React.FC<{
     gradient: string, 
     icon: React.ElementType
 }> = ({ label, value, subValue, gradient, icon: Icon }) => (
-    <div className="glass-card rounded-3xl p-6 border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
+    <div className="glass-card rounded-3xl p-6 border border-slate-100 dark:border-[#1a4d57] relative overflow-hidden group">
         <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-[0.03] group-hover:opacity-[0.08] transition-opacity blur-2xl`} />
         <div className="flex items-center justify-between mb-4">
             <div className={`p-2 rounded-xl bg-gradient-to-br ${gradient} text-white shadow-lg`}>
