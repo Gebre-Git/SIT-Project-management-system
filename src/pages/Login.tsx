@@ -1,5 +1,5 @@
 import React from 'react';
-import { GoogleAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db, firebaseConfigError, isFirebaseAvailable } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate, Navigate } from 'react-router-dom';
@@ -15,37 +15,7 @@ const Login: React.FC = () => {
         return <Navigate to="/dashboard" replace />;
     }
 
-    // Handle redirect result when returning from Google sign-in
-    React.useEffect(() => {
-        if (!isFirebaseAvailable) return;
-        setIsLoggingIn(true);
-        getRedirectResult(auth)
-            .then(async (result) => {
-                if (!result) { setIsLoggingIn(false); return; }
-                const user = result.user;
-                console.log("Google Login Success:", user.uid);
-                navigate('/dashboard');
-                const userRef = doc(db, 'users', user.uid);
-                const userSnap = await getDoc(userRef);
-                if (!userSnap.exists()) {
-                    await setDoc(userRef, {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp()
-                    });
-                }
-            })
-            .catch((error) => {
-                console.error("Redirect login failed:", error);
-                alert(`Login failed: ${(error as Error).message}`);
-            })
-            .finally(() => setIsLoggingIn(false));
-    }, [navigate]);
-
-    const handleGoogleLogin = () => {
+    const handleGoogleLogin = async () => {
         if (isLoggingIn) return;
 
         if (!isFirebaseAvailable) {
@@ -54,8 +24,33 @@ const Login: React.FC = () => {
         }
 
         setIsLoggingIn(true);
-        const provider = new GoogleAuthProvider();
-        signInWithRedirect(auth, provider);
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            console.log("Google Login Success:", user.uid);
+
+            navigate('/dashboard');
+
+            const userRef = doc(db, 'users', user.uid);
+            getDoc(userRef).then(userSnap => {
+                if (!userSnap.exists()) {
+                    return setDoc(userRef, {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+            }).catch(error => console.warn("Firestore error:", error));
+
+        } catch (error) {
+            console.error("Login failed:", error);
+            alert(`Login failed: ${(error as Error).message}`);
+            setIsLoggingIn(false);
+        }
     };
 
 
