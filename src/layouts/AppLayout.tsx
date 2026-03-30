@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Menu, X, LogOut, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import Logo from '../components/Logo';
@@ -25,8 +25,8 @@ const SidebarLink = ({ to, icon: Icon, label, collapsed }: SidebarLinkProps) => 
             "flex items-center gap-3 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
             collapsed ? "justify-center px-0 mx-2" : "px-4",
             isActive
-                ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
-                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                ? "text-white bg-sit-orange font-medium shadow-lg shadow-sit-orange/20"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
         )}
     >
         {({ isActive }) => (
@@ -52,8 +52,8 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
                 "flex items-center gap-3 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden",
                 collapsed ? "justify-center px-0 mx-2" : "px-4",
                 isActive
-                    ? "text-white bg-gradient-to-r from-blue-600 to-cyan-600 font-medium shadow-lg shadow-blue-500/25"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    ? "text-white bg-sit-orange font-medium shadow-lg shadow-sit-orange/20"
+                    : "text-slate-300 hover:text-white hover:bg-white/10"
             )}
         >
             {({ isActive }) => (
@@ -87,11 +87,17 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
 };
 
 const AppLayout: React.FC = () => {
-    const { logout, isSuperAdmin } = useAuth();
+    const { logout, isSuperAdmin, currentUser, loading } = useAuth();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const location = useLocation();
+
+    // Auth guard — redirect to login if not authenticated
+    if (!loading && !currentUser) {
+        return <Navigate to="/login" replace />;
+    }
+
 
     const handleLogout = async () => {
         await logout();
@@ -110,8 +116,8 @@ const AppLayout: React.FC = () => {
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 className={cn(
-                    "hidden lg:flex flex-col border-r border-border-color bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl fixed inset-y-0 z-40 transition-all duration-300",
-                    isSidebarCollapsed ? "w-[80px]" : "w-[260px]"
+                    "hidden lg:flex flex-col border-r border-[#1a4d57] bg-sit-dark text-white fixed inset-y-0 z-40 transition-all duration-300 shadow-2xl",
+                    isSidebarCollapsed ? "w-[80px]" : "w-[280px]"
                 )}
             >
                 <div className={cn("flex flex-col flex-shrink-0 transition-all duration-300", isSidebarCollapsed ? "pt-6 pb-2 items-center gap-4" : "h-20 px-6 justify-center")}>
@@ -120,7 +126,7 @@ const AppLayout: React.FC = () => {
                             <div className="flex justify-center w-full">
                                 <Logo collapsed={true} animate={false} />
                             </div>
-                            <button onClick={() => setIsSidebarCollapsed(false)} className="p-1.5 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors shadow-sm">
+                            <button onClick={() => setIsSidebarCollapsed(false)} className="p-1.5 rounded-xl bg-sit-orange text-white hover:bg-sit-orange/90 transition-colors shadow-sm">
                                 <ChevronRight className="w-5 h-5" />
                             </button>
                         </>
@@ -165,7 +171,7 @@ const AppLayout: React.FC = () => {
                     </button>
                 </nav>
 
-                <div className={cn("p-4 border-t border-border-color bg-white/30 dark:bg-slate-900/30 flex flex-col gap-4", isSidebarCollapsed ? "items-center" : "")}>
+                <div className={cn("p-4 border-t border-[#1a4d57] bg-black/10 flex flex-col gap-4", isSidebarCollapsed ? "items-center" : "")}>
                     <div className={cn("flex", isSidebarCollapsed ? "justify-center" : "justify-center w-full")}>
                         <ThemeToggle collapsed={isSidebarCollapsed} />
                     </div>
@@ -217,7 +223,7 @@ const AppLayout: React.FC = () => {
             </AnimatePresence>
 
             {/* Main Content Area */}
-            <motion.main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[260px]")}>
+            <motion.main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300 bg-white dark:bg-[#01161a]", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[280px]")}>
                 <div className="max-w-7xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Outlet />
                 </div>

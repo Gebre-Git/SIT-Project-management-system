@@ -3,7 +3,7 @@ import { AccountabilityEngine } from '../lib/AccountabilityEngine';
 import { format } from 'date-fns';
 import { SIT_REPORT_TEMPLATE } from './reportTemplate';
 
-export const generateGroupReport = (project: Project, tasks: Task[], members: User[]): string => {
+export const generateGroupReport = (project: Project, tasks: Task[], members: User[], aiSummary?: string): string => {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.status === 'done').length;
     const lateSubmissions = tasks.filter(t => {
@@ -55,6 +55,7 @@ export const generateGroupReport = (project: Project, tasks: Task[], members: Us
     html = html.split('{{overall_completion}}').join(completionRate.toString());
     html = html.split('{{member_rows}}').join(memberRows);
     html = html.split('{{generated_date}}').join(reportDate);
+    html = html.split('{{ai_summary}}').join(aiSummary || 'AI Summary is processing or unavailable for this report.');
 
     return html;
 };
