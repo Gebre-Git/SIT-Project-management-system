@@ -78,7 +78,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                 >
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
-                            <span className="w-2 h-6 bg-blue-600 rounded-full" />
+                            <span className="w-2 h-6 bg-sit-orange rounded-full" />
                             Contribution Heatmap
                         </h3>
                         {!hasCompletedTasks && (
@@ -136,7 +136,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                     className="glass-card p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border border-[#1a4d57] flex flex-col min-h-[400px] sm:min-h-[450px]"
                 >
                     <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8 flex items-center gap-3">
-                        <span className="w-2 h-6 bg-emerald-500 rounded-full" />
+                        <span className="w-2 h-6 bg-sit-half-baked rounded-full" />
                         Team Efficiency
                     </h3>
                     <div className="flex-1 w-full relative min-h-[300px]">
@@ -159,7 +159,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                     allowDecimals={false}
                                 />
                                 <Tooltip
-                                    cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
+                                    cursor={{ fill: 'rgba(254, 88, 35, 0.05)' }}
                                     contentStyle={{ borderRadius: '20px', border: 'none', background: 'rgba(15, 23, 42, 0.95)', color: '#fff' }}
                                     formatter={(value: any, name: any) => [value, name === 'OnTime' ? 'On Time' : name]}
                                 />
@@ -168,7 +168,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                     iconType="rect"
                                     formatter={(value) => value === 'OnTime' ? 'On Time' : value}
                                 />
-                                <Bar dataKey="OnTime" stackId="a" fill="#10b981" radius={[0, 0, 10, 10]} barSize={window.innerWidth < 640 ? 25 : 40} />
+                                <Bar dataKey="OnTime" stackId="a" fill="#8AC4C7" radius={[0, 0, 10, 10]} barSize={window.innerWidth < 640 ? 25 : 40} />
                                 <Bar dataKey="Late" stackId="a" fill="#ef4444" radius={[10, 10, 0, 0]} barSize={window.innerWidth < 640 ? 25 : 40} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -193,7 +193,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                         >
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-blue-600 shadow-inner">
+                                    <div className="w-12 h-12 rounded-2xl bg-white/50 dark:bg-sit-dark flex items-center justify-center font-black text-sit-orange shadow-inner border border-slate-100 dark:border-sit-half-baked/10">
                                         {(member?.displayName || member?.username || 'U')[0]}
                                     </div>
                                     <div>
@@ -230,7 +230,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                         transition={{ duration: 1.5, ease: 'circOut' }}
                                         className={cn(
                                             "h-full rounded-full transition-all duration-1000",
-                                            stat.isAtRisk ? 'bg-red-500' : 'bg-gradient-to-r from-blue-600 to-indigo-600'
+                                            stat.isAtRisk ? 'bg-red-500' : 'bg-gradient-to-r from-sit-orange to-sit-dark'
                                         )}
                                     />
                                 </div>

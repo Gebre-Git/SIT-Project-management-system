@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
+import { useTheme } from '../context/ThemeContext';
 
 interface LogoProps {
     className?: string;
@@ -10,6 +11,12 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = true }) => {
+    const { theme } = useTheme();
+
+    const logoSrc = theme === 'dark' 
+        ? "/src/assets/SIT SECONDARY LOGO SECONDARY COLOR (DARK BACKGROUND).png"
+        : "/src/assets/SIT SECONDARY LOGO PRIMARY COLOR.png";
+
     return (
         <Link
             to="/"
@@ -28,10 +35,10 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     damping: 20,
                     duration: 0.8
                 }}
-                className="relative flex items-center justify-center p-1 bg-white rounded-xl shadow-lg ring-1 ring-slate-200/50"
+                className="relative flex items-center justify-center p-1 bg-white/10 dark:bg-white/5 rounded-xl backdrop-blur-sm transition-colors duration-300"
             >
                 <img 
-                    src="/src/assets/sit_logo.png" 
+                    src={logoSrc}
                     alt="SIT Logo" 
                     className={cn(
                         "transition-all duration-300 object-contain",
@@ -47,12 +54,12 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     transition={{ delay: 0.2, duration: 0.5 }}
                     className="flex flex-col"
                 >
-                    <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-orange-100 to-white leading-none">
+                    <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-sit-orange via-sit-orange/80 to-sit-orange leading-none">
                         SIT Manager
                     </span>
-                    {/*<span className="text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400 tracking-widest uppercase ml-0.5">
-                        by Barkot Labs
-                    </span>*/}
+                    <span className="text-[0.6rem] font-semibold text-sit-dark/60 dark:text-sit-half-baked/60 tracking-[0.2em] uppercase ml-0.5 mt-1">
+                        Excellence in IT
+                    </span>
                 </motion.div>
             )}
         </Link>
