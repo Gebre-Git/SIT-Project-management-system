@@ -95,17 +95,17 @@ const Dashboard: React.FC = () => {
         <div className="space-y-8">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
-                        Welcome back, <span className="text-blue-600 dark:text-blue-400">{currentUser?.displayName?.split(' ')[0]}</span>
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">
+                        Welcome back, <span className="text-sit-orange">{currentUser?.displayName?.split(' ')[0]}</span>
                     </h1>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 font-medium">Here's what's happening with your projects.</p>
+                    <p className="text-lg text-white/70 font-medium">Here's what's happening with your projects.</p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                     <button
                         onClick={async () => {
                             if (await checkAndRedirect()) setIsJoinModalOpen(true);
                         }}
-                        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/20 text-white/90 font-semibold hover:bg-white/10 transition"
                     >
                         <UserPlus className="w-4 h-4" />
                         Join Team
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
                         onClick={async () => {
                             if (await checkAndRedirect()) setIsModalOpen(true);
                         }}
-                        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-blue-600/20"
+                        className="flex items-center justify-center gap-2 bg-sit-orange hover:bg-[#d64718] text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-sit-orange/20"
                     >
                         <Plus className="w-4 h-4" />
                         New Project
@@ -125,19 +125,19 @@ const Dashboard: React.FC = () => {
             {projectsLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-48 rounded-3xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+                        <div key={i} className="h-48 rounded-3xl bg-white/5 animate-pulse border border-white/10" />
                     ))}
                 </div>
             ) : projects.length === 0 ? (
-                <div className="glass-card rounded-[2rem] p-12 text-center border-dashed border-2 border-slate-300 dark:border-slate-700">
-                    <div className="w-16 h-16 mx-auto bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6">
-                        <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <div className="glass-card rounded-[2rem] p-12 text-center border-dashed border-2 border-white/20">
+                    <div className="w-16 h-16 mx-auto bg-sit-light-blue/20 rounded-full flex items-center justify-center mb-6">
+                        <BookOpen className="w-8 h-8 text-sit-light-blue" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No projects yet</h3>
-                    <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">Create your first project to start managing tasks and collaborating with your team.</p>
+                    <h3 className="text-xl font-bold text-white mb-2">No projects yet</h3>
+                    <p className="text-white/70 mb-8 max-w-sm mx-auto">Create your first project to start managing tasks and collaborating with your team.</p>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="text-blue-600 hover:text-blue-500 font-semibold flex items-center justify-center gap-2 mx-auto"
+                        className="text-sit-orange hover:text-[#d64718] font-semibold flex items-center justify-center gap-2 mx-auto"
                     >
                         Create Project <ArrowRight className="w-4 h-4" />
                     </button>
@@ -154,39 +154,39 @@ const Dashboard: React.FC = () => {
                                 onClick={() => navigate(`/project/${project.id}`)}
                                 className={cn(
                                     "group relative p-6 rounded-[2rem] cursor-pointer overflow-hidden transition-all duration-300",
-                                    "glass-card hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1",
+                                    "bg-white/5 border border-white/10 hover:shadow-xl hover:shadow-sit-orange/10 hover:-translate-y-1 hover:border-sit-light-blue/30",
                                     isFeatured ? "md:col-span-2 md:row-span-2 flex flex-col justify-between" : "flex flex-col justify-between"
                                 )}
                             >
                                 <div className={cn(
-                                    "absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 blur-[60px] rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110",
+                                    "absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-sit-light-blue/10 to-sit-half-baked/10 blur-[60px] rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110",
                                     isFeatured ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                                 )} />
 
                                 <div>
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-blue-600 dark:text-blue-400">
+                                        <div className="p-3 rounded-2xl bg-white/10 text-sit-light-blue">
                                             {project.type === 'personal' ? <Clock className="w-6 h-6" /> : <BookOpen className={cn("w-6 h-6", isFeatured && "w-8 h-8")} />}
                                         </div>
                                         <div className="flex gap-2">
-                                            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500">
+                                            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white/70">
                                                 {project.type}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <h3 className={cn("font-bold text-slate-900 dark:text-white mb-1", isFeatured ? "text-3xl" : "text-xl")}>
+                                    <h3 className={cn("font-bold text-white mb-1", isFeatured ? "text-3xl" : "text-xl")}>
                                         {project.name}
                                     </h3>
-                                    <p className="text-slate-500 dark:text-slate-400 font-medium">{project.course || (project.type === 'personal' ? 'Personal Goal' : 'Team Project')}</p>
+                                    <p className="text-white/70 font-medium">{project.course || (project.type === 'personal' ? 'Personal Goal' : 'Team Project')}</p>
                                 </div>
 
-                                <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800/50 mt-auto">
-                                    <div className="flex items-center gap-2 text-sm text-slate-500 font-bold uppercase tracking-widest">
+                                <div className="flex items-center justify-between pt-6 border-t border-white/10 mt-auto">
+                                    <div className="flex items-center gap-2 text-sm text-white/50 font-bold uppercase tracking-widest">
                                         Open Workspace
                                     </div>
-                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <ArrowRight className="w-4 h-4 text-slate-900 dark:text-white" />
+                                    <div className="w-8 h-8 rounded-full bg-sit-orange flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <ArrowRight className="w-4 h-4 text-white" />
                                     </div>
                                 </div>
                             </motion.div>
@@ -196,19 +196,19 @@ const Dashboard: React.FC = () => {
             )}
 
             {isJoinModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sit-dark/80 backdrop-blur-sm">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-md p-8 shadow-2xl"
+                        className="bg-[#01161a] border border-white/10 rounded-3xl w-full max-w-md p-8 shadow-2xl"
                     >
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
-                                <LinkIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            <div className="w-12 h-12 bg-sit-light-blue/20 rounded-2xl flex items-center justify-center">
+                                <LinkIcon className="w-6 h-6 text-sit-light-blue" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Join Team</h2>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">Enter invite link or code</p>
+                                <h2 className="text-2xl font-bold text-white">Join Team</h2>
+                                <p className="text-sm text-white/70">Enter invite link or code</p>
                             </div>
                         </div>
 
@@ -217,7 +217,7 @@ const Dashboard: React.FC = () => {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all placeholder-white/30"
                                     value={inviteLink}
                                     onChange={e => setInviteLink(e.target.value)}
                                     placeholder="Paste link here..."
@@ -230,13 +230,13 @@ const Dashboard: React.FC = () => {
                                         setIsJoinModalOpen(false);
                                         setInviteLink('');
                                     }}
-                                    className="px-6 py-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-medium transition"
+                                    className="px-6 py-3 text-white/70 hover:bg-white/10 rounded-xl font-medium transition"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg shadow-blue-600/20"
+                                    className="px-8 py-3 bg-sit-orange hover:bg-[#d64718] text-white rounded-xl font-semibold transition shadow-lg shadow-sit-orange/20"
                                 >
                                     Join Team
                                 </button>
@@ -247,13 +247,13 @@ const Dashboard: React.FC = () => {
             )}
 
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sit-dark/80 backdrop-blur-sm">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl p-8 shadow-2xl"
+                        className="bg-[#01161a] border border-white/10 rounded-3xl w-full max-w-xl p-8 shadow-2xl"
                     >
-                        <h2 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white">New Project</h2>
+                        <h2 className="text-3xl font-bold mb-6 text-white">New Project</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                             <button
@@ -261,40 +261,40 @@ const Dashboard: React.FC = () => {
                                 className={cn(
                                     "p-4 rounded-2xl border-2 transition-all text-left",
                                     newProject.type === 'personal'
-                                        ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20"
-                                        : "border-slate-100 dark:border-slate-800 hover:border-slate-200"
+                                        ? "border-sit-light-blue bg-sit-light-blue/20"
+                                        : "border-white/10 hover:border-white/20"
                                 )}
                             >
-                                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-3">
-                                    <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                <div className="w-10 h-10 rounded-xl bg-sit-light-blue/20 flex items-center justify-center mb-3">
+                                    <Clock className="w-5 h-5 text-sit-light-blue" />
                                 </div>
-                                <h3 className="font-bold text-slate-900 dark:text-white">Personal</h3>
-                                <p className="text-xs text-slate-500">Individual tasks & simple tracking.</p>
+                                <h3 className="font-bold text-white">Personal</h3>
+                                <p className="text-xs text-white/50">Individual tasks & simple tracking.</p>
                             </button>
                             <button
                                 onClick={() => setNewProject({ ...newProject, type: 'team' })}
                                 className={cn(
                                     "p-4 rounded-2xl border-2 transition-all text-left",
                                     newProject.type === 'team'
-                                        ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20"
-                                        : "border-slate-100 dark:border-slate-800 hover:border-slate-200"
+                                        ? "border-sit-half-baked bg-sit-half-baked/20"
+                                        : "border-white/10 hover:border-white/20"
                                 )}
                             >
-                                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center mb-3">
-                                    <UserPlus className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                <div className="w-10 h-10 rounded-xl bg-sit-half-baked/20 flex items-center justify-center mb-3">
+                                    <UserPlus className="w-5 h-5 text-sit-half-baked" />
                                 </div>
-                                <h3 className="font-bold text-slate-900 dark:text-white">Team</h3>
-                                <p className="text-xs text-slate-500">Collaborate with roles & scoring.</p>
+                                <h3 className="font-bold text-white">Team</h3>
+                                <p className="text-xs text-white/50">Collaborate with roles & scoring.</p>
                             </button>
                         </div>
 
                         <form onSubmit={handleCreate} className="space-y-5">
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Project Name</label>
+                                <label className="block text-sm font-semibold text-white/90 mb-2">Project Name</label>
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all placeholder-white/30"
                                     value={newProject.name}
                                     onChange={e => setNewProject({ ...newProject, name: e.target.value })}
                                     placeholder={newProject.type === 'personal' ? "e.g. My Study Plan" : "e.g. History Group Project"}
@@ -303,10 +303,10 @@ const Dashboard: React.FC = () => {
 
                             {newProject.type === 'team' && (
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Course (Optional)</label>
+                                    <label className="block text-sm font-semibold text-white/90 mb-2">Course (Optional)</label>
                                     <input
                                         type="text"
-                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all placeholder-white/30"
                                         value={newProject.course}
                                         onChange={e => setNewProject({ ...newProject, course: e.target.value })}
                                         placeholder="e.g. HIST 101"
@@ -321,14 +321,14 @@ const Dashboard: React.FC = () => {
                                         setIsModalOpen(false);
                                         setNewProject({ name: '', course: '', type: 'team' });
                                     }}
-                                    className="px-6 py-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-medium transition text-center"
+                                    className="px-6 py-3 text-white/70 hover:bg-white/10 rounded-xl font-medium transition text-center"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg shadow-blue-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="px-8 py-3 bg-sit-orange hover:bg-[#d64718] text-white rounded-xl font-semibold transition shadow-lg shadow-sit-orange/20 disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {creating && <Loader2 className="w-4 h-4 animate-spin" />}
                                     Create {newProject.type === 'personal' ? 'Personal' : 'Team'} Project

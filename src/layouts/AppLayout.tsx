@@ -5,7 +5,6 @@ import { LayoutDashboard, Menu, X, LogOut, Shield, ChevronLeft, ChevronRight } f
 import Logo from '../components/Logo';
 import ProfileDropdown from '../components/ProfileDropdown';
 import ProfileAvatar from '../components/ProfileAvatar';
-import ThemeToggle from '../components/ThemeToggle';
 import NotificationPanel from '../components/NotificationPanel';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
@@ -110,7 +109,7 @@ const AppLayout: React.FC = () => {
     }, [location.pathname]);
 
     return (
-        <div className="flex min-h-screen bg-bg-secondary dark:bg-bg-primary transition-colors duration-300">
+        <div className="flex min-h-screen bg-sit-dark transition-colors duration-300">
             {/* Desktop Sidebar */}
             <motion.aside
                 initial={{ x: -20, opacity: 0 }}
@@ -172,16 +171,13 @@ const AppLayout: React.FC = () => {
                 </nav>
 
                 <div className={cn("p-4 border-t border-[#1a4d57] bg-black/10 flex flex-col gap-4", isSidebarCollapsed ? "items-center" : "")}>
-                    <div className={cn("flex", isSidebarCollapsed ? "justify-center" : "justify-center w-full")}>
-                        <ThemeToggle collapsed={isSidebarCollapsed} />
-                    </div>
                     <ProfileDropdown collapsed={isSidebarCollapsed} />
                 </div>
             </motion.aside>
 
             {/* Mobile Header */}
-            <div className="lg:hidden fixed top-0 inset-x-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border-color z-40 flex items-center justify-between px-4">
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-600 dark:text-slate-300">
+            <div className="lg:hidden fixed top-0 inset-x-0 h-16 bg-sit-dark/80 backdrop-blur-xl border-b border-white/10 z-40 flex items-center justify-between px-4">
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-white">
                     {isMobileMenuOpen ? <X /> : <Menu />}
                 </button>
                 <Logo collapsed animate={false} />
@@ -198,22 +194,17 @@ const AppLayout: React.FC = () => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="lg:hidden fixed inset-0 top-16 bg-white dark:bg-slate-950 z-30 p-6 flex flex-col gap-4"
+                        className="lg:hidden fixed inset-0 top-16 bg-[#01161a] z-30 p-6 flex flex-col gap-4"
                     >
                         <SidebarLink to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
                         {isSuperAdmin && (
                             <SidebarLink to="/admin" icon={Shield} label="Admin Panel" />
                         )}
                         <ProfileSidebarLink to="/profile" />
-                        
-                        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 mt-4">
-                            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Theme</span>
-                            <ThemeToggle />
-                        </div>
 
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+                            className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-900/10 rounded-xl transition-all mt-4"
                         >
                             <LogOut className="w-5 h-5" />
                             <span className="font-medium">Logout</span>
@@ -223,7 +214,7 @@ const AppLayout: React.FC = () => {
             </AnimatePresence>
 
             {/* Main Content Area */}
-            <motion.main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300 bg-white dark:bg-[#01161a]", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[280px]")}>
+            <motion.main className={cn("flex-1 pt-16 lg:pt-0 min-h-screen transition-all duration-300 bg-sit-dark", isSidebarCollapsed ? "lg:pl-[80px]" : "lg:pl-[280px]")}>
                 <div className="max-w-7xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Outlet />
                 </div>
