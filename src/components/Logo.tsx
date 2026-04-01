@@ -28,7 +28,7 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     damping: 20,
                     duration: 0.8
                 }}
-                className="relative flex items-center justify-center p-1 bg-white rounded-xl shadow-lg ring-1 ring-slate-200/50"
+                className="relative flex items-center justify-center p-1 bg-white rounded-xl shadow-lg ring-1 ring-white/10"
             >
                 <img 
                     src="/src/assets/sit_logo.png" 
