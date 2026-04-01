@@ -26,7 +26,7 @@ export default {
                 },
                 sit: {
                     dark: '#02272F',
-                    orange: '#F15A24',
+                    orange: '#FE5823',
                     'half-baked': '#8AC4C7',
                     yellow: '#EEBE41',
                     'light-blue': '#CFDFDC',
