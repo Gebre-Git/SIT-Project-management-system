@@ -8,7 +8,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
+                sans: ['CA Saygon', 'Poppins', 'system-ui', 'sans-serif'],
             },
             colors: {
                 brand: {
@@ -26,7 +26,7 @@ export default {
                 },
                 sit: {
                     dark: '#02272F',
-                    orange: '#FE5823',
+                    orange: '#F15A24',
                     'half-baked': '#8AC4C7',
                     yellow: '#EEBE41',
                     'light-blue': '#CFDFDC',

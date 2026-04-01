@@ -6,7 +6,7 @@ export const SIT_REPORT_TEMPLATE = `
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIT - Group Project Performance Report Template</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap');
         
         :root {
             /* SIT Brand Colors */
@@ -30,7 +30,7 @@ export const SIT_REPORT_TEMPLATE = `
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             color: var(--text-main);
             background-color: #ffffff;
             margin: 0;
@@ -238,7 +238,7 @@ export const SIT_REPORT_TEMPLATE = `
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 10pt;
             font-weight: 700;
             cursor: pointer;

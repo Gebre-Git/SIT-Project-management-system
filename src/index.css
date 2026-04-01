@@ -7,9 +7,9 @@
     /* SIT Brand Palette - Premium Light Mode */
     --bg-primary: #ffffff;
     --bg-secondary: #f3f7f6; /* Subtle SIT Light Blue mix */
-    --accent-primary: #FE5823; /* SIT Orange */
+    --accent-primary: #F15A24; /* SIT Orange */
     --accent-secondary: #02272F; /* SIT Dark */
-    --accent-glow: rgba(254, 88, 35, 0.15);
+    --accent-glow: rgba(241, 90, 36, 0.15);
     --text-primary: #02272F; /* SIT Dark */
     --text-secondary: #475569;
     --border-color: #e2e8f0;
@@ -20,30 +20,30 @@
     /* SIT Brand Palette - Premium Dark Mode */
     --bg-primary: #01161a; /* Deeper SIT Dark */
     --bg-secondary: #02272F; /* SIT Dark */
-    --accent-primary: #FE5823; /* SIT Orange */
+    --accent-primary: #F15A24; /* SIT Orange */
     --accent-secondary: #8AC4C7; /* SIT Half Baked */
-    --accent-glow: rgba(254, 88, 35, 0.2);
+    --accent-glow: rgba(241, 90, 36, 0.2);
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --border-color: #1a4d57; /* Increased visibility for SIT Dark theme */
   }
 
   body {
-    @apply antialiased text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-950 font-sans selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-300;
+    @apply antialiased text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-950 font-sans selection:bg-sit-orange/30 selection:text-sit-orange dark:selection:text-sit-yellow;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'CA Saygon', 'Poppins', sans-serif;
   }
 
   p,
   span,
   div,
   button {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 
   /* Premium Scrollbar */
