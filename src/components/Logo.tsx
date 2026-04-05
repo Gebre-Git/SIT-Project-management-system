@@ -35,19 +35,14 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     damping: 20,
                     duration: 0.8
                 }}
-                className={cn(
-                    "relative flex items-center justify-center p-1 rounded-xl transition-all duration-500",
-                    isDark
-                        ? "bg-white/5"
-                        : "bg-white shadow-lg ring-1 ring-slate-200/50"
-                )}
+                className="relative flex items-center justify-center p-1 transition-all duration-500"
             >
                 <img
                     src={isDark ? logoDark : logoLight}
                     alt="SIT Logo"
                     className={cn(
                         "transition-all duration-300 object-contain",
-                        collapsed ? "w-8 h-8" : "w-10 h-10"
+                        collapsed ? "w-10 h-10" : "w-12 h-12"
                     )}
                 />
             </motion.div>
