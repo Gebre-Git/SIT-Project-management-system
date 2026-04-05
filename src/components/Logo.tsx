@@ -2,14 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
+import { useTheme } from '../context/ThemeContext';
+import logoLight from '../assets/logo-light.png';
+import logoDark from '../assets/logo-dark.png';
 
 interface LogoProps {
     className?: string;
     collapsed?: boolean;
     animate?: boolean;
+    forceDark?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = true }) => {
+const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = true, forceDark = false }) => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark' || forceDark;
+
     return (
         <Link
             to="/"
@@ -28,11 +35,16 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     damping: 20,
                     duration: 0.8
                 }}
-                className="relative flex items-center justify-center p-1 bg-white rounded-xl shadow-lg ring-1 ring-slate-200/50"
+                className={cn(
+                    "relative flex items-center justify-center p-1 rounded-xl transition-all duration-500",
+                    isDark
+                        ? "bg-white/5"
+                        : "bg-white shadow-lg ring-1 ring-slate-200/50"
+                )}
             >
-                <img 
-                    src="/src/assets/sit_logo.png" 
-                    alt="SIT Logo" 
+                <img
+                    src={isDark ? logoDark : logoLight}
+                    alt="SIT Logo"
                     className={cn(
                         "transition-all duration-300 object-contain",
                         collapsed ? "w-8 h-8" : "w-10 h-10"
@@ -47,12 +59,14 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     transition={{ delay: 0.2, duration: 0.5 }}
                     className="flex flex-col"
                 >
-                    <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-orange-100 to-white leading-none">
+                    <span className={cn(
+                        "text-xl font-bold tracking-tight bg-clip-text text-transparent leading-none",
+                        isDark
+                            ? "bg-gradient-to-r from-white via-orange-100 to-white"
+                            : "bg-gradient-to-r from-sit-dark via-sit-orange to-sit-dark"
+                    )}>
                         SIT Manager
                     </span>
-                    {/*<span className="text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400 tracking-widest uppercase ml-0.5">
-                        by Barkot Labs
-                    </span>*/}
                 </motion.div>
             )}
         </Link>

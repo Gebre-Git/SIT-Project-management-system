@@ -124,7 +124,7 @@ const AppLayout: React.FC = () => {
                     {isSidebarCollapsed ? (
                         <>
                             <div className="flex justify-center w-full">
-                                <Logo collapsed={true} animate={false} />
+                                <Logo collapsed={true} animate={false} forceDark={true} />
                             </div>
                             <button onClick={() => setIsSidebarCollapsed(false)} className="p-1.5 rounded-xl bg-sit-orange text-white hover:bg-sit-orange/90 transition-colors shadow-sm">
                                 <ChevronRight className="w-5 h-5" />
@@ -132,7 +132,7 @@ const AppLayout: React.FC = () => {
                         </>
                     ) : (
                         <div className="flex items-center justify-between w-full">
-                            <Logo collapsed={false} animate={false} />
+                            <Logo collapsed={false} animate={false} forceDark={true} />
                             <button onClick={() => setIsSidebarCollapsed(true)} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
                                 <ChevronLeft className="w-5 h-5" />
                             </button>
@@ -205,7 +205,7 @@ const AppLayout: React.FC = () => {
                             <SidebarLink to="/admin" icon={Shield} label="Admin Panel" />
                         )}
                         <ProfileSidebarLink to="/profile" />
-                        
+
                         <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 mt-4">
                             <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Theme</span>
                             <ThemeToggle />

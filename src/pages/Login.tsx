@@ -4,6 +4,7 @@ import { auth, db, firebaseConfigError, isFirebaseAvailable } from '../lib/fireb
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -61,7 +62,8 @@ const Login: React.FC = () => {
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-sit-orange/10 blur-[120px] rounded-full mix-blend-screen -mr-20 -mt-20" />
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sit-half-baked/10 blur-[100px] rounded-full mix-blend-screen -ml-20 -mb-20" />
 
-                <div className="relative z-10 max-w-lg text-center">
+                <div className="relative z-10 max-w-lg text-center space-y-8">
+                    <Logo forceDark={true} className="justify-center scale-150 mb-8" />
                     <h2 className="text-4xl font-bold text-white mb-6">Experience the flow.</h2>
                     <p className="text-lg text-sit-light-blue leading-relaxed opacity-80">
                         Join thousands of students managing their projects with effortless precision and clarity.
@@ -73,8 +75,8 @@ const Login: React.FC = () => {
             <div className="flex-1 flex items-center justify-center p-6 sm:p-8">
                 <div className="max-w-md w-full space-y-8">
                     <div className="text-center">
-                        <div className="w-20 h-20 bg-white p-2 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-xl ring-1 ring-slate-100">
-                            <img src="/src/assets/sit_logo.png" alt="SIT Logo" className="w-14 h-14 object-contain" />
+                        <div className="flex justify-center mb-6">
+                            <Logo animate={true} className="scale-125" />
                         </div>
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Welcome Back</h1>
                         <p className="text-slate-500 dark:text-slate-400">Sign in to continue your progress</p>
