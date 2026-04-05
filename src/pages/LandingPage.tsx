@@ -16,15 +16,15 @@ const LandingPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-50 selection:bg-blue-500/20 selection:text-blue-600">
+        <div className="min-h-screen bg-white dark:bg-sit-dark text-slate-900 dark:text-slate-50 selection:bg-sit-orange/20 selection:text-sit-orange">
             {/* Soft Ambient Background Elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[45%] bg-cyan-500/5 blur-[120px] rounded-full" />
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-sit-orange/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[45%] bg-sit-half-baked/5 blur-[120px] rounded-full" />
             </div>
 
             {/* Navigation */}
-            <nav className="fixed top-0 w-full z-50 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/70 dark:bg-[#020617]/70 backdrop-blur-xl transition-all duration-500">
+            <nav className="fixed top-0 w-full z-50 border-b border-slate-200/50 dark:border-sit-half-baked/20 bg-white/70 dark:bg-sit-dark/70 backdrop-blur-xl transition-all duration-500">
                 <div className="max-w-7xl mx-auto px-6 md:px-10 h-28 md:h-40 flex items-center justify-between">
                     <Logo />
                     <div className="flex items-center gap-6">
@@ -58,7 +58,7 @@ const LandingPage: React.FC = () => {
                                 </button>
                                 <button
                                     onClick={handleCTA}
-                                    className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-black/5 dark:shadow-white/5"
+                                    className="px-5 py-2 rounded-xl bg-sit-dark dark:bg-white text-white dark:text-sit-dark text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-sit-dark/10 dark:shadow-white/5"
                                 >
                                     Get Started
                                 </button>
@@ -102,7 +102,7 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Sub-Hero / Problem Statement */}
-                <section id="how-it-works" className="py-24 md:py-32 bg-slate-50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800 scroll-mt-28">
+                <section id="how-it-works" className="py-24 md:py-32 bg-sit-half-baked/5 dark:bg-sit-half-baked/10 border-y border-slate-200 dark:border-sit-half-baked/20 scroll-mt-28">
                     <div className="max-w-4xl mx-auto px-6 text-center space-y-12">
                         <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight">
                             Project management shouldn’t feel like babysitting.
@@ -112,9 +112,9 @@ const LandingPage: React.FC = () => {
                                 Most tools help you organize tasks — but they fail at what actually breaks group projects: <br className="hidden md:block" />
                                 <span className="text-slate-900 dark:text-white font-black underline decoration-sit-orange decoration-4 underline-offset-8 text-2xl md:text-3xl">unclear ownership, missed deadlines, and invisible effort.</span>
                             </p>
-                            <p className="bg-white dark:bg-slate-950 p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl italic relative">
-                                <span className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-blue-600 text-white text-xs font-black uppercase tracking-[0.3em] rounded-full shadow-lg">The Vision</span>
-                                "I built CrewSpace because I was tired of guessing who was working, who wasn’t, and why projects always fell apart at the last minute."
+                            <p className="bg-white dark:bg-sit-dark p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-slate-200 dark:border-sit-half-baked/20 shadow-xl italic relative">
+                                <span className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-sit-orange text-white text-xs font-black uppercase tracking-[0.3em] rounded-full shadow-lg">The Vision</span>
+                                "I built SIT Manager because I was tired of guessing who was working, who wasn’t, and why projects always fell apart at the last minute."
                             </p>
                             <p className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
                                 We replaced <span className="text-sit-orange">assumptions</span> with <span className="text-sit-orange">data</span>.
@@ -143,7 +143,7 @@ const LandingPage: React.FC = () => {
                                     title: "Accountability",
                                     desc: "Everyone knows who owns what — and the system keeps the record.",
                                     icon: Shield,
-                                    color: "blue"
+                                    color: "sit-orange"
                                 },
                                 {
                                     title: "Velocity",
@@ -158,9 +158,9 @@ const LandingPage: React.FC = () => {
                                     color: "emerald"
                                 }
                             ].map((item, i) => (
-                                <div key={i} className="group p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-sit-orange/40 transition-all duration-500">
-                                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-${item.color}-100 dark:bg-${item.color}-900/30 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
-                                        <item.icon className={`w-7 h-7 md:w-8 md:h-8 text-${item.color}-600 dark:text-${item.color}-400`} />
+                                <div key={i} className="group p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] bg-sit-half-baked/5 dark:bg-sit-dark border border-slate-200 dark:border-sit-half-baked/20 hover:border-sit-orange/40 transition-all duration-500">
+                                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-${item.color === 'sit-orange' ? 'sit-orange/10' : item.color + '-100'} dark:bg-${item.color === 'sit-orange' ? 'sit-orange/20' : item.color + '-900/30'} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
+                                        <item.icon className={`w-7 h-7 md:w-8 md:h-8 ${item.color === 'sit-orange' ? 'text-sit-orange' : 'text-' + item.color + '-600 dark:text-' + item.color + '-400'}`} />
                                     </div>
                                     <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4">{item.title}</h3>
                                     <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{item.desc}</p>
@@ -171,7 +171,7 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Features Grid */}
-                <section className="py-24 md:py-32 bg-slate-50/50 dark:bg-slate-900/30 border-y border-slate-200 dark:border-slate-800">
+                <section className="py-24 md:py-32 bg-sit-dark/5 dark:bg-sit-dark/30 border-y border-slate-200 dark:border-sit-half-baked/20">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[
@@ -182,7 +182,7 @@ const LandingPage: React.FC = () => {
                                 { title: "Secure Data", desc: "Immutable, transparent records", icon: Shield },
                                 { title: "SIT Approved", desc: "Built for real-world academic execution", icon: Zap }
                             ].map((feature, i) => (
-                                <div key={i} className="flex items-start gap-5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all">
+                                <div key={i} className="flex items-start gap-5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white dark:bg-sit-dark border border-slate-200 dark:border-sit-half-baked/20 hover:shadow-lg transition-all">
                                     <div className="p-3 rounded-xl bg-sit-orange/10 dark:bg-sit-orange/20 shrink-0">
                                         <feature.icon className="w-6 h-6 text-sit-orange" />
                                     </div>
@@ -239,7 +239,7 @@ const LandingPage: React.FC = () => {
                             <div className="relative group">
                                 {/* Visual Representation: The "Accountability Engine" Graph */}
                                 <div className="p-1 rounded-[3.5rem] bg-gradient-to-br from-sit-orange/20 to-sit-half-baked/20 shadow-2xl backdrop-blur-sm">
-                                    <div className="bg-slate-900 dark:bg-slate-950 rounded-[3.3rem] aspect-video md:aspect-[16/10] relative overflow-hidden group-hover:shadow-[0_0_100px_rgba(254,88,35,0.2)] transition-all duration-700 p-8 md:p-12 flex flex-col justify-between">
+                                    <div className="bg-sit-dark rounded-[3.3rem] aspect-video md:aspect-[16/10] relative overflow-hidden group-hover:shadow-[0_0_100px_rgba(254,88,35,0.2)] transition-all duration-700 p-8 md:p-12 flex flex-col justify-between">
                                         {/* Mesh Gradient Background */}
                                         <div className="absolute inset-0 opacity-40">
                                             <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,_rgba(254,88,35,0.4),_transparent_60%)]" />
@@ -271,7 +271,7 @@ const LandingPage: React.FC = () => {
                                             </div>
                                             <div className="flex gap-2">
                                                 {[1, 2].map(i => (
-                                                    <div key={i} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10" />
+                                                    <div key={i} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 dark:border-sit-half-baked/10" />
                                                 ))}
                                             </div>
                                         </div>
@@ -313,7 +313,7 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Analytics Section */}
-                <section className="py-24 md:py-32 bg-slate-900 text-white overflow-hidden relative">
+                <section className="py-24 md:py-32 bg-sit-dark text-white overflow-hidden relative">
                     <div className="absolute inset-0 opacity-20">
                         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,_rgba(254,88,35,0.3),_transparent_60%)]" />
                     </div>
@@ -353,10 +353,10 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Calendar & Flow Section */}
-                <section className="py-24 md:py-32">
+                <section className="py-24 md:py-32 scroll-mt-28">
                     <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
                         <div className="space-y-6">
-                            <span className="text-blue-600 font-black uppercase text-xs tracking-[0.3em] block">No Excuses</span>
+                            <span className="text-sit-orange font-black uppercase text-xs tracking-[0.3em] block">No Excuses</span>
                             <h2 className="text-4xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight">
                                 Deadlines you can’t ignore.
                             </h2>
@@ -367,13 +367,13 @@ const LandingPage: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                             {[
-                                { title: "Upcoming Deadlines", icon: CalendarIcon, color: "blue" },
+                                { title: "Upcoming Deadlines", icon: CalendarIcon, color: "sit-orange" },
                                 { title: "Due Today", icon: Zap, color: "amber" },
                                 { title: "Overdue Work", icon: Shield, color: "red" }
                             ].map((item, i) => (
-                                <div key={i} className="p-8 md:p-12 rounded-[2rem] md:rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:scale-[1.02] transition-transform">
-                                    <item.icon className={`w-10 h-10 md:w-12 md:h-12 text-${item.color}-500 mb-6 md:mb-8 mx-auto`} />
-                                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">{item.title}</h3>
+                                <div key={i} className="p-8 md:p-12 rounded-[2rem] md:rounded-[2.5rem] bg-sit-half-baked/5 dark:bg-sit-dark border border-slate-200 dark:border-sit-half-baked/20 hover:scale-[1.02] transition-transform">
+                                    <item.icon className={`w-10 h-10 md:w-12 md:h-12 ${item.color === 'sit-orange' ? 'text-sit-orange' : 'text-' + item.color + '-500'} mb-6 md:mb-8 mx-auto`} />
+                                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{item.title}</h3>
                                 </div>
                             ))}
                         </div>
@@ -381,7 +381,7 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Team Sync Section - RESTORING CHAT BUBBLES ANIMATION */}
-                <section className="py-24 md:py-32 bg-slate-50 dark:bg-slate-950/50 border-y border-slate-200 dark:border-slate-800">
+                <section className="py-24 md:py-32 bg-sit-half-baked/5 dark:bg-sit-dark border-y border-slate-200 dark:border-sit-half-baked/20">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="grid lg:grid-cols-2 gap-16 items-center">
                             <div className="space-y-8">
@@ -513,7 +513,7 @@ const LandingPage: React.FC = () => {
             </main>
 
             {/* Footer */}
-            <footer className="py-24 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#020617]">
+            <footer className="py-24 border-t border-slate-200 dark:border-sit-half-baked/20 bg-white dark:bg-sit-dark">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
                         <div className="col-span-1 md:col-span-2 space-y-8">
