@@ -120,7 +120,7 @@ const AppLayout: React.FC = () => {
                     isSidebarCollapsed ? "w-[80px]" : "w-[280px]"
                 )}
             >
-                <div className={cn("flex flex-col flex-shrink-0 transition-all duration-300", isSidebarCollapsed ? "pt-6 pb-2 items-center gap-4" : "h-20 px-6 justify-center")}>
+                <div className={cn("flex flex-col flex-shrink-0 transition-all duration-300", isSidebarCollapsed ? "pt-6 pb-2 items-center gap-4" : "h-40 px-6 justify-center")}>
                     {isSidebarCollapsed ? (
                         <>
                             <div className="flex justify-center w-full">

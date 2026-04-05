@@ -63,7 +63,7 @@ const Login: React.FC = () => {
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sit-half-baked/10 blur-[100px] rounded-full mix-blend-screen -ml-20 -mb-20" />
 
                 <div className="relative z-10 max-w-lg text-center space-y-8">
-                    <Logo forceDark={true} className="justify-center scale-150 mb-8" />
+                    <Logo forceDark={true} className="justify-center mb-8" />
                     <h2 className="text-4xl font-bold text-white mb-6">Experience the flow.</h2>
                     <p className="text-lg text-sit-light-blue leading-relaxed opacity-80">
                         Join thousands of students managing their projects with effortless precision and clarity.
@@ -76,7 +76,7 @@ const Login: React.FC = () => {
                 <div className="max-w-md w-full space-y-8">
                     <div className="text-center">
                         <div className="flex justify-center mb-6">
-                            <Logo animate={true} className="scale-125" />
+                            <Logo animate={true} />
                         </div>
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Welcome Back</h1>
                         <p className="text-slate-500 dark:text-slate-400">Sign in to continue your progress</p>

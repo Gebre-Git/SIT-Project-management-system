@@ -42,28 +42,10 @@ const Logo: React.FC<LogoProps> = ({ className, collapsed = false, animate = tru
                     alt="SIT Logo"
                     className={cn(
                         "transition-all duration-300 object-contain",
-                        collapsed ? "w-10 h-10" : "w-12 h-12"
+                        collapsed ? "w-16 h-16" : "w-32 h-32"
                     )}
                 />
             </motion.div>
-
-            {!collapsed && (
-                <motion.div
-                    initial={animate ? { opacity: 0, x: -10 } : false}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    className="flex flex-col"
-                >
-                    <span className={cn(
-                        "text-xl font-bold tracking-tight bg-clip-text text-transparent leading-none",
-                        isDark
-                            ? "bg-gradient-to-r from-white via-orange-100 to-white"
-                            : "bg-gradient-to-r from-sit-dark via-sit-orange to-sit-dark"
-                    )}>
-                        SIT Manager
-                    </span>
-                </motion.div>
-            )}
         </Link>
     );
 };
