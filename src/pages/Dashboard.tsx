@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
     if (authLoading) {
         return (
             <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+                <Loader2 className="w-10 h-10 text-sit-orange animate-spin" />
             </div>
         );
     }
@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
                 <div>
                     <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
-                        Welcome back, <span className="text-blue-600 dark:text-blue-400">{currentUser?.displayName?.split(' ')[0]}</span>
+                        Welcome back, <span className="text-sit-orange">{currentUser?.displayName?.split(' ')[0]}</span>
                     </h1>
                     <p className="text-lg text-slate-500 dark:text-slate-400 font-medium">Here's what's happening with your projects.</p>
                 </div>
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
                         onClick={async () => {
                             if (await checkAndRedirect()) setIsModalOpen(true);
                         }}
-                        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-blue-600/20"
+                        className="flex items-center justify-center gap-2 bg-sit-orange hover:bg-sit-orange/90 text-white px-5 py-2.5 rounded-xl font-semibold transition shadow-lg shadow-sit-orange/20"
                     >
                         <Plus className="w-4 h-4" />
                         New Project
@@ -130,14 +130,14 @@ const Dashboard: React.FC = () => {
                 </div>
             ) : projects.length === 0 ? (
                 <div className="glass-card rounded-[2rem] p-12 text-center border-dashed border-2 border-slate-300 dark:border-slate-700">
-                    <div className="w-16 h-16 mx-auto bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6">
-                        <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                    <div className="w-16 h-16 mx-auto bg-sit-orange/10 dark:bg-sit-orange/20 rounded-full flex items-center justify-center mb-6">
+                        <BookOpen className="w-8 h-8 text-sit-orange" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No projects yet</h3>
                     <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">Create your first project to start managing tasks and collaborating with your team.</p>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="text-blue-600 hover:text-blue-500 font-semibold flex items-center justify-center gap-2 mx-auto"
+                        className="text-sit-orange hover:text-sit-orange/80 font-semibold flex items-center justify-center gap-2 mx-auto"
                     >
                         Create Project <ArrowRight className="w-4 h-4" />
                     </button>
@@ -154,18 +154,18 @@ const Dashboard: React.FC = () => {
                                 onClick={() => navigate(`/project/${project.id}`)}
                                 className={cn(
                                     "group relative p-6 rounded-[2rem] cursor-pointer overflow-hidden transition-all duration-300",
-                                    "glass-card hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1",
+                                    "glass-card hover:shadow-xl hover:shadow-sit-orange/10 hover:-translate-y-1",
                                     isFeatured ? "md:col-span-2 md:row-span-2 flex flex-col justify-between" : "flex flex-col justify-between"
                                 )}
                             >
                                 <div className={cn(
-                                    "absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 blur-[60px] rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110",
+                                    "absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-sit-orange/10 to-yellow-500/10 blur-[60px] rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110",
                                     isFeatured ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                                 )} />
 
                                 <div>
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-blue-600 dark:text-blue-400">
+                                        <div className="p-3 rounded-2xl bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange">
                                             {project.type === 'personal' ? <Clock className="w-6 h-6" /> : <BookOpen className={cn("w-6 h-6", isFeatured && "w-8 h-8")} />}
                                         </div>
                                         <div className="flex gap-2">
@@ -203,8 +203,8 @@ const Dashboard: React.FC = () => {
                         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-md p-8 shadow-2xl"
                     >
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
-                                <LinkIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            <div className="w-12 h-12 bg-sit-orange/10 dark:bg-sit-orange/20 rounded-2xl flex items-center justify-center">
+                                <LinkIcon className="w-6 h-6 text-sit-orange" />
                             </div>
                             <div>
                                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Join Team</h2>
@@ -217,7 +217,7 @@ const Dashboard: React.FC = () => {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all"
                                     value={inviteLink}
                                     onChange={e => setInviteLink(e.target.value)}
                                     placeholder="Paste link here..."
@@ -236,7 +236,7 @@ const Dashboard: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg shadow-blue-600/20"
+                                    className="px-8 py-3 bg-sit-orange hover:bg-sit-orange/90 text-white rounded-xl font-semibold transition shadow-lg shadow-sit-orange/20"
                                 >
                                     Join Team
                                 </button>
@@ -261,12 +261,12 @@ const Dashboard: React.FC = () => {
                                 className={cn(
                                     "p-4 rounded-2xl border-2 transition-all text-left",
                                     newProject.type === 'personal'
-                                        ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20"
+                                        ? "border-sit-orange bg-sit-orange/10 dark:bg-sit-orange/20"
                                         : "border-slate-100 dark:border-slate-800 hover:border-slate-200"
                                 )}
                             >
-                                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-3">
-                                    <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                <div className="w-10 h-10 rounded-xl bg-sit-orange/10 dark:bg-sit-orange/20 flex items-center justify-center mb-3">
+                                    <Clock className="w-5 h-5 text-sit-orange" />
                                 </div>
                                 <h3 className="font-bold text-slate-900 dark:text-white">Personal</h3>
                                 <p className="text-xs text-slate-500">Individual tasks & simple tracking.</p>
@@ -294,7 +294,7 @@ const Dashboard: React.FC = () => {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all"
                                     value={newProject.name}
                                     onChange={e => setNewProject({ ...newProject, name: e.target.value })}
                                     placeholder={newProject.type === 'personal' ? "e.g. My Study Plan" : "e.g. History Group Project"}
@@ -306,7 +306,7 @@ const Dashboard: React.FC = () => {
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Course (Optional)</label>
                                     <input
                                         type="text"
-                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all"
                                         value={newProject.course}
                                         onChange={e => setNewProject({ ...newProject, course: e.target.value })}
                                         placeholder="e.g. HIST 101"
@@ -328,7 +328,7 @@ const Dashboard: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg shadow-blue-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="px-8 py-3 bg-sit-orange hover:bg-sit-orange/90 text-white rounded-xl font-semibold transition shadow-lg shadow-sit-orange/20 disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {creating && <Loader2 className="w-4 h-4 animate-spin" />}
                                     Create {newProject.type === 'personal' ? 'Personal' : 'Team'} Project
