@@ -72,13 +72,7 @@ const LandingPage: React.FC = () => {
                 {/* Hero Section */}
                 <section className="max-w-7xl mx-auto px-6 mb-24 lg:mb-32">
                     <div className="max-w-4xl mx-auto text-center space-y-10">
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-xs font-black uppercase tracking-widest border border-blue-100 dark:border-blue-900/50"
-                        >
-                            <Sparkles className="w-3.5 h-3.5" /> Built by Barkot, for You
-                        </motion.div>
+
 
                         <h1 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-slate-900 dark:text-white">
                             Group projects, <br />
@@ -86,7 +80,7 @@ const LandingPage: React.FC = () => {
                         </h1>
 
                         <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed font-bold">
-                            I built CrewSpace for students and teams who are tired of carrying the work alone.
+                            Streamlined project management for SIT students and academic teams.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
