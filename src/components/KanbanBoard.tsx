@@ -98,7 +98,7 @@ const KanbanCard: React.FC<{
                     </span>
                 </div>
                 {isOverdue && (
-                    <AlertTriangle className="w-3.5 h-3.5 text-red-500 animate-pulse" />
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
                 )}
             </div>
 

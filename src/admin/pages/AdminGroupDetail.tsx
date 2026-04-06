@@ -188,7 +188,6 @@ const AdminGroupDetail: React.FC = () => {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Performance Deep-Dive</h2>
-                        <p className="text-sm font-bold text-slate-500">Real-time data synchronization active</p>
                     </div>
                     <div className="p-3 rounded-2xl bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange">
                         <TrendingUp className="w-6 h-6" />
@@ -211,7 +210,6 @@ const AdminGroupDetail: React.FC = () => {
                     </div>
                     <div>
                         <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none mb-2">Project Roadmap & Task Oversight</h2>
-                        <p className="text-sm font-bold text-slate-500 tracking-tight">Real-time status synchronization • Deadline protection active</p>
                     </div>
                 </div>
 
@@ -439,7 +437,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
                     {task.weight} Intensity
                 </span>
                 {isOverdue && (
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-500 text-white text-[9px] font-black uppercase tracking-widest animate-pulse">
+                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-500 text-white text-[9px] font-black uppercase tracking-widest">
                         <AlertTriangle className="w-3 h-3" />
                         Critical Overdue
                     </span>

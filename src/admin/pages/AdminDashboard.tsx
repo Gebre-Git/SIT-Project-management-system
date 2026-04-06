@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
     Shield, Users, FolderKanban, CheckCircle2, AlertTriangle, Search,
-    TrendingUp, Activity, BarChart3, ExternalLink,
+    TrendingUp, BarChart3, ExternalLink,
     ChevronDown, ChevronUp, Filter, Star
 } from 'lucide-react';
 import { useAdminData } from '../hooks/useAdminData';
@@ -269,11 +269,7 @@ const AdminDashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-                    <Activity className="w-3.5 h-3.5" />
-                    Real-time data
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                </div>
+                
             </motion.div>
 
             {/* ── Stat Cards ─────────────────────────────────────────────── */}

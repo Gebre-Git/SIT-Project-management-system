@@ -204,7 +204,7 @@ const ProjectAnalytics: React.FC<AnalyticsProps> = ({ project, tasks, members })
                                     </div>
                                 </div>
                                 {stat.isAtRisk && (
-                                    <span className="bg-red-500 text-white text-[8px] font-black px-2 py-1 rounded-lg uppercase tracking-wider animate-pulse">
+                                    <span className="bg-red-500 text-white text-[8px] font-black px-2 py-1 rounded-lg uppercase tracking-wider">
                                         At Risk
                                     </span>
                                 )}
