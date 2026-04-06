@@ -130,7 +130,7 @@ const Profile: React.FC = () => {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+                <Loader2 className="w-10 h-10 text-sit-orange animate-spin" />
             </div>
         );
     }
@@ -140,7 +140,7 @@ const Profile: React.FC = () => {
             <div className="max-w-2xl mx-auto">
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="text-slate-500 dark:text-gray-400 hover:text-blue-500 mb-6 text-sm"
+                    className="text-slate-500 dark:text-gray-400 hover:text-sit-orange mb-6 text-sm"
                 >
                     ← Back to Dashboard
                 </button>
@@ -156,7 +156,7 @@ const Profile: React.FC = () => {
                                     <img
                                         src={previewImage}
                                         alt="Profile"
-                                        className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
+                                        className="w-32 h-32 rounded-full object-cover border-4 border-sit-orange"
                                     />
                                 ) : (
                                     <div className="w-32 h-32 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border-4 border-slate-300 dark:border-slate-600">

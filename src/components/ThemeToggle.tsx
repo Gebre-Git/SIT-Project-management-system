@@ -25,7 +25,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ collapsed = false }) => {
                 initial={false}
                 animate={collapsed ? { y: theme === 'dark' ? 28 : 0 } : { x: theme === 'dark' ? 28 : 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                className="z-10 w-5 h-5 rounded-full bg-white dark:bg-blue-500 shadow-sm flex items-center justify-center flex-shrink-0"
+                className="z-10 w-5 h-5 rounded-full bg-white dark:bg-sit-orange shadow-sm flex items-center justify-center flex-shrink-0"
             >
                 <AnimatePresence mode="wait">
                     {theme === 'light' ? (

@@ -62,7 +62,7 @@ const AdminInviteManager: React.FC = () => {
     return (
         <div className="glass-card rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-sit-orange to-sit-yellow shadow-lg shadow-sit-orange/25">
                     <Link2 className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -78,13 +78,13 @@ const AdminInviteManager: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="recipient@email.com"
                     disabled={loading}
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all disabled:opacity-50"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sit-orange/50 focus:border-sit-orange transition-all disabled:opacity-50"
                     onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
                 />
                 <button
                     onClick={handleGenerate}
                     disabled={loading || !email.trim()}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sit-orange to-sit-yellow text-white text-sm font-medium hover:from-sit-orange/90 hover:to-sit-yellow/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-sit-orange/25 hover:shadow-sit-orange/40 flex items-center gap-2"
                 >
                     {loading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

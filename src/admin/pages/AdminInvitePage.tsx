@@ -110,7 +110,7 @@ const AdminInvitePage: React.FC = () => {
     const statusConfig = {
         'idle': { icon: Shield, color: 'text-slate-400', bg: 'bg-slate-100 dark:bg-slate-800' },
         'waiting-auth': { icon: LogIn, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-        'claiming': { icon: Loader2, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+        'claiming': { icon: Loader2, color: 'text-sit-orange', bg: 'bg-sit-orange/10 dark:bg-sit-orange/20' },
         'success': { icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
         'error': { icon: XCircle, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
     };
@@ -129,11 +129,11 @@ const AdminInvitePage: React.FC = () => {
                 <div className="glass-card rounded-3xl p-8 text-center shadow-xl">
                     {/* Logo area */}
                     <div className="mb-6">
-                        <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 flex items-center justify-center shadow-xl shadow-blue-500/30 mb-4">
+                        <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-sit-orange to-sit-yellow flex items-center justify-center shadow-xl shadow-sit-orange/30 mb-4">
                             <Shield className="w-10 h-10 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Invitation</h1>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">CrewSpace Super-Admin Access</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">SIT Super-Admin Access</p>
                     </div>
 
                     {/* Status indicator */}
@@ -146,7 +146,7 @@ const AdminInvitePage: React.FC = () => {
                     {status === 'waiting-auth' && (
                         <Link
                             to="/login"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-sm font-medium hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-sit-orange to-sit-yellow text-white text-sm font-medium hover:from-sit-orange/90 hover:to-sit-yellow/90 shadow-lg shadow-sit-orange/25 hover:shadow-sit-orange/40 transition-all"
                         >
                             <LogIn className="w-4 h-4" />
                             Log In to Continue

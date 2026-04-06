@@ -1,23 +1,11 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-    Shield, 
-    ArrowLeft, 
-    Star, 
-    CheckCircle2, 
-    Clock, 
-    AlertTriangle, 
-    Users, 
-    TrendingUp,
-    ChevronRight,
-    ClipboardList,
-    Layout
-} from 'lucide-react';
+import { Shield, Star, CheckCircle2, Clock, AlertTriangle, Users, TrendingUp, Layout, ClipboardList, ArrowLeft } from 'lucide-react';
 import { useGroupDetailData } from '../hooks/useGroupDetailData';
 import { AccountabilityEngine } from '../../lib/AccountabilityEngine';
 import { format } from 'date-fns';
-import { Task, User, SubTask } from '../../types';
+import { User, SubTask } from '../../types';
 
 const AdminFinalProjectDetail: React.FC = () => {
     const { projectId, taskId } = useParams<{ projectId: string; taskId: string }>();
@@ -30,8 +18,8 @@ const AdminFinalProjectDetail: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin" />
-                    <Star className="w-6 h-6 text-amber-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <div className="w-16 h-16 rounded-full border-4 border-sit-orange/30 border-t-sit-orange animate-spin" />
+                    <Star className="w-6 h-6 text-sit-orange absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 </div>
                 <p className="text-slate-500 dark:text-slate-400 text-sm animate-pulse">Loading final project insights...</p>
             </div>
@@ -66,7 +54,7 @@ const AdminFinalProjectDetail: React.FC = () => {
             >
                 <button 
                     onClick={() => navigate('/admin')}
-                    className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-amber-500 transition-colors mb-6"
+                    className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-sit-orange transition-colors mb-6"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Back to Admin Dashboard
@@ -74,7 +62,7 @@ const AdminFinalProjectDetail: React.FC = () => {
 
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-2xl shadow-amber-500/20 flex items-center justify-center text-white">
+                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-sit-orange to-sit-yellow shadow-2xl shadow-sit-orange/20 flex items-center justify-center text-white">
                             <Star className="w-10 h-10" />
                         </div>
                         <div>
@@ -83,7 +71,7 @@ const AdminFinalProjectDetail: React.FC = () => {
                                     {task.title}
                                 </h1>
                                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                    task.status === 'done' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'
+                                    task.status === 'done' ? 'bg-emerald-100 text-emerald-600' : 'bg-sit-orange/10 text-sit-orange'
                                 }`}>
                                     {task.status.replace('_', ' ')}
                                 </span>
@@ -107,7 +95,7 @@ const AdminFinalProjectDetail: React.FC = () => {
                     {/* Description Card */}
                     <div className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+                            <div className="p-2 rounded-xl bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange">
                                 <ClipboardList className="w-5 h-5" />
                             </div>
                             <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Assignment Context</h2>
@@ -140,7 +128,7 @@ const AdminFinalProjectDetail: React.FC = () => {
                     <div className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600">
+                                <div className="p-2 rounded-xl bg-sit-yellow/10 dark:bg-sit-yellow/20 text-sit-yellow">
                                     <Layout className="w-5 h-5" />
                                 </div>
                                 <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Execution Roadmap</h2>
@@ -161,11 +149,11 @@ const AdminFinalProjectDetail: React.FC = () => {
                                             </span>
                                         </div>
                                         {m && (
-                                            <Link to={`/admin/user/${m.uid}`} className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
+                                            <Link to={`/admin/user/${m.uid}`} className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-sit-orange/10 transition-colors group">
                                                 <div className="w-6 h-6 rounded-lg overflow-hidden flex-shrink-0">
-                                                    {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-[8px] font-black">{(m.username || 'U')[0]}</div>}
+                                                    {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-sit-orange/10 dark:bg-sit-orange/20 flex items-center justify-center text-[8px] font-black">{(m.username || 'U')[0]}</div>}
                                                 </div>
-                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-blue-600 transition-colors">{m.username}</span>
+                                                <span className="text-[10px] font-black uppercase text-slate-500 group-hover:text-sit-orange transition-colors">{m.username}</span>
                                             </Link>
                                         )}
                                     </div>
@@ -196,7 +184,7 @@ const AdminFinalProjectDetail: React.FC = () => {
                                 const completionRate = Math.round((stats.tasksCompleted / (stats.tasksAssigned || 1)) * 100);
                                 
                                 return (
-                                    <div key={member.uid} className={`p-5 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-amber-200 transition-all group ${isAssignedToThisTask ? 'ring-2 ring-amber-500/20' : ''}`}>
+                                    <div key={member.uid} className={`p-5 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sit-orange/50 transition-all group ${isAssignedToThisTask ? 'ring-2 ring-sit-orange/20' : ''}`}>
                                         <div className="flex items-center justify-between mb-4">
                                             <Link to={`/admin/user/${member.uid}`} className="flex items-center gap-3 group/link">
                                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-sm font-black text-slate-600 dark:text-slate-400 overflow-hidden shadow-inner group-hover/link:scale-110 transition-transform">
@@ -207,21 +195,21 @@ const AdminFinalProjectDetail: React.FC = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tighter group-hover/link:text-amber-600 transition-colors uppercase">{member.displayName || 'Unnamed'}</p>
+                                                    <p className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tighter group-hover/link:text-sit-orange transition-colors uppercase">{member.displayName || 'Unnamed'}</p>
                                                     <p className="text-[10px] font-bold text-slate-500">@{member.username}</p>
                                                 </div>
                                             </Link>
                                             
                                             <div className="text-right">
                                                 <p className="text-sm font-black text-slate-900 dark:text-white">{stats.contributionScore} <span className="text-[9px] text-slate-400">PTS</span></p>
-                                                {isAssignedToThisTask && <span className="text-[8px] font-black text-amber-500 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-lg border border-amber-100">Primary Assignee</span>}
+                                                {isAssignedToThisTask && <span className="text-[8px] font-black text-sit-orange uppercase tracking-widest bg-sit-orange/10 px-1.5 py-0.5 rounded-lg border border-sit-orange/20">Primary Assignee</span>}
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-3 gap-2">
                                             <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-center">
                                                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Efficiency</span>
-                                                <span className={`text-xs font-black ${completionRate > 80 ? 'text-emerald-500' : 'text-blue-500'}`}>{completionRate}%</span>
+                                                <span className={`text-xs font-black ${completionRate > 80 ? 'text-emerald-500' : 'text-sit-orange'}`}>{completionRate}%</span>
                                             </div>
                                             <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-center">
                                                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Tasks</span>
@@ -256,7 +244,7 @@ const AdminFinalProjectDetail: React.FC = () => {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-xs font-bold text-slate-500">Collaboration Type</span>
-                                    <span className="text-xs font-black text-blue-500 uppercase bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">{project.type || 'Team'}</span>
+                                    <span className="text-xs font-black text-sit-orange uppercase bg-sit-orange/10 px-2 py-0.5 rounded-lg border border-sit-orange/20">{project.type || 'Team'}</span>
                                 </div>
                             </div>
                         </div>

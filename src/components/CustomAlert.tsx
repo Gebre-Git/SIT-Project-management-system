@@ -23,13 +23,13 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ message, type, isOpen, onClos
     const icons = {
         success: <CheckCircle2 className="w-6 h-6 text-emerald-500" />,
         error: <AlertCircle className="w-6 h-6 text-red-500" />,
-        info: <Info className="w-6 h-6 text-blue-500" />
+        info: <Info className="w-6 h-6 text-sit-orange" />
     };
 
     const backgrounds = {
         success: 'bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-200/50 dark:border-emerald-800/20',
         error: 'bg-red-50/80 dark:bg-red-950/20 border-red-200/50 dark:border-red-800/20',
-        info: 'bg-blue-50/80 dark:bg-blue-950/20 border-blue-200/50 dark:border-blue-800/20'
+        info: 'bg-sit-orange/10 dark:bg-sit-orange/5 border-sit-orange/20'
     };
 
     return (
@@ -74,7 +74,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ message, type, isOpen, onClos
                                     "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                                     type === 'error' ? "bg-red-600 text-white hover:bg-red-700" :
                                         type === 'success' ? "bg-emerald-600 text-white hover:bg-emerald-700" :
-                                            "bg-blue-600 text-white hover:bg-blue-700"
+                                            "bg-sit-orange text-white hover:bg-sit-orange/90"
                                 )}
                             >
                                 Got it

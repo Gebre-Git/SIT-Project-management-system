@@ -19,13 +19,13 @@ const CustomConfirm: React.FC<CustomConfirmProps> = ({ config, isOpen, onConfirm
     const icons = {
         danger: <AlertTriangle className="w-6 h-6 text-red-500" />,
         warning: <AlertTriangle className="w-6 h-6 text-amber-500" />,
-        info: <HelpCircle className="w-6 h-6 text-blue-500" />
+        info: <HelpCircle className="w-6 h-6 text-sit-orange" />
     };
 
     const backgrounds = {
         danger: 'bg-red-50/80 dark:bg-red-950/20 border-red-200/50 dark:border-red-800/20',
         warning: 'bg-amber-50/80 dark:bg-amber-950/20 border-amber-200/50 dark:border-amber-800/20',
-        info: 'bg-blue-50/80 dark:bg-blue-950/20 border-blue-200/50 dark:border-blue-800/20'
+        info: 'bg-sit-orange/10 dark:bg-sit-orange/5 border-sit-orange/20'
     };
 
     return (
@@ -75,7 +75,7 @@ const CustomConfirm: React.FC<CustomConfirmProps> = ({ config, isOpen, onConfirm
                                         "flex-1 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest text-white shadow-lg transition-all active:scale-95",
                                         type === 'danger' ? "bg-red-600 shadow-red-600/20 hover:bg-red-700" :
                                             type === 'warning' ? "bg-amber-500 shadow-amber-500/20 hover:bg-amber-600" :
-                                                "bg-blue-600 shadow-blue-600/20 hover:bg-blue-700"
+                                                "bg-sit-orange shadow-sit-orange/20 hover:bg-sit-orange/90"
                                     )}
                                 >
                                     {config.confirmLabel || 'Confirm'}

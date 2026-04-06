@@ -34,7 +34,7 @@ const SidebarLink = ({ to, icon: Icon, label, collapsed }: SidebarLinkProps) => 
                 <Icon className={cn("w-5 h-5 transition-transform duration-300 group-hover:scale-110", isActive && "fill-current opacity-100")} />
                 {!collapsed && <span className="relative z-10">{label}</span>}
                 {!isActive && (
-                    <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-sit-orange/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 )}
             </>
         )}
@@ -62,7 +62,7 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
                         photoURL={currentUser?.photoURL}
                         displayName={currentUser?.displayName}
                         size="sm"
-                        className={cn("ring-2 ring-transparent transition-all", isActive ? "ring-white/50" : "group-hover:ring-blue-500/30")}
+                        className={cn("ring-2 ring-transparent transition-all", isActive ? "ring-white/50" : "group-hover:ring-sit-orange/30")}
                     />
                     {!collapsed && (
                         <div className="flex flex-col min-w-0">
@@ -71,14 +71,14 @@ const ProfileSidebarLink = ({ to, collapsed }: { to: string, collapsed?: boolean
                             </span>
                             <span className={cn(
                                 "text-[10px] truncate transition-colors",
-                                isActive ? "text-blue-100" : "text-slate-400"
+                                isActive ? "text-white/80" : "text-slate-400"
                             )}>
                                 Account Settings
                             </span>
                         </div>
                     )}
                     {!isActive && (
-                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute inset-0 bg-sit-orange/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     )}
                 </>
             )}

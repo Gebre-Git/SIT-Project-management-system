@@ -76,8 +76,8 @@ const NotificationPanel: React.FC = () => {
 
     const getIcon = (type: Notification['type']) => {
         switch (type) {
-            case 'task_assigned': return <Bell className="w-4 h-4 text-blue-500" />;
-            case 'subtask_assigned': return <UserPlus className="w-4 h-4 text-indigo-500" />;
+            case 'task_assigned': return <Bell className="w-4 h-4 text-sit-orange" />;
+            case 'subtask_assigned': return <UserPlus className="w-4 h-4 text-sit-orange" />;
             case 'project_update': return <RefreshCw className="w-4 h-4 text-emerald-500" />;
             case 'mention': return <AlertCircle className="w-4 h-4 text-amber-500" />;
             default: return <Bell className="w-4 h-4 text-slate-500" />;
@@ -92,7 +92,7 @@ const NotificationPanel: React.FC = () => {
             >
                 <Bell className={cn(
                     "w-5 h-5 transition-transform group-hover:scale-110",
-                    unreadCount > 0 ? "text-blue-600 dark:text-blue-400 fill-blue-600/10" : "text-slate-500 dark:text-slate-400"
+                    unreadCount > 0 ? "text-sit-orange fill-sit-orange/10" : "text-slate-500 dark:text-slate-400"
                 )} />
                 {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 w-4 h-4 bg-red-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 animate-in zoom-in duration-300">
@@ -125,7 +125,7 @@ const NotificationPanel: React.FC = () => {
                                     {unreadCount > 0 && (
                                         <button
                                             onClick={markAllAsRead}
-                                            className="text-[10px] font-black uppercase text-blue-600 hover:text-blue-700 p-1"
+                                            className="text-[10px] font-black uppercase text-sit-orange hover:text-sit-orange/90 p-1"
                                             title="Mark all as read"
                                         >
                                             <Check className="w-4 h-4" />
@@ -143,7 +143,7 @@ const NotificationPanel: React.FC = () => {
                             <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                                 {loading ? (
                                     <div className="p-12 flex flex-col items-center justify-center text-slate-400 gap-3">
-                                        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                                        <div className="w-6 h-6 border-2 border-sit-orange border-t-transparent rounded-full animate-spin" />
                                         <span className="text-xs font-medium italic">Loading...</span>
                                     </div>
                                 ) : notifications.length === 0 ? (
@@ -161,7 +161,7 @@ const NotificationPanel: React.FC = () => {
                                                 key={notification.id}
                                                 className={cn(
                                                     "p-4 flex gap-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 group relative",
-                                                    !notification.read && "bg-blue-50/30 dark:bg-blue-900/10"
+                                                    !notification.read && "bg-sit-orange/5 dark:bg-sit-orange/10"
                                                 )}
                                             >
                                                 <div className="mt-1">
@@ -190,7 +190,7 @@ const NotificationPanel: React.FC = () => {
                                                                     markAsRead(notification.id);
                                                                     setIsOpen(false);
                                                                 }}
-                                                                className="flex items-center gap-1.5 text-[10px] font-black uppercase text-blue-600 hover:text-blue-700 tracking-tight"
+                                                                className="flex items-center gap-1.5 text-[10px] font-black uppercase text-sit-orange hover:text-sit-orange/90 tracking-tight"
                                                             >
                                                                 View Details <ExternalLink className="w-3 h-3" />
                                                             </button>

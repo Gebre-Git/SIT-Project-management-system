@@ -42,7 +42,7 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
     }
 
     return (
-        <div className={cn(sizeClasses[size], "rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-semibold text-white flex-shrink-0", className)}>
+        <div className={cn(sizeClasses[size], "rounded-full bg-gradient-to-br from-sit-orange to-sit-yellow flex items-center justify-center font-semibold text-white flex-shrink-0", className)}>
             {displayName ? getInitials() : <User className="w-1/2 h-1/2" />}
         </div>
     );

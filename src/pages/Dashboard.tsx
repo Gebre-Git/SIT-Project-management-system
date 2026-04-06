@@ -276,7 +276,7 @@ const Dashboard: React.FC = () => {
                                 className={cn(
                                     "p-4 rounded-2xl border-2 transition-all text-left",
                                     newProject.type === 'team'
-                                        ? "border-blue-600 bg-blue-50/50 dark:bg-blue-900/20"
+                                        ? "border-sit-orange bg-sit-orange/5 dark:bg-sit-orange/10"
                                         : "border-slate-100 dark:border-slate-800 hover:border-slate-200"
                                 )}
                             >

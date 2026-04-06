@@ -72,9 +72,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
 
     return (
         <div className="space-y-4 sm:space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl shadow-sit-orange/5 dark:shadow-none">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30">
+                    <div className="w-12 h-12 bg-sit-orange rounded-2xl flex items-center justify-center shadow-lg shadow-sit-orange/30">
                         <CalendarIcon className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -93,7 +93,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
                                 onClick={() => setViewType(type)}
                                 className={cn(
                                     "px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5",
-                                    viewType === type ? "bg-white dark:bg-slate-700 text-blue-600 shadow-md" : "text-slate-500 hover:text-slate-700"
+                                    viewType === type ? "bg-white dark:bg-slate-700 text-sit-orange shadow-md" : "text-slate-500 hover:text-slate-700"
                                 )}
                             >
                                 {type === 'timeline' && <GanttChart className="w-3 h-3" />}
@@ -108,7 +108,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, members, projectName
                         <button onClick={() => navigate('prev')} className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl border border-slate-200 dark:border-slate-700 transition active:scale-90">
                             <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
                         </button>
-                        <button onClick={() => setCurrentDate(new Date())} className="px-4 sm:px-6 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] sm:text-xs font-black uppercase tracking-widest rounded-2xl border border-blue-100 dark:border-blue-900/50 hover:bg-blue-100 transition">
+                        <button onClick={() => setCurrentDate(new Date())} className="px-4 sm:px-6 py-3 bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange text-[10px] sm:text-xs font-black uppercase tracking-widest rounded-2xl border border-sit-orange/20 dark:border-sit-orange/40 hover:bg-sit-orange/20 transition">
                             Today
                         </button>
                         <button onClick={() => navigate('next')} className="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl border border-slate-200 dark:border-slate-700 transition active:scale-90">
@@ -162,7 +162,7 @@ const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, pro
                         key={i}
                         className={cn(
                             "min-h-[100px] sm:min-h-[140px] rounded-2xl sm:rounded-3xl p-2 sm:p-4 border transition-all relative overflow-hidden group",
-                            isTodayDay ? "bg-blue-600 border-blue-500 shadow-xl shadow-blue-500/20 z-10 scale-[1.02]" : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700",
+                            isTodayDay ? "bg-sit-orange border-sit-orange shadow-xl shadow-sit-orange/20 z-10 scale-[1.02]" : "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 hover:border-sit-orange/50 dark:hover:border-sit-orange/70",
                             isOtherMonth && "opacity-20 pointer-events-none grayscale"
                         )}
                     >
@@ -171,7 +171,7 @@ const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, pro
                                 {format(day, 'd')}
                             </span>
                             {dayTasks.length > 0 && !isTodayDay && (
-                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-sit-orange animate-pulse" />
                             )}
                         </div>
 
@@ -182,7 +182,7 @@ const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, pro
                                     onClick={() => onTaskClick?.(t)}
                                     className={cn(
                                         "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-bold truncate transition-colors cursor-pointer",
-                                        isTodayDay ? "bg-white/20 text-white hover:bg-white/30" : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800"
+                                        isTodayDay ? "bg-white/20 text-white hover:bg-white/30" : "bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange hover:bg-sit-orange/20 dark:hover:bg-sit-orange/30"
                                     )}
                                 >
                                     {t.title}
@@ -216,7 +216,7 @@ const MonthMode: React.FC<{ days: Date[], tasks: Task[], currentMonth: Date, pro
 const YearMode: React.FC<{ months: Date[], tasks: Task[], members: User[] }> = ({ months, tasks, members }) => (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {months.map((month, i) => (
-            <div key={i} className="glass-card p-5 rounded-[2rem] border border-slate-200 dark:border-slate-800 hover:border-blue-400 transition-all flex flex-col">
+            <div key={i} className="glass-card p-5 rounded-[2rem] border border-slate-200 dark:border-slate-800 hover:border-sit-orange transition-all flex flex-col">
                 <h4 className="text-sm font-black text-slate-900 dark:text-white mb-4 uppercase tracking-widest text-center">
                     {format(month, 'MMMM')}
                 </h4>
@@ -239,8 +239,8 @@ const YearMode: React.FC<{ months: Date[], tasks: Task[], members: User[] }> = (
                                     className={cn(
                                         "aspect-square flex items-center justify-center text-[8px] rounded-sm transition-colors",
                                         !isCurrentMonth ? "opacity-0" :
-                                            isTodayDay ? "bg-blue-600 text-white font-black" :
-                                                hasTask ? "bg-blue-100 dark:bg-blue-900/40 text-blue-600 font-bold" : "text-slate-400"
+                                            isTodayDay ? "bg-sit-orange text-white font-black" :
+                                                hasTask ? "bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange font-bold" : "text-slate-400"
                                     )}
                                 >
                                     {isCurrentMonth ? format(day, 'd') : ''}
@@ -278,26 +278,26 @@ const DayCard: React.FC<{ day: Date, tasks: Task[], members: User[], fullHeight?
             "flex flex-col rounded-3xl p-6 border transition-all duration-300",
             fullHeight ? "min-h-[350px]" : "min-h-[160px]",
             isCurrentDay
-                ? "bg-blue-50/40 border-blue-200 dark:bg-blue-900/10 dark:border-blue-900/40 shadow-xl shadow-blue-500/5 ring-1 ring-blue-500/20"
+                ? "bg-sit-orange/5 border-sit-orange/20 dark:bg-sit-orange/5 dark:border-sit-orange/30 shadow-xl shadow-sit-orange/5 ring-1 ring-sit-orange/20"
                 : "glass-card border-slate-200/60 dark:border-slate-800 hover:shadow-lg"
         )}>
             <div className="flex justify-between items-start mb-6">
                 <div>
                     <p className={cn(
                         "text-[10px] uppercase font-black tracking-[0.2em] mb-1",
-                        isCurrentDay ? "text-blue-600 dark:text-blue-400" : "text-slate-400"
+                        isCurrentDay ? "text-sit-orange" : "text-slate-400"
                     )}>
                         {format(day, 'EEEE')}
                     </p>
                     <p className={cn(
                         "text-4xl font-black tabular-nums tracking-tighter",
-                        isCurrentDay ? "text-blue-700 dark:text-blue-300" : "text-slate-900 dark:text-white"
+                        isCurrentDay ? "text-sit-orange" : "text-slate-900 dark:text-white"
                     )}>
                         {format(day, 'd')}
                     </p>
                 </div>
                 {isCurrentDay && (
-                    <div className="w-3.5 h-3.5 rounded-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.7)] animate-pulse" />
+                    <div className="w-3.5 h-3.5 rounded-full bg-sit-orange shadow-[0_0_15px_rgba(254,88,35,0.7)] animate-pulse" />
                 )}
             </div>
 
@@ -321,7 +321,7 @@ const DayCard: React.FC<{ day: Date, tasks: Task[], members: User[], fullHeight?
                                         ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30"
                                         : isOverdue
                                             ? "bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30"
-                                            : "bg-white dark:bg-slate-800 text-slate-700 border-slate-200 dark:border-slate-700/50 hover:border-blue-400"
+                                            : "bg-white dark:bg-slate-800 text-slate-700 border-slate-200 dark:border-slate-700/50 hover:border-sit-orange"
                                 )}
                             >
                                 <p className="leading-tight mb-3 tracking-tight font-black">{task.title}</p>
@@ -350,7 +350,7 @@ const DayCard: React.FC<{ day: Date, tasks: Task[], members: User[], fullHeight?
 // ─── Status color map ────────────────────────────────────────────────────────
 const STATUS_STYLES: Record<string, { bar: string; badge: string; dot: string }> = {
     todo:         { bar: 'bg-slate-400/80 dark:bg-slate-500/80',       badge: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300',         dot: 'bg-slate-400' },
-    in_progress:  { bar: 'bg-blue-500/90',                              badge: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',           dot: 'bg-blue-500 animate-pulse' },
+    in_progress:  { bar: 'bg-sit-orange/90',                             badge: 'bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange',                  dot: 'bg-sit-orange animate-pulse' },
     under_review: { bar: 'bg-amber-400/90',                             badge: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',       dot: 'bg-amber-400' },
     done:         { bar: 'bg-emerald-500/90',                           badge: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300', dot: 'bg-emerald-500' },
 };
@@ -443,7 +443,7 @@ const TimelineMode: React.FC<{
                                 >
                                     <div className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', s.dot)} />
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-[10px] font-black text-slate-800 dark:text-slate-100 truncate leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                        <p className="text-[10px] font-black text-slate-800 dark:text-slate-100 truncate leading-tight group-hover:text-sit-orange transition-colors">
                                             {task.title}
                                         </p>
                                         <span className={cn('text-[8px] font-bold px-1 py-0.5 rounded-md mt-0.5 inline-block', s.badge)}>
@@ -470,7 +470,7 @@ const TimelineMode: React.FC<{
                                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                                     className={cn(
                                         'flex flex-col items-center justify-center border-r border-slate-50 dark:border-slate-800/60 select-none',
-                                        isToday(day) && 'bg-blue-600'
+                                        isToday(day) && 'bg-sit-orange'
                                     )}
                                 >
                                     <span className={cn(
@@ -512,7 +512,7 @@ const TimelineMode: React.FC<{
                                                 style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, flexShrink: 0 }}
                                                 className={cn(
                                                     'h-full border-r border-slate-50 dark:border-slate-800/40',
-                                                    isToday(day) && 'bg-blue-50/60 dark:bg-blue-900/10',
+                                                    isToday(day) && 'bg-sit-orange/10 dark:bg-sit-orange/5',
                                                     i % 2 === 0 && !isToday(day) && 'bg-slate-50/50 dark:bg-slate-800/20'
                                                 )}
                                             />
@@ -521,7 +521,7 @@ const TimelineMode: React.FC<{
                                         {/* Today vertical line */}
                                         {todayOffset >= 0 && (
                                             <div
-                                                className="absolute top-0 bottom-0 w-px bg-blue-500/40 pointer-events-none z-10"
+                                                className="absolute top-0 bottom-0 w-px bg-sit-orange/40 pointer-events-none z-10"
                                                 style={{ left: todayOffset * CELL_WIDTH + CELL_WIDTH / 2 }}
                                             />
                                         )}

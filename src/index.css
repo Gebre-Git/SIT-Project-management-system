@@ -29,7 +29,7 @@
   }
 
   body {
-    @apply antialiased text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-950 font-sans selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-300;
+    @apply antialiased text-slate-900 dark:text-slate-50 bg-slate-50 dark:bg-slate-950 font-sans selection:bg-sit-orange/30 selection:text-sit-orange;
   }
 
   h1,
@@ -73,21 +73,21 @@
   .glass-panel {
     @apply bg-white/60 dark:bg-sit-dark/60 backdrop-blur-xl border border-white/20 dark:border-[var(--border-color)];
     box-shadow:
-      0 8px 32px 0 rgba(31, 38, 135, 0.07),
+      0 8px 32px 0 rgba(254, 88, 35, 0.07),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   }
 
   .glass-panel-hero {
     @apply bg-white/40 dark:bg-sit-dark/30 backdrop-blur-3xl border border-white/30 dark:border-[var(--border-color)];
     box-shadow:
-      0 20px 60px 0 rgba(31, 38, 135, 0.1),
+      0 20px 60px 0 rgba(254, 88, 35, 0.1),
       0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
       0 -1px 0 0 rgba(0, 0, 0, 0.05) inset;
   }
 
   .glass-card-nav {
     @apply bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl;
-    box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.05);
+    box-shadow: 0 4px 24px 0 rgba(254, 88, 35, 0.05);
   }
 
   .text-glow {

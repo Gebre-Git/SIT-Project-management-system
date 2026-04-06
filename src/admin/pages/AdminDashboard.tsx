@@ -59,11 +59,10 @@ const SectionHeader: React.FC<{
 );
 
 const AdminDashboard: React.FC = () => {
-    const { projects, users, recentMessages, taskStats, allTasks, superAdmins, loading, error } = useAdminData();
+    const { projects, users, taskStats, allTasks, superAdmins, loading, error } = useAdminData();
     const [projectSearch, setProjectSearch] = useState('');
     const [userSearch, setUserSearch] = useState('');
     const [finalSearch, setFinalSearch] = useState('');
-    const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
     const adminUsers = users.filter(u => superAdmins.includes(u.uid));
     const [showAllProjects, setShowAllProjects] = useState(false);
@@ -191,9 +190,9 @@ const AdminDashboard: React.FC = () => {
 
     // Chart data
     const chartData = [
-        { name: 'To Do', value: taskStats.todo, color: '#3b82f6' },
+        { name: 'To Do', value: taskStats.todo, color: '#FE5823' },
         { name: 'In Progress', value: taskStats.inProgress, color: '#f59e0b' },
-        { name: 'Under Review', value: taskStats.underReview, color: '#8b5cf6' },
+        { name: 'Under Review', value: taskStats.underReview, color: '#FFB400' },
         { name: 'Done', value: taskStats.done, color: '#22c55e' },
         { name: 'Overdue', value: taskStats.overdue, color: '#ef4444' },
     ];
@@ -202,8 +201,8 @@ const AdminDashboard: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-4 border-blue-500/30 border-t-blue-500 animate-spin" />
-                    <Shield className="w-6 h-6 text-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <div className="w-16 h-16 rounded-full border-4 border-sit-orange/30 border-t-sit-orange animate-spin" />
+                    <Shield className="w-6 h-6 text-sit-orange absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 </div>
                 <p className="text-slate-500 dark:text-slate-400 text-sm animate-pulse">Loading admin data...</p>
             </div>
@@ -232,14 +231,14 @@ const AdminDashboard: React.FC = () => {
             <select
                 value={sortBy}
                 onChange={(e) => setSort({ by: e.target.value as any, order: sortOrder })}
-                className="pl-3 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all cursor-pointer font-bold"
+                className="pl-3 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 appearance-none focus:outline-none focus:ring-2 focus:ring-sit-orange/50 transition-all cursor-pointer font-bold"
             >
                 <option value="date">Date Created</option>
                 <option value="score">{scoreLabel}</option>
             </select>
             <button
                 onClick={() => setSort({ by: sortBy, order: sortOrder === 'asc' ? 'desc' : 'asc' })}
-                className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-500 transition-colors"
+                className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-sit-orange transition-colors"
                 title={sortOrder === 'asc' ? "Ascending" : "Descending"}
             >
                 {sortOrder === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -257,7 +256,7 @@ const AdminDashboard: React.FC = () => {
             >
                 <div>
                     <div className="flex items-center gap-3">
-                        <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 shadow-xl shadow-blue-500/30">
+                        <div className="p-3 rounded-2xl bg-gradient-to-br from-sit-orange to-sit-yellow shadow-xl shadow-sit-orange/30">
                             <Shield className="w-7 h-7 text-white" />
                         </div>
                         <div>
@@ -279,8 +278,8 @@ const AdminDashboard: React.FC = () => {
 
             {/* ── Stat Cards ─────────────────────────────────────────────── */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard label="Total Groups"     value={projects.filter(p => !p.type || p.type === 'team').length}         icon={FolderKanban}   gradient="from-blue-500 to-cyan-500"    shadowColor="shadow-blue-500/25" delay={0}   />
-                <StatCard label="Total Users"      value={users.length}            icon={Users}          gradient="from-violet-500 to-purple-500" shadowColor="shadow-violet-500/25" delay={0.1} />
+                <StatCard label="Total Groups"     value={projects.filter(p => !p.type || p.type === 'team').length}         icon={FolderKanban}   gradient="from-sit-orange to-sit-yellow"    shadowColor="shadow-sit-orange/25" delay={0}   />
+                <StatCard label="Total Users"      value={users.length}            icon={Users}          gradient="from-sit-orange/80 to-sit-yellow/80" shadowColor="shadow-sit-orange/20" delay={0.1} />
                 <StatCard label="Total Tasks"      value={taskStats.total}         icon={CheckCircle2}   gradient="from-emerald-500 to-teal-500" shadowColor="shadow-emerald-500/25" delay={0.3}/>
             </div>
 
@@ -297,8 +296,8 @@ const AdminDashboard: React.FC = () => {
                         icon={BarChart3}
                         title="Workflow Insights"
                         subtitle="Task distribution across all projects"
-                        gradient="from-indigo-500 to-blue-500"
-                        shadowColor="shadow-indigo-500/25"
+                        gradient="from-sit-orange to-sit-yellow"
+                        shadowColor="shadow-sit-orange/25"
                     />
                     <div className="h-64 mt-6">
                         <ResponsiveContainer width="100%" height="100%">
@@ -324,14 +323,14 @@ const AdminDashboard: React.FC = () => {
                         </ResponsiveContainer>
                     </div>
                     <div className="flex flex-wrap items-center gap-4 mt-6 text-[10px] font-bold uppercase tracking-tight text-slate-500 dark:text-slate-400">
-                        <span className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">
-                            <span className="w-2 h-2 rounded bg-blue-500" /> TO DO {taskStats.todo}
+                        <span className="flex items-center gap-1.5 bg-sit-orange/10 dark:bg-sit-orange/20 px-2 py-1 rounded-lg">
+                            <span className="w-2 h-2 rounded bg-sit-orange" /> TO DO {taskStats.todo}
                         </span>
                         <span className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-lg">
                             <span className="w-2 h-2 rounded bg-amber-500" /> IN PROGRESS {taskStats.inProgress}
                         </span>
-                        <span className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-900/20 px-2 py-1 rounded-lg">
-                            <span className="w-2 h-2 rounded bg-purple-500" /> UNDER REVIEW {taskStats.underReview}
+                        <span className="flex items-center gap-1.5 bg-sit-yellow/10 dark:bg-sit-yellow/20 px-2 py-1 rounded-lg">
+                            <span className="w-2 h-2 rounded bg-sit-yellow" /> UNDER REVIEW {taskStats.underReview}
                         </span>
                         <span className="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-lg">
                             <span className="w-2 h-2 rounded bg-emerald-500" /> DONE {taskStats.done}
@@ -362,8 +361,8 @@ const AdminDashboard: React.FC = () => {
                         icon={FolderKanban}
                         title="All Groups"
                         subtitle={`${projects.length} groups & projects across the platform`}
-                        gradient="from-blue-500 to-cyan-500"
-                        shadowColor="shadow-blue-500/25"
+                        gradient="from-sit-orange to-sit-yellow"
+                        shadowColor="shadow-sit-orange/25"
                     />
                     <div className="flex flex-wrap items-center gap-3">
                         <SortControls sortBy={projectSort.by} sortOrder={projectSort.order} setSort={setProjectSort} scoreLabel="Efficiency" />
@@ -372,7 +371,7 @@ const AdminDashboard: React.FC = () => {
                             <select
                                 value={groupFilter}
                                 onChange={(e) => setGroupFilter(e.target.value as any)}
-                                className="w-full pl-10 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all cursor-pointer"
+                                className="w-full pl-10 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 appearance-none focus:outline-none focus:ring-2 focus:ring-sit-orange/50 transition-all cursor-pointer"
                             >
                                 <option value="all">All Groups</option>
                                 <option value="team">Team Groups</option>
@@ -390,8 +389,8 @@ const AdminDashboard: React.FC = () => {
                             type="text"
                             value={projectSearch}
                             onChange={(e) => setProjectSearch(e.target.value)}
-                            placeholder="Search projects by name or course..."
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            placeholder="Search repository by name or status..."
+                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sit-orange/50 transition-all"
                         />
                     </div>
                 </div>
@@ -417,12 +416,12 @@ const AdminDashboard: React.FC = () => {
                                     </td>
                                     <td className="py-4 px-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell font-medium">{p.course}</td>
                                     <td className="py-4 px-3 text-slate-500 dark:text-slate-400 hidden md:table-cell">
-                                        <Link to={`/admin/user/${p.ownerId}`} className="hover:text-blue-500 transition-colors font-medium">
+                                        <Link to={`/admin/user/${p.ownerId}`} className="hover:text-sit-orange transition-colors font-medium">
                                             {getUserName(p.ownerId)}
                                         </Link>
                                     </td>
                                     <td className="py-4 px-3 text-center">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-black bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-black bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange">
                                             {p.members?.length || 0}
                                         </span>
                                     </td>
@@ -446,7 +445,7 @@ const AdminDashboard: React.FC = () => {
                                     <td className="py-4 px-3 text-right">
                                         <Link
                                             to={`/admin/group/${p.id}`}
-                                            className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all inline-flex items-center gap-2"
+                                            className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-sit-orange hover:bg-sit-orange/10 transition-all inline-flex items-center gap-2"
                                         >
                                             View <ExternalLink className="w-3 h-3" />
                                         </Link>
@@ -464,7 +463,7 @@ const AdminDashboard: React.FC = () => {
                 {sortedProjects.length > 6 && (
                     <button
                         onClick={() => setShowAllProjects(!showAllProjects)}
-                        className="mt-6 w-full flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-2xl transition-all border border-blue-100 dark:border-blue-900/30"
+                        className="mt-6 w-full flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest text-sit-orange hover:bg-sit-orange/10 rounded-2xl transition-all border border-sit-orange/20"
                     >
                         {showAllProjects ? <><ChevronUp className="w-4 h-4" /> Show Less</> : <><ChevronDown className="w-4 h-4" /> Show All {sortedProjects.length} Groups</>}
                     </button>
@@ -494,7 +493,7 @@ const AdminDashboard: React.FC = () => {
                                 value={finalSearch}
                                 onChange={(e) => setFinalSearch(e.target.value)}
                                 placeholder="Search tasks or groups..."
-                                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all font-medium"
+                                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sit-orange/50 transition-all font-medium"
                             />
                         </div>
                         <SortControls sortBy={finalSort.by} sortOrder={finalSort.order} setSort={setFinalSort} scoreLabel="Status Rank" />
@@ -528,9 +527,9 @@ const AdminDashboard: React.FC = () => {
                                         <td className="py-4 px-3 text-center">
                                             <span className={`inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
                                                 task.status === 'done' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' :
-                                                task.status === 'under_review' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' :
+                                                task.status === 'under_review' ? 'bg-sit-yellow/10 dark:bg-sit-yellow/20 text-sit-yellow' :
                                                 task.status === 'in_progress' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' :
-                                                'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                                'bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange'
                                             }`}>
                                                 {task.status.replace('_', ' ')}
                                             </span>
@@ -543,7 +542,7 @@ const AdminDashboard: React.FC = () => {
                                         <td className="py-4 px-3 text-right">
                                             <Link
                                                 to={`/admin/final-project/${task.projectId}/${task.id}`}
-                                                className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-all inline-flex items-center gap-2"
+                                                className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-sit-orange hover:bg-sit-orange/10 transition-all inline-flex items-center gap-2"
                                             >
                                                 Details <ExternalLink className="w-3 h-3" />
                                             </Link>
@@ -573,8 +572,8 @@ const AdminDashboard: React.FC = () => {
                         icon={Users}
                         title="User Management"
                         subtitle={`${users.length} registered system users`}
-                        gradient="from-violet-500 to-purple-500"
-                        shadowColor="shadow-violet-500/25"
+                        gradient="from-sit-orange/80 to-sit-yellow/80"
+                        shadowColor="shadow-sit-orange/20"
                     />
                     <SortControls sortBy={userSort.by} sortOrder={userSort.order} setSort={setUserSort} scoreLabel="Avg Efficiency" />
                 </div>
@@ -586,8 +585,8 @@ const AdminDashboard: React.FC = () => {
                             type="text"
                             value={userSearch}
                             onChange={(e) => setUserSearch(e.target.value)}
-                            placeholder="Search users by name or email..."
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50 transition-all"
+                            placeholder="Search active users by name or email..."
+                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sit-orange/50 transition-all"
                         />
                     </div>
                 </div>
@@ -608,11 +607,11 @@ const AdminDashboard: React.FC = () => {
                                 <tr key={u.uid} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
                                     <td className="py-4 px-3">
                                         <Link to={`/admin/user/${u.uid}`} className="flex items-center gap-3 group/link">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-sm font-black text-white shadow-lg shadow-violet-500/20 shrink-0 group-hover/link:scale-110 transition-transform">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sit-orange to-sit-yellow flex items-center justify-center text-sm font-black text-white shadow-lg shadow-sit-orange/20 shrink-0 group-hover/link:scale-110 transition-transform">
                                                 {(u.displayName || u.email || '?').charAt(0).toUpperCase()}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="font-bold text-slate-800 dark:text-slate-200 truncate group-hover/link:text-violet-500 transition-colors">{u.displayName || 'Unnamed User'}</p>
+                                                <p className="font-bold text-slate-800 dark:text-slate-200 truncate group-hover/link:text-sit-orange transition-colors">{u.displayName || 'Unnamed User'}</p>
                                                 <p className="text-[10px] text-slate-400 sm:hidden truncate font-bold uppercase tracking-wider">{u.email}</p>
                                             </div>
                                         </Link>
@@ -649,7 +648,7 @@ const AdminDashboard: React.FC = () => {
                 {sortedUsers.length > 8 && (
                     <button
                         onClick={() => setShowAllUsers(!showAllUsers)}
-                        className="mt-6 w-full flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-2xl transition-all border border-violet-100 dark:border-violet-900/30"
+                        className="mt-6 w-full flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest text-sit-orange hover:bg-sit-orange/10 rounded-2xl transition-all border border-sit-orange/20"
                     >
                         {showAllUsers ? <><ChevronUp className="w-4 h-4" /> Show Less</> : <><ChevronDown className="w-4 h-4" /> Show All {sortedUsers.length} Users</>}
                     </button>

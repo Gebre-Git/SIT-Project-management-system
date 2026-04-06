@@ -806,12 +806,12 @@ const ProjectDetails: React.FC = () => {
             key={task.id}
             className={cn(
                 "group relative glass-card rounded-3xl p-6 border transition-all duration-300",
-                isDone ? "opacity-75 bg-slate-50/50 dark:bg-slate-900/30" : "hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900/60"
+                isDone ? "opacity-75 bg-slate-50/50 dark:bg-slate-900/30" : "hover:shadow-xl hover:border-sit-orange/20 dark:hover:border-sit-orange/40"
             )}
         >
             <div className={cn(
                 "absolute left-0 top-6 bottom-6 w-1.5 rounded-r-full transition-colors",
-                isDone ? (isLate ? "bg-amber-400" : "bg-emerald-500") : isOverdue ? "bg-red-500" : "bg-blue-600"
+                isDone ? (isLate ? "bg-amber-400" : "bg-emerald-500") : isOverdue ? "bg-red-500" : "bg-sit-orange"
             )} />
 
             <div className="flex items-start gap-5 pl-4">
@@ -826,7 +826,7 @@ const ProjectDetails: React.FC = () => {
                             ? "bg-emerald-500 border-emerald-500 text-white"
                             : (task.requiresUpload && !task.submissionUrl
                                 ? "border-amber-400 text-amber-300 cursor-not-allowed opacity-70"
-                                : "border-slate-300 dark:border-slate-600 hover:border-blue-600 text-transparent hover:text-blue-600")
+                                : "border-slate-300 dark:border-slate-600 hover:border-sit-orange text-transparent hover:text-sit-orange")
                     )}
                 >
                     <CheckCircle className="w-5 h-5 pointer-events-none" />
@@ -864,7 +864,7 @@ const ProjectDetails: React.FC = () => {
                                                 onClick={() => toggleSubTask(task, st.id)}
                                                 className={cn(
                                                     "w-4 h-4 rounded-md border flex items-center justify-center transition-all",
-                                                    st.status === 'done' ? "bg-blue-500 border-blue-500 text-white" : "border-slate-300 dark:border-slate-600"
+                                                    st.status === 'done' ? "bg-sit-orange border-sit-orange text-white" : "border-slate-300 dark:border-slate-600"
                                                 )}
                                             >
                                                 {st.status === 'done' && <CheckCircle className="w-3 h-3" />}
@@ -890,8 +890,8 @@ const ProjectDetails: React.FC = () => {
                                                 <div className="flex items-center gap-2">
                                                     {uploadingTaskId === st.id ? (
                                                         <div className="flex items-center gap-1">
-                                                            <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
-                                                            <span className="text-[9px] font-bold text-blue-600">{taskUploadProgress}%</span>
+                                                            <Loader2 className="w-3 h-3 animate-spin text-sit-orange" />
+                                                            <span className="text-[9px] font-bold text-sit-orange">{taskUploadProgress}%</span>
                                                         </div>
                                                     ) : (
                                                         <label className="cursor-pointer flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase transition-colors bg-amber-500 hover:bg-amber-600 text-white">
@@ -959,7 +959,7 @@ const ProjectDetails: React.FC = () => {
                                     e.stopPropagation();
                                     setEditingTask(task);
                                 }}
-                                className="p-2 bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 rounded-xl backdrop-blur-sm transition-all shadow-sm"
+                                className="p-2 bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-sit-orange rounded-xl backdrop-blur-sm transition-all shadow-sm"
                                 title="Edit Task"
                             >
                                 <Edit3 className="w-4 h-4" />
@@ -986,7 +986,7 @@ const ProjectDetails: React.FC = () => {
                                 "text-[10px] font-black uppercase tracking-tighter px-3 py-2 rounded-xl border transition-all backdrop-blur-sm shadow-sm",
                                 task.assignedTo.includes(currentUser?.uid || '')
                                     ? "bg-red-50/80 border-red-200 text-red-600 hover:bg-red-100 dark:bg-red-900/40 dark:border-red-900"
-                                    : "bg-blue-50/80 border-blue-200 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/40 dark:border-blue-900"
+                                    : "bg-sit-orange/10 border-sit-orange/20 text-sit-orange hover:bg-sit-orange/20 dark:bg-sit-orange/20 dark:border-sit-orange/40"
                             )}
                         >
                             {task.assignedTo.includes(currentUser?.uid || '') ? 'Leave' : 'Take Task'}
@@ -1000,7 +1000,7 @@ const ProjectDetails: React.FC = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+                <Loader2 className="w-10 h-10 text-sit-orange animate-spin" />
             </div>
         );
     }
@@ -1012,13 +1012,13 @@ const ProjectDetails: React.FC = () => {
                 <div>
                     <button
                         onClick={() => navigate('/dashboard')}
-                        className="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium mb-4 flex items-center gap-2 transition-colors"
+                        className="text-slate-500 dark:text-slate-400 hover:text-sit-orange dark:hover:text-sit-orange text-sm font-medium mb-4 flex items-center gap-2 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" /> Back to Dashboard
                     </button>
                     <div className="flex items-start gap-4">
-                        <div className="p-4 bg-blue-50 dark:bg-slate-800 rounded-2xl hidden sm:block">
-                            <Layout className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                        <div className="p-4 bg-sit-orange/10 dark:bg-slate-800 rounded-2xl hidden sm:block">
+                            <Layout className="w-8 h-8 text-sit-orange" />
                         </div>
                         <div>
                             <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
@@ -1028,7 +1028,7 @@ const ProjectDetails: React.FC = () => {
                                         {project.course}
                                     </span>
                                 )}
-                                <span className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.1em]">
+                                <span className="px-3 py-1 rounded-full bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange text-[10px] font-black uppercase tracking-[0.1em]">
                                     {project?.type}
                                 </span>
                             </div>
@@ -1055,7 +1055,7 @@ const ProjectDetails: React.FC = () => {
                             setActiveTab('tasks');
                             setNewTaskMode(true);
                         }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition hover:scale-105 text-sm"
+                        className="bg-sit-orange hover:bg-sit-orange/90 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-sit-orange/20 transition hover:scale-105 text-sm"
                     >
                         <Plus className="w-5 h-5" /> <span className="hidden xs:inline">Add Task</span>
                     </button>
@@ -1066,32 +1066,32 @@ const ProjectDetails: React.FC = () => {
             <div className="border-b border-slate-200 dark:border-slate-700 flex items-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar whitespace-nowrap -mx-4 px-4 sm:mx-0 sm:px-0">
                 <button
                     onClick={() => setActiveTab('tasks')}
-                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'tasks' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'tasks' ? 'border-sit-orange text-sit-orange' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                 >
                     <List className="w-4 h-4" /> Tasks
                 </button>
                 <button
                     onClick={() => setActiveTab('chat')}
-                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'chat' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'chat' ? 'border-sit-orange text-sit-orange' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                 >
                     <MessageSquare className="w-4 h-4" /> Chat & Files
                 </button>
                 <button
                     onClick={() => setActiveTab('kanban')}
-                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'kanban' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'kanban' ? 'border-sit-orange text-sit-orange' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                 >
                     <Columns className="w-4 h-4" /> Kanban
                 </button>
                 <button
                     onClick={() => setActiveTab('calendar')}
-                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'calendar' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                    className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'calendar' ? 'border-sit-orange text-sit-orange' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                 >
                     <Calendar className="w-4 h-4" /> Calendar
                 </button>
                 {!isPersonal && (
                     <button
                         onClick={() => setActiveTab('analytics')}
-                        className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'analytics' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                        className={`pb-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'analytics' ? 'border-sit-orange text-sit-orange' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
                     >
                         <BarChart2 className="w-4 h-4" /> Analytics
                     </button>
@@ -1118,7 +1118,7 @@ const ProjectDetails: React.FC = () => {
                                     exit={{ opacity: 0, height: 0 }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="glass-card rounded-3xl p-8 border border-blue-200 dark:border-blue-900/50 shadow-xl shadow-blue-500/5 mb-6">
+                                    <div className="glass-card rounded-3xl p-8 border border-sit-orange/20 dark:border-sit-orange/40 shadow-xl shadow-sit-orange/5 mb-6">
                                         <form onSubmit={handleAddTask} className="space-y-6">
                                             <div className="space-y-2">
                                                 <input
@@ -1169,7 +1169,7 @@ const ProjectDetails: React.FC = () => {
                                                             />
                                                             {!isPersonal && (
                                                                 <select
-                                                                    className="bg-transparent text-xs text-blue-600 dark:text-blue-400 font-bold outline-none max-w-[120px]"
+                                                                    className="bg-transparent text-xs text-sit-orange dark:text-sit-orange/80 font-bold outline-none max-w-[120px]"
                                                                     value={st.assignedTo}
                                                                     onChange={e => {
                                                                         const list = [...newSubTasks];
@@ -1195,7 +1195,7 @@ const ProjectDetails: React.FC = () => {
                                                                 className={cn(
                                                                     "p-1.5 rounded-lg border transition-all flex items-center gap-1.5",
                                                                     st.requiresUpload
-                                                                        ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800"
+                                                                        ? "bg-sit-orange/5 border-sit-orange/20 text-sit-orange dark:bg-sit-orange/10 dark:border-sit-orange/30"
                                                                         : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/50 dark:border-slate-800"
                                                                 )}
                                                                 title="Require file upload for this sub-task"
@@ -1218,7 +1218,7 @@ const ProjectDetails: React.FC = () => {
                                                 <button
                                                     type="button"
                                                     onClick={addSubTaskRow}
-                                                    className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:translate-x-1 transition-transform"
+                                                    className="flex items-center gap-2 text-xs font-bold text-sit-orange hover:translate-x-1 transition-transform"
                                                 >
                                                     <Plus className="w-4 h-4" /> Add Sub-task
                                                 </button>
@@ -1257,16 +1257,16 @@ const ProjectDetails: React.FC = () => {
                                                     <div className="flex flex-col gap-2 w-full mt-2">
                                                         <div
                                                             onClick={() => setNewTaskRequiresUpload(prev => !prev)}
-                                                            className={cn(
-                                                                "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all",
-                                                                newTaskRequiresUpload
-                                                                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
-                                                                    : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50"
-                                                            )}
+                                                                className={cn(
+                                                                    "flex items-center gap-3 cursor-pointer select-none p-3 rounded-xl border transition-all",
+                                                                    newTaskRequiresUpload
+                                                                        ? "bg-sit-orange/5 dark:bg-sit-orange/10 border-sit-orange/20 dark:border-sit-orange/30"
+                                                                        : "bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-sit-orange/40 dark:hover:border-sit-orange/50"
+                                                                )}
                                                         >
                                                             <div className={cn(
                                                                 "w-10 h-5 rounded-full relative flex-shrink-0 transition-colors duration-300",
-                                                                newTaskRequiresUpload ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-700"
+                                                                newTaskRequiresUpload ? "bg-sit-orange" : "bg-slate-300 dark:bg-slate-700"
                                                             )}>
                                                                 <div className={cn(
                                                                     "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300",
@@ -1316,7 +1316,7 @@ const ProjectDetails: React.FC = () => {
                                                     </button>
                                                     <button
                                                         type="submit"
-                                                        className="bg-blue-600 hover:bg-blue-500 text-white text-sm px-6 py-2 rounded-xl font-bold shadow-lg shadow-blue-600/20"
+                                                        className="bg-sit-orange hover:bg-sit-orange/90 text-white text-sm px-6 py-2 rounded-xl font-bold shadow-lg shadow-sit-orange/20"
                                                     >
                                                         Create Task
                                                     </button>
@@ -1331,8 +1331,8 @@ const ProjectDetails: React.FC = () => {
                         <div className="space-y-6">
                             {tasks.length === 0 && !newTaskMode ? (
                                 <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-900/30 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[2rem]">
-                                    <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Plus className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                                    <div className="w-16 h-16 bg-sit-orange/10 dark:bg-sit-orange/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Plus className="w-8 h-8 text-sit-orange" />
                                     </div>
                                     <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Focus starts here. Create your first task.</p>
                                 </div>
@@ -1371,14 +1371,14 @@ const ProjectDetails: React.FC = () => {
                                                     <div className="flex items-center justify-between mb-2">
                                                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
                                                             Active Tasks
-                                                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full text-[10px]">{todoTasks.length}</span>
+                                                            <span className="bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange px-2 py-0.5 rounded-full text-[10px]">{todoTasks.length}</span>
                                                         </h3>
                                                         <button
                                                             onClick={() => setGroupByPriority(!groupByPriority)}
                                                             className={cn(
                                                                 "flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all text-[10px] font-bold uppercase tracking-wider border",
                                                                 groupByPriority
-                                                                    ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/30 dark:border-blue-800 ring-2 ring-blue-500/10"
+                                                                    ? "bg-sit-orange/10 border-sit-orange/20 text-sit-orange dark:bg-sit-orange/20 dark:border-sit-orange/40 ring-2 ring-sit-orange/10"
                                                                     : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/50 dark:border-slate-800 hover:text-slate-600 hover:border-slate-200 dark:hover:border-slate-700"
                                                             )}
                                                         >
@@ -1408,7 +1408,7 @@ const ProjectDetails: React.FC = () => {
                                                                                 </div>
                                                                                 <div className={cn(
                                                                                     "w-2 h-2 rounded-full shadow-[0_0_8px]",
-                                                                                    priority === 'large' ? "bg-red-500 shadow-red-500/50" : priority === 'medium' ? "bg-amber-500 shadow-amber-500/50" : "bg-blue-500 shadow-blue-500/50"
+                                                                                    priority === 'large' ? "bg-red-500 shadow-red-500/50" : priority === 'medium' ? "bg-amber-500 shadow-amber-500/50" : "bg-sit-orange shadow-sit-orange/50"
                                                                                 )} />
                                                                                 <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400">{priority} Priority</span>
                                                                                 <span className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full">{groupTasks.length}</span>
@@ -1468,7 +1468,7 @@ const ProjectDetails: React.FC = () => {
                                                                 {doneTasks.length}
                                                             </span>
                                                         </div>
-                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-blue-500 transition-colors">
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-sit-orange transition-colors">
                                                             {showCompletedTasks ? 'Hide' : 'Show'}
                                                         </span>
                                                     </button>
@@ -1522,7 +1522,7 @@ const ProjectDetails: React.FC = () => {
                                                             <p className="text-sm font-bold text-slate-900 dark:text-white truncate flex items-center gap-2">
                                                                 {member.displayName || member.username}
                                                                 {member.uid === project?.ownerId && (
-                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 shadow-sm shadow-blue-500/5">Admin</span>
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-sit-orange/10 text-sit-orange border border-sit-orange/20 shadow-sm shadow-sit-orange/5">Admin</span>
                                                                 )}
                                                             </p>
                                                             {stats?.isAtRisk && (
@@ -1549,7 +1549,7 @@ const ProjectDetails: React.FC = () => {
                                             initial={{ width: 0 }}
                                             animate={{ width: `${tasks.length > 0 ? (tasks.filter(t => t.status === 'done').length / tasks.length) * 100 : 0}% ` }}
                                             transition={{ duration: 1.5, ease: 'circOut' }}
-                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                                            className="bg-gradient-to-r from-sit-orange to-sit-yellow h-full rounded-full shadow-[0_0_10px_rgba(254,88,35,0.3)]"
                                         />
                                     </div>
                                 </div>

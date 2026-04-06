@@ -32,7 +32,7 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                     <div className="flex items-center gap-4">
                         <div className={cn(
                             "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg",
-                            isDone ? "bg-emerald-500 shadow-emerald-500/20" : "bg-blue-600 shadow-blue-600/20"
+                            isDone ? "bg-emerald-500 shadow-emerald-500/20" : "bg-sit-orange shadow-sit-orange/20"
                         )}>
                             {isDone ? <CheckCircle className="w-6 h-6 text-white" /> : <Layout className="w-6 h-6 text-white" />}
                         </div>
@@ -74,7 +74,7 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                     {/* Meta Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="bg-slate-50 dark:bg-slate-950/40 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center gap-4">
-                            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                            <div className="w-10 h-10 bg-sit-orange/10 dark:bg-sit-orange/20 rounded-xl flex items-center justify-center text-sit-orange">
                                 <Calendar className="w-5 h-5" />
                             </div>
                             <div>
@@ -105,7 +105,7 @@ const TaskViewModal: React.FC<TaskViewModalProps> = ({ isOpen, onClose, task, me
                                     const member = members.find(m => m.uid === uid);
                                     if (!member) return null;
                                     return (
-                                        <div key={uid} className="flex items-center gap-3 p-3 pr-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm group hover:border-blue-500 transition-colors">
+                                        <div key={uid} className="flex items-center gap-3 p-3 pr-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm group hover:border-sit-orange transition-colors">
                                             <ProfileAvatar photoURL={member.photoURL} displayName={member.displayName || member.username} size="sm" />
                                             <div>
                                                 <p className="text-xs font-bold text-slate-900 dark:text-white">{member.displayName || member.username}</p>

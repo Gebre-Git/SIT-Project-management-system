@@ -19,13 +19,11 @@ const LandingPage: React.FC = () => {
         <div className="min-h-screen bg-white dark:bg-sit-dark text-slate-900 dark:text-slate-50 selection:bg-sit-orange/20 selection:text-sit-orange">
             {/* Soft Ambient Background Elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-sit-orange/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[45%] bg-sit-half-baked/5 blur-[120px] rounded-full" />
             </div>
 
             {/* Navigation */}
             <nav className="fixed top-0 w-full z-50 border-b border-slate-200/50 dark:border-sit-half-baked/20 bg-white/70 dark:bg-sit-dark/70 backdrop-blur-xl transition-all duration-500">
-                <div className="max-w-7xl mx-auto px-6 md:px-10 h-28 md:h-40 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-6 md:px-10 h-20 md:h-24 flex items-center justify-between">
                     <Logo />
                     <div className="flex items-center gap-6">
                         <ThemeToggle />
@@ -101,35 +99,15 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* Sub-Hero / Problem Statement */}
-                <section id="how-it-works" className="py-24 md:py-32 bg-sit-half-baked/5 dark:bg-sit-half-baked/10 border-y border-slate-200 dark:border-sit-half-baked/20 scroll-mt-28">
-                    <div className="max-w-4xl mx-auto px-6 text-center space-y-12">
-                        <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight">
-                            Project management shouldn’t feel like babysitting.
-                        </h2>
-                        <div className="space-y-8 text-xl md:text-2xl text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                            <p>
-                                Most tools help you organize tasks — but they fail at what actually breaks group projects: <br className="hidden md:block" />
-                                <span className="text-slate-900 dark:text-white font-black underline decoration-sit-orange decoration-4 underline-offset-8 text-2xl md:text-3xl">unclear ownership, missed deadlines, and invisible effort.</span>
-                            </p>
-                            <p className="bg-white dark:bg-sit-dark p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-slate-200 dark:border-sit-half-baked/20 shadow-xl italic relative">
-                                <span className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-sit-orange text-white text-xs font-black uppercase tracking-[0.3em] rounded-full shadow-lg">The Vision</span>
-                                "I built SIT Manager because I was tired of guessing who was working, who wasn’t, and why projects always fell apart at the last minute."
-                            </p>
-                            <p className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
-                                We replaced <span className="text-sit-orange">assumptions</span> with <span className="text-sit-orange">data</span>.
-                            </p>
-                        </div>
-                    </div>
-                </section>
+
 
                 {/* Core Philosophy */}
-                <section className="py-24 md:py-32">
+                <section id="how-it-works" className="py-24 md:py-32 scroll-mt-28">
                     <div className="max-w-7xl mx-auto px-6">
                         <div className="text-center mb-16 md:mb-20 space-y-6">
                             <span className="text-sit-orange font-black uppercase text-xs tracking-[0.3em] block">Our Foundation</span>
                             <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white">
-                                Built on three principles I care about
+                                Built on three core principles
                             </h2>
                             <p className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto font-medium">
                                 Focused on what actually makes academic teams succeed. <br className="hidden md:block" />

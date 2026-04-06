@@ -109,7 +109,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 text-lg font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder:text-slate-400"
+                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 text-lg font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all placeholder:text-slate-400"
                                 placeholder="Task Title"
                                 required
                             />
@@ -120,7 +120,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                             <textarea
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-medium text-slate-600 dark:text-slate-300 focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder:text-slate-400 min-h-[100px] resize-none"
+                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm font-medium text-slate-600 dark:text-slate-300 focus:ring-2 focus:ring-sit-orange outline-none transition-all placeholder:text-slate-400 min-h-[100px] resize-none"
                                 placeholder="Describe the mission objective..."
                             />
                         </div>
@@ -136,7 +136,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                                     type="date"
                                     value={deadline}
                                     onChange={(e) => setDeadline(e.target.value)}
-                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl pl-12 pr-5 py-4 text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl pl-12 pr-5 py-4 text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-sit-orange outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -154,7 +154,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                                             className={cn(
                                                 "flex-1 py-2 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all",
                                                 weight === w
-                                                    ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700"
+                                                    ? "bg-white dark:bg-slate-800 text-sit-orange shadow-sm ring-1 ring-slate-200 dark:ring-slate-700"
                                                     : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50"
                                             )}
                                         >
@@ -176,7 +176,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                             <button
                                 type="button"
                                 onClick={handleAddSubTask}
-                                className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all group shadow-sm text-[10px] font-black uppercase tracking-widest"
+                                className="flex items-center gap-2 px-4 py-2 bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange rounded-xl hover:bg-sit-orange/20 dark:hover:bg-sit-orange/30 transition-all group shadow-sm text-[10px] font-black uppercase tracking-widest"
                             >
                                 <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" /> Add Component
                             </button>
@@ -218,7 +218,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                                                             <select
                                                                 value={st.assignedTo || ''}
                                                                 onChange={(e) => handleUpdateSubTask(st.id, { assignedTo: e.target.value || '' })}
-                                                                className="bg-transparent text-[10px] font-bold text-blue-600 dark:text-blue-400 outline-none max-w-[100px]"
+                                                                className="bg-transparent text-[10px] font-bold text-sit-orange outline-none max-w-[100px]"
                                                             >
                                                                 <option value="">Unassigned</option>
                                                                 {members.map(m => (
@@ -234,7 +234,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                                                             className={cn(
                                                                 "p-2 rounded-xl border transition-all flex items-center gap-2",
                                                                 st.requiresUpload
-                                                                    ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800"
+                                                                    ? "bg-sit-orange/10 border-sit-orange/20 text-sit-orange dark:bg-sit-orange/20 dark:border-sit-orange/30"
                                                                     : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/50 dark:border-slate-800"
                                                             )}
                                                             title="Require file upload for this sub-task"
@@ -281,7 +281,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, onClose, task, me
                     <button
                         onClick={handleSubmit}
                         disabled={isSaving}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
+                        className="flex items-center gap-2 bg-sit-orange hover:bg-sit-orange/90 disabled:opacity-50 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-sit-orange/20 transition-all hover:scale-105 active:scale-95"
                     >
                         {isSaving ? "Synchronizing..." : "Finalize Mission"}
                     </button>

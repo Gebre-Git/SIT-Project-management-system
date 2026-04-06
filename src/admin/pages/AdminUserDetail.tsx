@@ -54,8 +54,8 @@ const AdminUserDetail: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-4 border-blue-500/30 border-t-blue-500 animate-spin" />
-                    <Shield className="w-6 h-6 text-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <div className="w-16 h-16 rounded-full border-4 border-sit-orange/30 border-t-sit-orange animate-spin" />
+                    <Shield className="w-6 h-6 text-sit-orange absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 </div>
                 <p className="text-slate-500 dark:text-slate-400 text-sm animate-pulse">Aggregating user performance data...</p>
             </div>
@@ -87,7 +87,7 @@ const AdminUserDetail: React.FC = () => {
             >
                 <button 
                     onClick={() => navigate('/admin')}
-                    className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors mb-6"
+                    className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-sit-orange transition-colors mb-6"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Back to User Management
@@ -95,7 +95,7 @@ const AdminUserDetail: React.FC = () => {
 
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                     <div className="flex items-center gap-6">
-                        <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-violet-600 to-purple-600 shadow-2xl shadow-violet-500/20 flex items-center justify-center text-3xl font-black text-white relative group overflow-hidden">
+                        <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-sit-orange to-sit-yellow shadow-2xl shadow-sit-orange/20 flex items-center justify-center text-3xl font-black text-white relative group overflow-hidden">
                             {user.photoURL ? (
                                 <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
                             ) : (
@@ -131,7 +131,7 @@ const AdminUserDetail: React.FC = () => {
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Administrative Status</p>
                             <p className="text-sm font-bold text-slate-900 dark:text-white">Full Review Mode Active</p>
                         </div>
-                        <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-blue-500 shadow-inner">
+                        <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sit-orange shadow-inner">
                             <Shield className="w-7 h-7" />
                         </div>
                     </div>
@@ -144,14 +144,14 @@ const AdminUserDetail: React.FC = () => {
                     label="Platform Score" 
                     value={stats?.totalContributionScore || 0} 
                     subValue="Cumulative Impact" 
-                    gradient="from-blue-600 to-indigo-600" 
+                    gradient="from-sit-orange to-sit-yellow" 
                     icon={TrendingUp} 
                 />
                 <StatBox 
                     label="Participated" 
                     value={stats?.totalProjects || 0} 
                     subValue="Total Projects" 
-                    gradient="from-violet-600 to-purple-600" 
+                    gradient="from-sit-orange/80 to-sit-yellow/80" 
                     icon={Briefcase} 
                 />
                 <StatBox 
@@ -175,7 +175,7 @@ const AdminUserDetail: React.FC = () => {
                 <div className="lg:col-span-1 space-y-8">
                     <div className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 h-full">
                         <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8 flex items-center gap-3">
-                            <UserIcon className="w-5 h-5 text-blue-500" />
+                            <UserIcon className="w-5 h-5 text-sit-orange" />
                             Academic Profile
                         </h2>
                         
@@ -218,10 +218,10 @@ const AdminUserDetail: React.FC = () => {
                     <div className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 h-full">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
-                                <Briefcase className="w-5 h-5 text-blue-500" />
+                                <Briefcase className="w-5 h-5 text-sit-orange" />
                                 Project Engagement
                             </h2>
-                            <span className="px-3 py-1 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                            <span className="px-3 py-1 rounded-xl bg-sit-orange/10 dark:bg-sit-orange/20 text-[10px] font-black text-sit-orange uppercase tracking-widest">
                                 {stats?.projectBreakdown.length || 0} Total Projects
                             </span>
                         </div>
@@ -233,15 +233,15 @@ const AdminUserDetail: React.FC = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
                                     key={pStat.project.id}
-                                    className="p-6 rounded-[2rem] bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 transition-all hover:shadow-xl group"
+                                    className="p-6 rounded-[2rem] bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:border-sit-orange/50 transition-all hover:shadow-xl group"
                                 >
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 group-hover:bg-blue-50 dark:group-hover:bg-blue-900 text-slate-400 group-hover:text-blue-500 transition-colors">
+                                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 group-hover:bg-sit-orange/10 text-slate-400 group-hover:text-sit-orange transition-colors">
                                                 <Activity className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover:text-blue-600 transition-colors">{pStat.project.name}</h3>
+                                                <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover:text-sit-orange transition-colors">{pStat.project.name}</h3>
                                                 <p className="text-xs font-bold text-slate-500">{pStat.project.course}</p>
                                             </div>
                                         </div>
@@ -261,7 +261,7 @@ const AdminUserDetail: React.FC = () => {
                                             </div>
                                             <Link 
                                                 to={`/admin/group/${pStat.project.id}`}
-                                                className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900 transition-all"
+                                                className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-sit-orange hover:bg-sit-orange/10 transition-all"
                                             >
                                                 <ChevronRight className="w-5 h-5" />
                                             </Link>

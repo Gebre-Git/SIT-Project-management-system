@@ -109,7 +109,7 @@ const JoinProject: React.FC = () => {
             <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
                 {status === 'loading' && (
                     <>
-                        <Loader2 className="w-16 h-16 mx-auto mb-4 text-blue-500 animate-spin" />
+                        <Loader2 className="w-16 h-16 mx-auto mb-4 text-sit-orange animate-spin" />
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Joining Project...</h2>
                         <p className="text-slate-500 dark:text-gray-400">Please wait while we add you to the project</p>
                     </>
@@ -135,8 +135,7 @@ const JoinProject: React.FC = () => {
                         <p className="text-slate-600 dark:text-gray-400 mb-6">{message}</p>
                         <div className="flex gap-3 justify-center">
                             <button
-                                onClick={() => navigate('/login')}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                className="px-6 py-2 bg-sit-orange text-white rounded-lg hover:bg-sit-orange/90 transition"
                             >
                                 Login
                             </button>

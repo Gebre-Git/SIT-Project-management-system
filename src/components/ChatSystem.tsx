@@ -157,8 +157,8 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
         const el = messageRefs.current.get(messageId);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('ring-2', 'ring-blue-500/50');
-            setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500/50'), 2000);
+            el.classList.add('ring-2', 'ring-sit-orange/50');
+            setTimeout(() => el.classList.remove('ring-2', 'ring-sit-orange/50'), 2000);
         }
     };
 
@@ -424,7 +424,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
     if (loading) {
         return (
             <div className="h-[500px] flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/30 rounded-3xl border border-slate-200 dark:border-slate-800">
-                <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                <Loader2 className="w-8 h-8 text-sit-orange animate-spin" />
             </div>
         );
     }
@@ -440,7 +440,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
             {/* ── Header ───────────────────────────────────────────── */}
             <div className="px-6 md:px-8 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-sit-orange to-sit-yellow flex items-center justify-center shadow-lg shadow-sit-orange/20">
                         {isPersonal ? <UserIcon className="w-5 h-5 text-white" /> : <Smile className="w-5 h-5 text-white" />}
                     </div>
                     <div>
@@ -627,7 +627,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                             msg.isDeleted
                                                 ? "bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 italic rounded-2xl"
                                                 : isMe
-                                                    ? cn("bg-blue-600 text-white shadow-sm shadow-blue-500/10",
+                                                    ? cn("bg-sit-orange text-white shadow-sm shadow-sit-orange/10",
                                                         isFirstInGroup ? "rounded-2xl rounded-br-sm" : "rounded-2xl rounded-br-sm")
                                                     : cn("bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm",
                                                         isFirstInGroup ? "rounded-2xl rounded-bl-sm" : "rounded-2xl rounded-bl-sm"),
@@ -637,7 +637,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                             {msg.pinnedBy && !msg.isDeleted && (
                                                 <div className="flex items-center gap-1 mb-1">
                                                     <Pin className="w-3 h-3 text-amber-500" />
-                                                    <span className={cn("text-[9px] font-bold uppercase tracking-widest", isMe ? "text-blue-200" : "text-amber-600 dark:text-amber-400")}>Pinned</span>
+                                                    <span className={cn("text-[9px] font-bold uppercase tracking-widest", isMe ? "text-white/80" : "text-amber-600 dark:text-amber-400")}>Pinned</span>
                                                 </div>
                                             )}
 
@@ -648,8 +648,8 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                                     className={cn(
                                                         "w-full text-left mb-2 pl-3 py-1.5 rounded-lg border-l-[3px] text-xs",
                                                         isMe
-                                                            ? "border-blue-300 bg-blue-700/40 text-blue-100"
-                                                            : "border-blue-500 bg-blue-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300"
+                                                            ? "border-white/30 bg-white/10 text-white/90"
+                                                            : "border-sit-orange bg-sit-orange/5 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300"
                                                     )}
                                                 >
                                                     <p className="font-bold text-[10px] mb-0.5">{msg.replyTo.senderName}</p>
@@ -695,10 +695,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                                                     onClick={() => downloadFile(msg.fileUrl!, msg.fileName || 'file')}
                                                                     className={cn(
                                                                         "w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left",
-                                                                        isMe ? "bg-blue-700/40 border-blue-400/30 hover:bg-blue-700/60" : "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                                                        isMe ? "bg-sit-orange/20 border-sit-orange/30 hover:bg-sit-orange/30" : "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
                                                                     )}
                                                                 >
-                                                                    <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", isMe ? "bg-blue-500/30" : "bg-slate-200 dark:bg-slate-700")}>
+                                                                    <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", isMe ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
                                                                         <FileText className="w-5 h-5" />
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">
@@ -720,8 +720,8 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                                         {msg.createdAt && format(msg.createdAt.toDate(), 'HH:mm')}
                                                         {isMe && (
                                                             <div className="flex items-center -space-x-1 ml-1">
-                                                                <Check className={cn("w-3 h-3 transition-colors", msg.seenBy && msg.seenBy.length > 0 ? "text-blue-300" : "opacity-70")} />
-                                                                {msg.seenBy && msg.seenBy.length > 0 && <Check className="w-3 h-3 text-blue-300" />}
+                                                                <Check className={cn("w-3 h-3 transition-colors", msg.seenBy && msg.seenBy.length > 0 ? "text-white" : "opacity-70")} />
+                                                                {msg.seenBy && msg.seenBy.length > 0 && <Check className="w-3 h-3 text-white" />}
                                                             </div>
                                                         )}
                                                     </div>
@@ -739,7 +739,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                                                         className={cn(
                                                             "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all",
                                                             users.includes(currentUser?.uid || '')
-                                                                ? "bg-blue-100 dark:bg-blue-900/40 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300"
+                                                                ? "bg-sit-orange/10 dark:bg-sit-orange/20 border-sit-orange/30 dark:border-sit-orange/50 text-sit-orange"
                                                                 : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
                                                         )}
                                                     >
@@ -779,19 +779,19 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="px-6 md:px-8 py-2 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-100 dark:border-blue-900/30 shrink-0"
+                        className="px-6 md:px-8 py-2 bg-sit-orange/5 dark:bg-sit-orange/10 border-t border-sit-orange/20 shrink-0"
                     >
                         <div className="flex items-center gap-3">
-                            <Loader2 className="w-4 h-4 text-blue-500 animate-spin shrink-0" />
-                            <div className="flex-1 h-1.5 bg-blue-100 dark:bg-blue-900/40 rounded-full overflow-hidden">
+                            <Loader2 className="w-4 h-4 text-sit-orange animate-spin shrink-0" />
+                            <div className="flex-1 h-1.5 bg-sit-orange/10 dark:bg-sit-orange/20 rounded-full overflow-hidden">
                                 <motion.div
-                                    className="h-full bg-blue-500 rounded-full"
+                                    className="h-full bg-sit-orange rounded-full"
                                     initial={{ width: 0 }}
                                     animate={{ width: `${uploadProgress}%` }}
                                     transition={{ duration: 0.3 }}
                                 />
                             </div>
-                            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 tabular-nums">{uploadProgress}%</span>
+                            <span className="text-[10px] font-bold text-sit-orange tabular-nums">{uploadProgress}%</span>
                         </div>
                     </motion.div>
                 )}
@@ -808,19 +808,18 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                     >
                         <div className="max-w-5xl mx-auto w-full bg-slate-50/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-t-2xl border-x border-t border-slate-200 dark:border-slate-700 p-2 flex items-center gap-3">
                             <div className={cn(
-                                "w-1 h-10 rounded-full shrink-0",
-                                editingMessage ? "bg-amber-500" : "bg-blue-500"
+                                editingMessage ? "bg-amber-500" : "bg-sit-orange"
                             )} />
                             <div className="flex-1 min-w-0 pr-2">
                                 <div className="flex items-center gap-1.5 mb-0.5">
                                     {editingMessage ? (
                                         <Pencil className="w-3 h-3 text-amber-500" />
                                     ) : (
-                                        <Reply className="w-3 h-3 text-blue-500" />
+                                        <Reply className="w-3 h-3 text-sit-orange" />
                                     )}
                                     <span className={cn(
                                         "text-[10px] font-bold uppercase tracking-wider",
-                                        editingMessage ? "text-amber-500" : "text-blue-500"
+                                        editingMessage ? "text-amber-500" : "text-sit-orange"
                                     )}>
                                         {editingMessage ? 'Editing message' : `Reply to ${getSender(replyingTo!.senderId)?.displayName || 'User'}`}
                                     </span>
@@ -851,11 +850,11 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isUploading}
-                        className="p-2.5 mb-0.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all text-slate-500 hover:text-blue-500 active:scale-90"
+                        className="p-2.5 mb-0.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all text-slate-500 hover:text-sit-orange active:scale-90"
                         title="Attach file"
                     >
                         {isUploading ? (
-                            <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                            <Loader2 className="w-6 h-6 animate-spin text-sit-orange" />
                         ) : (
                             <Paperclip className="w-6 h-6 rotate-45" />
                         )}
@@ -872,7 +871,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                     {/* Main Input Capsule */}
                     <div className={cn(
                         "flex-1 flex items-end bg-slate-100 dark:bg-slate-800/80 rounded-[22px] px-2 py-1.5 border-2 border-transparent transition-all",
-                        "focus-within:bg-white dark:focus-within:bg-slate-800 focus-within:border-blue-500/10 focus-within:shadow-sm"
+                        "focus-within:bg-white dark:focus-within:bg-slate-800 focus-within:border-sit-orange/10 focus-within:shadow-sm"
                     )}>
                         {/* Emoji Button */}
                         <button
@@ -922,7 +921,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ projectId, members, isPersonal 
                             "p-3 rounded-full transition-all shadow-md flex items-center justify-center mb-0.5",
                             editingMessage
                                 ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/20"
-                                : "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30",
+                                : "bg-sit-orange hover:bg-sit-orange/90 shadow-sit-orange/30",
                             (!newMessage.trim() && !isUploading) && "opacity-0 scale-75 pointer-events-none"
                         )}
                     >

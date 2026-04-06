@@ -34,10 +34,10 @@ const COLUMNS: KanbanColumn[] = [
     {
         id: 'in_progress',
         title: 'In Progress',
-        color: 'text-blue-600 dark:text-blue-400',
-        bgGradient: 'from-blue-50 to-blue-100/30 dark:from-blue-900/20 dark:to-blue-900/10',
-        dotColor: 'bg-blue-500',
-        headerBg: 'bg-blue-50 dark:bg-blue-900/30',
+        color: 'text-sit-orange',
+        bgGradient: 'from-sit-orange/10 to-sit-orange/5',
+        dotColor: 'bg-sit-orange',
+        headerBg: 'bg-sit-orange/10',
     },
     {
         id: 'under_review',
@@ -58,7 +58,7 @@ const COLUMNS: KanbanColumn[] = [
 ];
 
 const WEIGHT_CONFIG = {
-    small: { label: 'Low', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+    small: { label: 'Low', color: 'bg-sit-orange/10 text-sit-orange' },
     medium: { label: 'Medium', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
     large: { label: 'High', color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
 };
@@ -103,7 +103,7 @@ const KanbanCard: React.FC<{
             </div>
 
             {/* Title */}
-            <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-100 leading-snug mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-100 leading-snug mb-3 line-clamp-2 group-hover:text-sit-orange transition-colors">
                 {task.title}
             </h4>
 
@@ -123,7 +123,7 @@ const KanbanCard: React.FC<{
                     </div>
                     <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-sit-orange to-sit-yellow rounded-full transition-all duration-500"
                             style={{
                                 width: `${(task.subTasks.filter(s => s.status === 'done').length / task.subTasks.length) * 100}%`
                             }}
@@ -213,7 +213,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, members, onStatusChang
                             className={cn(
                                 "flex flex-col rounded-2xl border transition-all duration-300 min-w-[280px] sm:min-w-[300px] lg:min-w-0 snap-center shrink-0 lg:shrink",
                                 isDropTarget
-                                    ? "border-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-900/10 scale-[1.01] shadow-lg shadow-blue-500/10"
+                                    ? "border-sit-orange/40 dark:border-sit-orange/60 bg-sit-orange/5 dark:bg-sit-orange/10 scale-[1.01] shadow-lg shadow-sit-orange/10"
                                     : "border-slate-200/60 dark:border-slate-700/40 bg-gradient-to-b " + col.bgGradient
                             )}
                         >

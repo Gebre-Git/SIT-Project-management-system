@@ -35,8 +35,8 @@ const AdminGroupDetail: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-4 border-blue-500/30 border-t-blue-500 animate-spin" />
-                    <Shield className="w-6 h-6 text-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <div className="w-16 h-16 rounded-full border-4 border-sit-orange/30 border-t-sit-orange animate-spin" />
+                    <Shield className="w-6 h-6 text-sit-orange absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 </div>
                 <p className="text-slate-500 dark:text-slate-400 text-sm animate-pulse">Loading detailed group analytics...</p>
             </div>
@@ -74,7 +74,7 @@ const AdminGroupDetail: React.FC = () => {
                     <div className="flex items-center justify-between mb-4">
                         <button 
                             onClick={() => navigate('/admin')}
-                            className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
+                            className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-sit-orange transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             Back to Admin Dashboard
@@ -144,7 +144,7 @@ const AdminGroupDetail: React.FC = () => {
                     </div>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
-                            <div className="p-4 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-xl shadow-blue-500/20 text-white">
+                            <div className="p-4 rounded-3xl bg-gradient-to-br from-sit-orange to-sit-yellow shadow-xl shadow-sit-orange/20 text-white">
                                 <Briefcase className="w-8 h-8" />
                             </div>
                             <div>
@@ -153,7 +153,7 @@ const AdminGroupDetail: React.FC = () => {
                                         {project.name}
                                     </h1>
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                        project.type === 'team' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'
+                                        project.type === 'team' ? 'bg-sit-orange/10 text-sit-orange' : 'bg-sit-yellow/10 text-sit-yellow'
                                     }`}>
                                         {project.type || 'team'}
                                     </span>
@@ -167,7 +167,7 @@ const AdminGroupDetail: React.FC = () => {
                                <p className="text-slate-900 dark:text-white">Admin Privileges Active</p>
                            </div>
                            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                               <Shield className="w-6 h-6 text-blue-500" />
+                               <Shield className="w-6 h-6 text-sit-orange" />
                            </div>
                         </div>
                     </div>
@@ -176,11 +176,11 @@ const AdminGroupDetail: React.FC = () => {
 
             {/* Sub-header Stat Row */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <StatBox label="Total Tasks" value={tasks.length} subValue="Platform Average: 12" gradient="from-blue-500 to-indigo-500" icon={BarChart3} />
+                <StatBox label="Total Tasks" value={tasks.length} subValue="Platform Average: 12" gradient="from-sit-orange to-sit-yellow" icon={BarChart3} />
                 <StatBox label="Completed" value={completedTasks} subValue={`${efficiency}% Ratio`} gradient="from-emerald-500 to-teal-500" icon={CheckCircle2} />
                 <StatBox label="In Progress" value={progressTasks} subValue="Pending Review" gradient="from-amber-500 to-orange-500" icon={Clock} />
                 <StatBox label="Overdue" value={overdueTasks} subValue="Action Required" gradient="from-red-500 to-rose-500" icon={AlertTriangle} />
-                <StatBox label="Efficiency" value={`${efficiency}%`} subValue="Overall Health" gradient="from-violet-500 to-purple-500" icon={TrendingUp} />
+                <StatBox label="Efficiency" value={`${efficiency}%`} subValue="Overall Health" gradient="from-sit-orange/80 to-sit-yellow/80" icon={TrendingUp} />
             </div>
 
             {/* Detailed Analytics Section */}
@@ -190,7 +190,7 @@ const AdminGroupDetail: React.FC = () => {
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Performance Deep-Dive</h2>
                         <p className="text-sm font-bold text-slate-500">Real-time data synchronization active</p>
                     </div>
-                    <div className="p-3 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+                    <div className="p-3 rounded-2xl bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange">
                         <TrendingUp className="w-6 h-6" />
                     </div>
                 </div>
@@ -206,7 +206,7 @@ const AdminGroupDetail: React.FC = () => {
                 className="glass-card rounded-[3rem] p-10 border-2 border-[#1a4d57] bg-white/40 dark:bg-sit-dark/40 backdrop-blur-2xl shadow-2xl shadow-sit-orange/5"
             >
                 <div className="flex items-center gap-6 mb-10">
-                    <div className="p-4 rounded-[2rem] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-lg shadow-blue-500/20">
+                    <div className="p-4 rounded-[2rem] bg-gradient-to-br from-sit-orange to-sit-yellow text-white shadow-lg shadow-sit-orange/20">
                         <BarChart3 className="w-8 h-8" />
                     </div>
                     <div>
@@ -238,7 +238,7 @@ const AdminGroupDetail: React.FC = () => {
                         tasks={tasks.filter((t: Task) => t.status === 'under_review')} 
                         members={members} 
                         icon={AlertTriangle} 
-                        color="text-purple-600 bg-purple-50/80"
+                        color="text-sit-yellow bg-sit-yellow/10"
                     />
                     <TaskGroup 
                         title="Completed Archive" 
@@ -259,7 +259,7 @@ const AdminGroupDetail: React.FC = () => {
                 className="glass-card rounded-[2.5rem] p-8 border-2 border-[#1a4d57]"
             >
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="p-3 rounded-2xl bg-violet-50 dark:bg-violet-900/20 text-violet-600">
+                    <div className="p-3 rounded-2xl bg-sit-orange/10 dark:bg-sit-orange/20 text-sit-orange">
                         <Users className="w-6 h-6" />
                     </div>
                     <div>
@@ -303,7 +303,7 @@ const AdminGroupDetail: React.FC = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover/link:text-blue-600 transition-colors">{member.displayName || 'Anonymous User'}</p>
+                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight group-hover/link:text-sit-orange transition-colors">{member.displayName || 'Anonymous User'}</p>
                                                     <p className="text-xs font-bold text-slate-500">@{member.username || 'user'}</p>
                                                 </div>
                                             </Link>
@@ -317,7 +317,7 @@ const AdminGroupDetail: React.FC = () => {
                                                 <div className="relative w-8 h-8">
                                                     <svg className="w-full h-full -rotate-90">
                                                         <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-100 dark:text-slate-800" />
-                                                        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={88} strokeDashoffset={88 - (88 * completionRate) / 100} className={completionRate > 80 ? 'text-emerald-500' : completionRate > 40 ? 'text-blue-500' : 'text-red-500'} strokeLinecap="round" />
+                                                        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={88} strokeDashoffset={88 - (88 * completionRate) / 100} className={completionRate > 80 ? 'text-emerald-500' : completionRate > 40 ? 'text-sit-orange' : 'text-red-500'} strokeLinecap="round" />
                                                     </svg>
                                                     <span className="absolute inset-0 flex items-center justify-center text-[8px] font-black">{completionRate}%</span>
                                                 </div>
@@ -335,7 +335,7 @@ const AdminGroupDetail: React.FC = () => {
                                         </td>
                                         <td className="py-5 px-2 text-right">
                                             <div className="flex flex-col items-end">
-                                                <p className={`text-sm font-black uppercase tracking-tighter ${stats?.contributionScore && stats.contributionScore > 30 ? 'text-blue-600' : 'text-slate-900 dark:text-white'}`}>
+                                                <p className={`text-sm font-black uppercase tracking-tighter ${stats?.contributionScore && stats.contributionScore > 30 ? 'text-sit-orange' : 'text-slate-900 dark:text-white'}`}>
                                                     {stats?.contributionScore || 0} pts
                                                 </p>
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Performance</p>
@@ -428,13 +428,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
     
     return (
         <div className="p-6 rounded-[2rem] border bg-white dark:bg-sit-dark/80 border-slate-100 dark:border-[#1a4d57] shadow-xl hover:shadow-2xl transition-all duration-300 group/card relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500/20 group-hover/card:bg-blue-500 transition-colors" />
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-sit-orange/20 group-hover/card:bg-sit-orange transition-colors" />
             
             <div className="flex justify-between items-start mb-6">
                 <span className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ${
                     task.weight === 'large' ? 'bg-red-50 text-red-600 border border-red-100' : 
                     task.weight === 'medium' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
-                    'bg-sky-50 text-sky-600 border border-sky-100'
+                    'bg-sit-orange/10 text-sit-orange border border-sit-orange/20'
                 }`}>
                     {task.weight} Intensity
                 </span>
@@ -469,12 +469,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, members }) => {
                                 {m && (
                                     <Link 
                                         to={`/admin/user/${m.uid}`}
-                                        className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm hover:border-blue-500 transition-colors group/member"
+                                        className="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm hover:border-sit-orange transition-colors group/member"
                                     >
                                         <div className="w-4 h-4 rounded-full overflow-hidden flex-shrink-0 group-hover/member:scale-110 transition-transform">
-                                            {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-[8px] font-black">{(m.username || 'U')[0]}</div>}
+                                            {m.photoURL ? <img src={m.photoURL} alt="" /> : <div className="w-full h-full bg-sit-orange/10 dark:bg-sit-orange/20 flex items-center justify-center text-[8px] font-black">{(m.username || 'U')[0]}</div>}
                                         </div>
-                                        <span className="text-[8px] font-black uppercase text-slate-500 group-hover/member:text-blue-500 transition-colors">{m.username}</span>
+                                        <span className="text-[8px] font-black uppercase text-slate-500 group-hover/member:text-sit-orange transition-colors">{m.username}</span>
                                     </Link>
                                 )}
                             </div>
