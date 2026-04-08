@@ -1,17 +1,12 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="8" fill="url(#grad)" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#2563eb" />
-      <stop offset="1" stop-color="#0891b2" />
-    </linearGradient>
+    <style>
+      .cls-1 { fill: #cfdfdc; }
+      .cls-2 { fill: #FE5823; }
+    </style>
   </defs>
-  <g transform="translate(4, 4) scale(1)">
-    <circle cx="12" cy="8" r="2.5" fill="white" />
-    <path d="M12 11C9.5 11 8 12.5 8 14.5V16H16V14.5C16 12.5 14.5 11 12 11Z" fill="white" />
-    <circle cx="6" cy="9" r="2" fill="white" fill-opacity="0.7" />
-    <path d="M6 11.5C4 11.5 3 12.8 3 14.5V16H6V14C6 12.8 6 12 6 11.5Z" fill="white" fill-opacity="0.7" />
-    <circle cx="18" cy="9" r="2" fill="white" fill-opacity="0.7" />
-    <path d="M18 11.5C20 11.5 21 12.8 21 14.5V16H18V14C18 12.8 18 12 18 11.5Z" fill="white" fill-opacity="0.7" />
+  <g transform="translate(0, 9)">
+    <path class="cls-1" d="M73.87,59.66H32l-1.1.15,4,.57A20.42,20.42,0,0,1,52.33,77.73l.57,4,.57-4A20.42,20.42,0,0,1,70.84,60.37l4-.57Z"/>
+    <path class="cls-2" d="M98.78,45.88H70L95.29,20.54l-5-5a7,7,0,0,0-9.94,0L60.05,35.9V7a7,7,0,0,0-7-7,7,7,0,0,0-7,7V36L25.44,15.42a7,7,0,0,0-10,0l-5,5L36,45.88H7a7,7,0,0,0-7,7v7H32.07L35,59.52a20.73,20.73,0,0,0,17.6-17.61l.29-2,.28,2A20.82,20.82,0,0,0,70.8,59.52l3,.42h32v-7A7,7,0,0,0,98.78,45.88Z"/>
   </g>
 </svg>
